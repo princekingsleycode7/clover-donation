@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Uzima Children's Fund — meals, medicine, and clean water for children in the Democratic Republic of Congo.">
+<meta name="theme-color" content="#241D15">
+<title>Uzima Children's Fund — No Child's Story Should End in Hunger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+/* ============ Tokens & reset ============ */
+:root{
+  --cream:#FBF6ED; --cream-2:#F3EADA; --white:#FFFDF8;
+  --ink:#2C241B; --ink-2:#6E5F4E;
+  --line:rgba(44,36,27,.15); --line-soft:rgba(44,36,27,.09);
+  --terra:#C1502E; --terra-dark:#9E3F21; --terra-light:#E28B62; --terra-tint:#F7E4D6;
+  --ochre:#D89A55; --olive:#8A815F;
+  --earth:#241D15; --earth-2:#1B1510;
+  --err:#9E2B1E; --ok:#5B7B4F;
+  --shadow:0 22px 55px -24px rgba(44,36,27,.35);
+  --r-sm:10px; --r-md:14px; --r-lg:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  font-family:'Instrument Sans',sans-serif;
+  background:var(--cream);color:var(--ink);
+  font-size:16px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+/* subtle paper grain over everything */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:2000;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+ul{list-style:none}
+::selection{background:var(--terra);color:var(--cream)}
+:focus-visible{outline:2px solid var(--terra);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:'Fraunces',serif;font-optical-sizing:auto;font-weight:550;line-height:1.08;letter-spacing:-.01em}
+section{scroll-margin-top:96px}
+.container{width:min(1180px,92%);margin-inline:auto}
+.skip-link{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--cream);padding:10px 18px;z-index:500;border-radius:0 0 10px 0}
+.skip-link:focus{left:0}
+
+/* ============ Shared pieces ============ */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--terra);margin-bottom:18px;
+}
+.eyebrow.light{color:var(--terra-light)}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--terra);position:relative;flex:none}
+.eyebrow.light .pulse-dot{background:var(--terra-light)}
+.pulse-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid currentColor;animation:ping 1.9s cubic-bezier(0,0,.2,1) infinite;color:inherit;opacity:.7}
+@keyframes ping{0%{transform:scale(.5);opacity:.9}80%,100%{transform:scale(1.7);opacity:0}}
+.icon{flex:none}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 27px;border-radius:999px;border:1.5px solid transparent;
+  font-size:15px;font-weight:600;letter-spacing:.01em;
+  transition:transform .22s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease,color .22s ease;
+}
+.btn-solid{background:var(--terra);color:var(--cream)}
+.btn-solid:hover{background:var(--terra-dark);transform:translateY(-2px);box-shadow:0 14px 28px -12px rgba(158,63,33,.55)}
+.btn-ghost{border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+.btn-sm{padding:11px 20px;font-size:14px}
+.btn:disabled{opacity:.7;cursor:default;transform:none!important}
+
+.duo{background:#C97A52;overflow:hidden;position:relative}
+.duo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.07) brightness(1.03);mix-blend-mode:multiply;transition:transform .9s cubic-bezier(.2,.6,.2,1)}
+.duo:hover img{transform:scale(1.045)}
+
+.contour{position:absolute;pointer-events:none;z-index:0;color:var(--terra)}
+.contour path{vector-effect:non-scaling-stroke}
+
+[data-reveal]{opacity:0;transform:translateY(20px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.3,1);transition-delay:var(--d,0s)}
+[data-reveal].is-in{opacity:1;transform:none}
+
+/* ============ Top bar & header ============ */
+.topbar{background:var(--earth);color:rgba(251,246,237,.88);font-size:12.5px}
+.topbar .container{display:flex;justify-content:center;align-items:center;gap:14px;padding:9px 0;flex-wrap:wrap}
+.topbar a{color:var(--terra-light);font-weight:600;border-bottom:1px solid rgba(226,139,98,.4);padding-bottom:1px;transition:border-color .2s}
+.topbar a:hover{border-color:var(--terra-light)}
+
+.site-header{
+  position:sticky;top:0;z-index:500;
+  background:rgba(251,246,237,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s;
+}
+.site-header.scrolled{border-bottom-color:var(--line);box-shadow:0 10px 30px -22px rgba(44,36,27,.4)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 0}
+.brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',serif}
+.brand .mark{width:38px;height:38px;color:var(--terra);flex:none}
+.brand-name{font-size:21px;font-weight:600;line-height:1}
+.brand-name small{display:block;font-family:'Instrument Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-2);margin-top:4px}
+.nav-links{display:flex;align-items:center;gap:34px}
+.nav-links a{font-size:14.5px;font-weight:600;color:var(--ink-2);position:relative;padding:6px 0;transition:color .2s}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--terra);transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.nav-links a:hover,.nav-links a.current{color:var(--ink)}
+.nav-links a:hover::after,.nav-links a.current::after{transform:scaleX(1)}
+.nav-toggle{display:none;width:42px;height:42px;border:1px solid var(--line);border-radius:10px;align-items:center;justify-content:center;color:var(--ink)}
+.nav-toggle .icon-close{display:none}
+.nav-toggle.open .icon-menu{display:none}
+.nav-toggle.open .icon-close{display:block}
+
+/* ============ Hero ============ */
+.hero{position:relative;overflow:hidden;padding:76px 0 110px}
+.hero-contour{right:-160px;top:-110px;width:640px;opacity:.15}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;position:relative;z-index:1}
+.hero h1{font-size:clamp(2.7rem,5.4vw,4.35rem);max-width:11ch;margin-bottom:24px}
+.hero h1 em{font-style:italic;color:var(--terra);font-weight:480}
+.lede{font-size:17.5px;color:var(--ink-2);max-width:52ch;margin-bottom:34px}
+.lede strong{color:var(--ink);font-weight:600}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:32px}
+.trust-line{display:flex;flex-wrap:wrap;gap:10px 22px}
+.trust-line li{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.trust-line .icon{color:var(--terra)}
+
+.hero-media{position:relative;min-height:560px}
+.hero-img-main{position:absolute;top:0;right:0;width:74%;aspect-ratio:4/4.9;border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.hero-img-sub{position:absolute;left:0;bottom:0;width:47%;aspect-ratio:4/3;border-radius:16px;border:8px solid var(--cream);box-shadow:var(--shadow)}
+.chip{position:absolute;background:var(--white);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 16px;box-shadow:var(--shadow);font-size:13.5px;font-weight:600;color:var(--ink);z-index:3}
+.chip strong{color:var(--terra)}
+.chip-cost{top:7%;left:-3%;transform:rotate(-2.5deg)}
+.chip-loc{display:flex;align-items:center;gap:8px;background:var(--earth);color:rgba(251,246,237,.92);border-color:transparent;border-radius:999px;font-size:12.5px;padding:10px 16px;bottom:9%;right:2%}
+.chip-loc .icon{color:var(--terra-light)}
+.spin-badge{
+  position:absolute;top:-26px;right:6%;width:124px;height:124px;border-radius:50%;
+  background:var(--cream);border:1px solid var(--line);z-index:4;
+  display:grid;place-items:center;box-shadow:var(--shadow);
+}
+.spin-badge .ring{position:absolute;inset:7px;color:var(--ink);animation:spin 22s linear infinite}
+.spin-badge .ring text{font-family:'Instrument Sans',sans-serif;font-weight:700;letter-spacing:1.6px}
+.spin-badge .core{width:38px;height:38px;color:var(--terra)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ Urgency strip ============ */
+.strip{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.strip-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:34px 0}
+.strip-item{padding:4px 30px;border-left:1px solid var(--line)}
+.strip-item:first-child{border-left:0;padding-left:0}
+.strip-num{display:block;font-family:'Fraunces',serif;font-size:2.15rem;font-weight:550;color:var(--ink);line-height:1.1}
+.strip-num b{color:var(--terra);font-weight:550}
+.strip-item span{font-size:13.5px;color:var(--ink-2)}
+
+/* ============ Impact ============ */
+.impact{padding:112px 0}
+.impact-head{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end;margin-bottom:64px}
+.impact-head h2{font-size:clamp(2rem,3.6vw,2.9rem);max-width:16ch}
+.impact-head p{color:var(--ink-2);font-size:16px;max-width:46ch;justify-self:end}
+.impact-body{display:grid;grid-template-columns:1.05fr .95fr;gap:76px;align-items:start}
+.impact-board{border-top:2px solid var(--ink)}
+.impact-featured{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:34px 0 30px;border-bottom:1px solid var(--line)}
+.impact-featured .num{font-family:'Fraunces',serif;font-size:clamp(3.1rem,5.4vw,4.7rem);line-height:.95;letter-spacing:-.02em;transition:color .5s ease}
+.impact-featured.bumped .num{color:var(--terra)}
+.live-tag{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);margin-top:10px}
+.live-tag i{width:6px;height:6px;border-radius:50%;background:var(--terra);animation:blink 1.6s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.count-label{max-width:190px;text-align:right;font-size:14px;color:var(--ink-2);line-height:1.45}
+.count-row{display:flex;align-items:center;gap:16px;padding:22px 0;border-bottom:1px solid var(--line)}
+.count-row:last-child{border-bottom:0}
+.count-row .icon{color:var(--terra);width:24px;height:24px}
+.count-row .num{font-family:'Fraunces',serif;font-size:1.95rem;line-height:1;min-width:128px}
+.count-row p{margin-left:auto;max-width:230px;text-align:right;font-size:14px;color:var(--ink-2);line-height:1.45}
+
+.alloc h3{font-size:1.55rem;margin-bottom:8px}
+.alloc>p{color:var(--ink-2);font-size:15px;margin-bottom:30px}
+.alloc-row{margin-bottom:22px}
+.alloc-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;gap:16px}
+.alloc-top span{font-size:14.5px;font-weight:600}
+.alloc-top b{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:550}
+.alloc-track{height:8px;background:var(--cream-2);border-radius:99px;overflow:hidden}
+.alloc-fill{display:block;height:100%;width:0;border-radius:99px;transition:width 1.5s cubic-bezier(.2,.7,.2,1)}
+.f-programs{background:var(--terra)}
+.f-ops{background:var(--ochre)}
+.f-fund{background:var(--olive)}
+.alloc-note{border-left:3px solid var(--terra);padding-left:16px;font-size:14.5px;color:var(--ink-2);font-style:italic;margin:32px 0 20px}
+.report-link{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:var(--terra);border-bottom:1.5px solid rgba(193,80,46,.35);padding-bottom:2px;transition:border-color .2s}
+.report-link:hover{border-color:var(--terra)}
+.report-link .icon{transition:transform .25s}
+.report-link:hover .icon{transform:translateX(3px)}
+
+/* ============ Story ============ */
+.story{background:var(--cream-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:112px 0}
+.story-grid{display:grid;grid-template-columns:5fr 7fr;gap:76px;align-items:start}
+.story-left{position:sticky;top:120px}
+.story-left h2{font-size:clamp(2rem,3.4vw,2.75rem);max-width:14ch;margin-bottom:34px}
+.pull-quote{border-left:3px solid var(--terra);padding-left:22px}
+.pull-quote blockquote{font-family:'Fraunces',serif;font-style:italic;font-size:1.4rem;line-height:1.45;color:var(--ink)}
+.pull-quote blockquote::before{content:"\201C";color:var(--terra);margin-right:2px}
+.quote-by{display:flex;align-items:center;gap:12px;margin-top:18px}
+.avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none}
+.quote-by b{display:block;font-size:13.5px;font-weight:700}
+.quote-by span{font-size:12.5px;color:var(--ink-2)}
+.prose p{margin-bottom:1.25em;color:#4A4034;font-size:16.5px}
+.prose p:first-of-type::first-letter{
+  font-family:'Fraunces',serif;font-weight:600;font-size:3.5em;float:left;
+  line-height:.82;padding:.06em .12em 0 0;color:var(--terra);
+}
+.prose strong{color:var(--ink);font-weight:600}
+.story-img{aspect-ratio:16/7.4;border-radius:20px;margin:14px 0 12px}
+.story-cap{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-2)}
+.story-cap::before{content:"";width:16px;height:2px;background:var(--terra);flex:none}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;margin-top:80px}
+.step{border-top:2px solid var(--ink);padding-top:22px}
+.step-num{font-family:'Fraunces',serif;font-style:italic;font-size:2.15rem;color:var(--terra);display:block;margin-bottom:10px}
+.step h4{font-size:16px;font-weight:700;margin-bottom:8px}
+.step p{font-size:14.5px;color:var(--ink-2)}
+
+/* ============ Donate ============ */
+.donate{position:relative;overflow:hidden;background:var(--earth);color:var(--cream);padding:112px 0 120px}
+.donate-contour{left:-180px;top:-140px;width:720px;color:var(--cream);opacity:.055}
+.donate-head{position:relative;z-index:1;text-align:center;max-width:640px;margin:0 auto 58px}
+.donate-head h2{font-size:clamp(2.1rem,4vw,3rem);margin-bottom:16px}
+.donate-head h2 em{font-style:italic;color:var(--terra-light);font-weight:480}
+.donate-head p{color:rgba(251,246,237,.72);font-size:16.5px}
+
+.widget{
+  position:relative;z-index:1;max-width:1020px;margin:0 auto;
+  background:var(--cream);border-radius:24px;overflow:hidden;color:var(--ink);
+  display:grid;grid-template-columns:1fr 1.12fr;box-shadow:0 40px 90px -40px rgba(0,0,0,.6);
+}
+.widget::before{content:"";display:block;position:absolute;top:0;left:0;right:0;height:5px;background:var(--terra);z-index:2}
+.widget-give{padding:44px 42px}
+.widget-form{background:var(--white);border-left:1px solid var(--line);padding:44px 42px}
+.w-overline{
+  display:flex;align-items:center;gap:12px;font-size:11.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);margin-bottom:24px;
+}
+.w-overline::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;background:#EBDEC9;border-radius:999px;padding:5px;margin-bottom:22px}
+.seg-ind{position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);background:var(--white);border-radius:999px;box-shadow:0 3px 10px rgba(44,36,27,.14);transition:transform .35s cubic-bezier(.45,0,.2,1)}
+.seg[data-freq="monthly"] .seg-ind{transform:translateX(100%)}
+.seg-btn{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 6px;border-radius:999px;font-size:14.5px;font-weight:600;color:var(--ink-2);transition:color .25s}
+.seg-btn.active{color:var(--ink)}
+.seg-tag{font-size:10px;font-weight:700;letter-spacing:.05em;padding:3px 7px;border-radius:999px;background:var(--terra-tint);color:var(--terra-dark)}
+
+.amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.amount-btn{
+  border:1.5px solid var(--line);border-radius:12px;background:var(--white);
+  padding:13px 6px 11px;text-align:center;transition:all .2s ease;
+}
+.amount-btn:hover{border-color:var(--terra);transform:translateY(-2px)}
+.amount-btn.active{background:var(--terra);border-color:var(--terra);box-shadow:0 12px 24px -12px rgba(158,63,33,.6)}
+.amount-btn .amt{display:block;font-family:'Fraunces',serif;font-size:1.3rem;font-weight:550;line-height:1.2}
+.amount-btn .amt-note{display:block;font-size:10.5px;color:var(--ink-2);margin-top:3px;line-height:1.3}
+.amount-btn.active .amt{color:var(--cream)}
+.amount-btn.active .amt-note{color:rgba(251,246,237,.85)}
+
+.field{display:block;margin-bottom:16px}
+.f-label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px}
+.input-wrap{position:relative}
+.input-wrap .prefix{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-weight:600;color:var(--ink-2);pointer-events:none}
+.field input{
+  width:100%;background:var(--white);border:1.5px solid var(--line);border-radius:var(--r-sm);
+  padding:13px 14px;font:inherit;font-size:15px;color:var(--ink);transition:border-color .2s,box-shadow .2s;
+}
+.field input::placeholder{color:#B4A48F}
+.field input:focus{outline:none;border-color:var(--terra);box-shadow:0 0 0 3px rgba(193,80,46,.16)}
+.field input[aria-invalid="true"]{border-color:var(--err)}
+.field.error input[aria-invalid="true"]{border-color:var(--err);box-shadow:0 0 0 3px rgba(158,43,30,.12)}
+#customAmount{padding-left:30px}
+#cardNumber{padding-right:126px}
+.brand-chips{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:5px}
+.brand-chip{
+  width:33px;height:22px;border:1px solid var(--line);border-radius:4px;background:var(--white);
+  display:grid;place-items:center;font-size:8px;font-weight:800;letter-spacing:.03em;color:#A7977F;
+  transition:all .2s;
+}
+.brand-chip svg{display:block}
+.brand-chip.on{border-color:var(--terra);color:var(--terra);background:var(--terra-tint)}
+.err-msg{display:none;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--err);margin-top:7px}
+.field.error .err-msg{display:flex}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.echo{
+  display:flex;gap:13px;align-items:flex-start;background:var(--terra-tint);
+  border:1px solid #EBC9B2;border-radius:12px;padding:15px 17px;margin-top:22px;
+}
+.echo .icon{color:var(--terra);width:24px;height:24px;margin-top:2px}
+.echo p{font-size:14px;line-height:1.55;color:#6B4A38}
+.echo strong{color:var(--terra-dark)}
+.echo.flash p{animation:echoIn .45s ease}
+@keyframes echoIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.form-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.form-head h3{font-size:1.35rem}
+.secure-pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+.secure-pill .icon{color:var(--terra)}
+#donateForm{margin-top:24px}
+.btn-submit{width:100%;padding:16px;font-size:15.5px;margin-top:6px}
+.spinner{width:17px;height:17px;border:2.5px solid rgba(251,246,237,.35);border-top-color:var(--cream);border-radius:50%;display:none;animation:spin .7s linear infinite}
+.btn.loading .spinner{display:inline-block}
+.btn.loading .icon-lock{display:none}
+.form-note{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.5}
+.form-note .icon{color:var(--terra);margin-top:1px}
+
+/* ============ Modal ============ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+  background:rgba(27,21,16,.64);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  opacity:0;transition:opacity .28s ease;padding:20px;
+}
+.modal-overlay.show{opacity:1}
+.modal-overlay[hidden]{display:none}
+.modal{
+  position:relative;width:min(520px,100%);background:var(--cream);border-radius:22px;
+  padding:46px 40px 34px;text-align:center;box-shadow:0 50px 110px -30px rgba(0,0,0,.65);
+  transform:translateY(18px) scale(.97);opacity:0;transition:transform .4s cubic-bezier(.3,1.25,.4,1),opacity .3s;
+}
+.modal-overlay.show .modal{transform:none;opacity:1}
+.modal-x{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink-2);transition:background .2s,color .2s}
+.modal-x:hover{background:var(--cream-2);color:var(--ink)}
+.modal-check{color:var(--terra);margin-bottom:14px}
+.modal-check .ring-c{stroke-dasharray:158;stroke-dashoffset:158}
+.modal-check .tick{stroke-dasharray:36;stroke-dashoffset:36}
+.modal.play .ring-c{animation:draw .7s ease forwards}
+.modal.play .tick{animation:draw .4s .55s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.modal h3{font-size:1.85rem;margin-bottom:10px}
+.modal-msg{font-size:15px;color:var(--ink-2);max-width:40ch;margin:0 auto 24px}
+.modal-msg strong{color:var(--terra-dark)}
+.receipt{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px 22px;text-align:left;margin-bottom:24px}
+.r-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.r-row:last-child{border-bottom:0}
+.r-row span{color:var(--ink-2)}
+.r-row strong{font-weight:600}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-foot{font-size:12px;color:var(--ink-2);margin-top:18px;line-height:1.55}
+
+/* ============ Toast ============ */
+.toast-wrap{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;max-width:calc(100vw - 32px)}
+.toast{
+  display:flex;align-items:center;gap:10px;background:var(--earth);color:var(--cream);
+  border:1px solid rgba(251,246,237,.14);border-radius:999px;padding:12px 20px;
+  font-size:14px;font-weight:500;box-shadow:0 18px 45px -15px rgba(0,0,0,.55);
+  opacity:0;transform:translateY(14px);transition:opacity .35s,transform .35s;max-width:100%;
+}
+.toast.show{opacity:1;transform:none}
+.toast.warn svg{color:var(--terra-light)}
+.toast.ok svg{color:#A9C89B}
+
+/* ============ Footer ============ */
+.site-footer{background:var(--earth-2);color:var(--cream);padding:76px 0 30px}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:56px}
+.f-brand .brand .mark{color:var(--terra-light)}
+.f-brand .brand-name small{color:rgba(251,246,237,.55)}
+.f-mission{margin-top:18px;font-size:14.5px;color:rgba(251,246,237,.66);max-width:34ch;line-height:1.6}
+.f-col h5{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(251,246,237,.45);margin-bottom:18px}
+.f-col ul li{margin-bottom:11px}
+.f-col ul a{font-size:14.5px;color:rgba(251,246,237,.78);transition:color .2s;position:relative}
+.f-col ul a:hover{color:var(--terra-light)}
+.f-contact li{font-size:14.5px;color:rgba(251,246,237,.78);display:flex;gap:10px;align-items:baseline}
+.f-contact .icon{color:var(--terra-light);transform:translateY(2px)}
+.badges{display:flex;flex-wrap:wrap;gap:16px 34px;margin-top:60px;padding-top:26px;border-top:1px solid rgba(251,246,237,.13)}
+.badges li{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(251,246,237,.68)}
+.badges .icon{color:var(--terra-light)}
+.footer-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 30px;margin-top:26px;padding-top:24px;border-top:1px solid rgba(251,246,237,.13);font-size:12.5px;color:rgba(251,246,237,.45)}
+.footer-bottom a{border-bottom:1px solid rgba(251,246,237,.25);transition:color .2s}
+.footer-bottom a:hover{color:var(--terra-light)}
+
+/* ============ Responsive ============ */
+@media (max-width:1024px){
+  .impact-body{grid-template-columns:1fr;gap:60px}
+  .impact-head{grid-template-columns:1fr;gap:16px}
+  .impact-head p{justify-self:start}
+  .hero-grid{gap:44px}
+}
+@media (max-width:880px){
+  .nav-links{position:fixed;top:69px;left:0;right:0;background:var(--cream);border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0;padding:10px 4vw 22px;transform:translateY(-10px);opacity:0;pointer-events:none;transition:transform .28s,opacity .28s;box-shadow:0 30px 50px -30px rgba(44,36,27,.4)}
+  .nav-links.open{transform:none;opacity:1;pointer-events:auto}
+  .nav-links a{padding:14px 4px;border-bottom:1px solid var(--line-soft);font-size:16px}
+  .nav-links .btn{margin-top:16px;justify-content:center}
+  .nav-toggle{display:flex}
+  .hero{padding:56px 0 96px}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-media{min-height:470px;margin-top:44px;max-width:560px}
+  .story-grid{grid-template-columns:1fr;gap:48px}
+  .story-left{position:static}
+  .steps{grid-template-columns:1fr;gap:36px}
+  .widget{grid-template-columns:1fr}
+  .widget-form{border-left:0;border-top:1px solid var(--line)}
+  .strip-grid{grid-template-columns:1fr 1fr;gap:26px 0;padding:30px 0}
+  .strip-item:nth-child(odd){border-left:0;padding-left:0}
+  .strip-item:nth-child(n+3){border-top:1px solid var(--line);padding-top:24px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:44px}
+}
+@media (max-width:560px){
+  .topbar .long{display:none}
+  .hero-media{min-height:390px}
+  .spin-badge{width:96px;height:96px;top:-16px}
+  .chip-cost{left:-1%;padding:10px 13px;font-size:12.5px}
+  .chip-loc{right:0;bottom:5%}
+  .amount-grid{grid-template-columns:1fr 1fr}
+  .widget-give,.widget-form{padding:32px 22px}
+  .field-row{grid-template-columns:1fr}
+  #cardNumber{padding-right:118px}
+  .brand-chip{width:30px}
+  .modal{padding:38px 22px 28px}
+  .modal-actions{grid-template-columns:1fr}
+  .impact-featured{flex-direction:column;align-items:flex-start;gap:12px}
+  .count-label{text-align:left}
+  .count-row .num{min-width:0}
+  .count-row p{max-width:none}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  [data-reveal]{opacity:1;transform:none}
+  .modal-check .ring-c,.modal-check .tick{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#donate">Skip to donation form</a>
+
+<!-- Emergency top bar -->
+<div class="topbar">
+  <div class="container">
+    <span class="long">Emergency appeal: hunger in eastern DRC has reached a record high — 4.5 million children need treatment now.</span>
+    <span class="pulse-dot" aria-hidden="true" style="color:#E28B62"></span>
+    <a href="#donate">Give now</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="site-header" id="top">
+  <div class="container header-inner">
+    <a class="brand" href="#top" aria-label="Uzima Children's Fund — home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M20 27c-4.7-3-7.4-5.7-7.4-8.6 0-2.2 1.7-4 3.9-4 1.4 0 2.7.7 3.5 1.9a4.5 4.5 0 0 1 3.5-1.9c2.2 0 3.9 1.8 3.9 4 0 2.9-2.7 5.6-7.4 8.6Z" fill="currentColor"/></svg>
+      <span class="brand-name">Uzima<small>Children's Fund</small></span>
+    </a>
+    <nav class="nav-links" id="navPanel" aria-label="Primary">
+      <a href="#crisis">The crisis</a>
+      <a href="#impact">Impact</a>
+      <a href="#story">Our story</a>
+      <a class="btn btn-solid btn-sm" href="#donate">Donate</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navPanel" aria-label="Toggle menu">
+      <svg class="icon icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
+      <svg class="icon icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ Hero ============ -->
+  <section class="hero">
+    <svg class="contour hero-contour" viewBox="-175 -175 350 350" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+      <g>
+        <path d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.8) rotate(7)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.6) rotate(-9)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.42) rotate(14)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.25) rotate(-16)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+      </g>
+    </svg>
+
+    <div class="container hero-grid">
+      <div class="hero-copy" data-reveal>
+        <p class="eyebrow"><span class="pulse-dot"></span>Emergency appeal · Democratic Republic of Congo</p>
+        <h1>No child's story should <em>end in hunger.</em></h1>
+        <p class="lede">Years of conflict in eastern DRC have pushed <strong>25 million people</strong> into severe food insecurity — most of them children. Uzima funds local kitchens, mobile clinics, and clean-water wells in the hardest-hit villages of North Kivu and Ituri. <strong>$25 keeps a child fed for a month.</strong></p>
+        <div class="cta-row">
+          <a class="btn btn-solid" href="#donate">Donate now
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15m-6-6.5L20 12l-6.5 6.5"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#impact">See our impact</a>
+        </div>
+        <ul class="trust-line">
+          <li><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg>Verified local partners</li>
+          <li><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg>91% reaches programs</li>
+          <li><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg>Secure giving</li>
+        </ul>
+      </div>
+
+      <div class="hero-media" data-reveal style="--d:.15s">
+        <div class="duo hero-img-main"><img src="https://picsum.photos/seed/uzima-kitchen/780/950.jpg" alt="A community kitchen in eastern Congo at dawn" loading="eager"></div>
+        <div class="duo hero-img-sub"><img src="https://picsum.photos/seed/uzima-class/640/480.jpg" alt="Children gathered for a school meal" loading="lazy"></div>
+        <div class="chip chip-cost"><strong>$25</strong> = 75 warm meals</div>
+        <div class="chip chip-loc">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          Goma, North Kivu — a Uzima kitchen at dawn
+        </div>
+        <div class="spin-badge" aria-hidden="true">
+          <svg class="ring" viewBox="0 0 100 100">
+            <defs><path id="circPath" d="M50 50 m -38 0 a 38 38 0 1 1 76 0 a 38 38 0 1 1 -76 0"/></defs>
+            <text font-size="8" fill="currentColor"><textPath href="#circPath">MEALS · MEDICINE · HOPE · GIVE LIFE ·</textPath></text>
+          </svg>
+          <svg class="core" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20.2C6.7 16.7 3.4 13.6 3.4 10.2 3.4 7.6 5.4 5.6 7.9 5.6c1.6 0 3.1.8 4.1 2.2a5 5 0 0 1 4.1-2.2c2.5 0 4.5 2 4.5 4.6 0 3.4-3.3 6.5-8.6 10Z"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Urgency strip ============ -->
+  <section class="strip" id="crisis" aria-label="The situation right now">
+    <div class="container strip-grid" data-reveal>
+      <div class="strip-item"><strong class="strip-num"><span class="count" data-count="25.4" data-decimals="1">0</span>M</strong><span>people facing acute hunger across the DRC</span></div>
+      <div class="strip-item"><strong class="strip-num"><span class="count" data-count="7.2" data-decimals="1">0</span>M</strong><span>people displaced from their homes in the east</span></div>
+      <div class="strip-item"><strong class="strip-num"><span class="count" data-count="4.5" data-decimals="1">0</span>M</strong><span>children suffering acute malnutrition</span></div>
+      <div class="strip-item"><strong class="strip-num"><b>$</b><span class="count" data-count="0.33" data-decimals="2">0</span></strong><span>is all it costs to put one warm meal on the table</span></div>
+    </div>
+  </section>
+
+  <!-- ============ Impact / Transparency ============ -->
+  <section class="impact" id="impact">
+    <div class="container">
+      <div class="impact-head" data-reveal>
+        <div>
+          <p class="eyebrow"><span class="pulse-dot"></span>Transparency first</p>
+          <h2>Your impact, counted to the last bowl.</h2>
+        </div>
+        <p>We publish every dollar, every quarter. Food is bought from markets near the camps, receipts are logged, and an independent auditor reviews the books each year — because trust is the only thing that keeps a kitchen running.</p>
+      </div>
+
+      <div class="impact-body">
+        <div class="impact-board" data-reveal>
+          <div class="impact-featured">
+            <div>
+              <span class="num count" id="mealsCount" data-count="1284306">0</span>
+              <div class="live-tag"><i></i>Live running total</div>
+            </div>
+            <p class="count-label">warm meals served by Uzima partner kitchens since 2022</p>
+          </div>
+          <div class="count-row">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7.5" width="17" height="12" rx="2.2"/><path d="M9.3 7.5V6a1.8 1.8 0 0 1 1.8-1.8h1.8A1.8 1.8 0 0 1 14.7 6v1.5M12 11v5M9.5 13.5h5"/></svg>
+            <span class="num count" data-count="46312">0</span>
+            <p>medical kits delivered to mobile clinics in displacement camps</p>
+          </div>
+          <div class="count-row">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6C10.2 5.2 7.7 4.7 4.6 4.9v13c3.1-.2 5.6.4 7.4 1.8 1.8-1.4 4.3-2 7.4-1.8v-13c-3.1-.2-5.6.3-7.4 1.7Z"/><path d="M12 6.6v13.1"/></svg>
+            <span class="num count" data-count="12780">0</span>
+            <p>children enrolled on daily school-meal programs</p>
+          </div>
+          <div class="count-row">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6S6.2 9.8 6.2 14a5.8 5.8 0 0 0 11.6 0c0-4.2-5.8-10.4-5.8-10.4Z"/></svg>
+            <span class="num count" data-count="386">0</span>
+            <p>clean-water points built or repaired with Uzima funding</p>
+          </div>
+        </div>
+
+        <div class="alloc" data-reveal style="--d:.12s">
+          <h3>Where every dollar goes</h3>
+          <p>Unusually small overheads, unusually local. Our teams in Goma and Bukavu are Congolese, paid fairly, and accountable to their own communities first.</p>
+
+          <div class="alloc-row">
+            <div class="alloc-top"><span>Direct programs — food, medicine, water</span><b>91%</b></div>
+            <div class="alloc-track"><i class="alloc-fill f-programs" data-val="91"></i></div>
+          </div>
+          <div class="alloc-row">
+            <div class="alloc-top"><span>Local operations &amp; staff</span><b>6%</b></div>
+            <div class="alloc-track"><i class="alloc-fill f-ops" data-val="6"></i></div>
+          </div>
+          <div class="alloc-row">
+            <div class="alloc-top"><span>Fundraising &amp; administration</span><b>3%</b></div>
+            <div class="alloc-track"><i class="alloc-fill f-fund" data-val="3"></i></div>
+          </div>
+
+          <p class="alloc-note">Every quarter our ledgers are reviewed by an independent auditor and published in full — down to the sacks of beans.</p>
+          <a class="report-link" href="#" data-demo>Read the 2024 impact report
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15m-6-6.5L20 12l-6.5 6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Story ============ -->
+  <section class="story" id="story">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-left" data-reveal>
+          <p class="eyebrow"><span class="pulse-dot"></span>Why the Congo, why now</p>
+          <h2>A crisis of hunger, met with quiet, stubborn love.</h2>
+          <div class="pull-quote">
+            <blockquote>We cook because the children are here. As long as one child is hungry, our fire stays lit.</blockquote>
+            <div class="quote-by">
+              <span class="avatar duo"><img src="https://picsum.photos/seed/uzima-beatrice/120/120.jpg" alt="Portrait of Béatrice K." loading="lazy"></span>
+              <span><b>Béatrice K.</b><span>Kitchen coordinator, Goma</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prose" data-reveal style="--d:.1s">
+          <p>For three decades, armed conflict in the east of the Democratic Republic of Congo has driven families from their villages in North Kivu and Ituri. Today, more than <strong>7.2 million people</strong> are displaced inside their own country — most arriving at the sprawling camps around Goma with nothing but the clothes they fled in. The children pay the highest price: when harvests fail and supply lines collapse, malnutrition rates in some areas have doubled in a single season.</p>
+          <p>For the children in these camps, hunger is not an event — it is the weather. It decides whether they can concentrate in a classroom, whether a fever becomes something worse, whether a body grows or merely endures. And yet, in every camp we work in, the same people show up before sunrise: Congolese cooks, nurses, teachers, and well-mechanics who never left.</p>
+          <p>Uzima exists to stand behind them. We don't parachute in — we <strong>fund local organizations directly</strong>, buying food from markets a few kilometres from the camps, stocking clinics with the medicine local nurses ask for, and letting mothers choose what their families eat. Dignity is not a slogan here; it is the operating model. Every purchase is receipted, every meal counted, and the whole ledger is public.</p>
+          <div class="duo story-img"><img src="https://picsum.photos/seed/uzima-river/1400/640.jpg" alt="A river valley in the eastern Democratic Republic of Congo" loading="lazy"></div>
+          <p class="story-cap">The lava-farmed valleys outside Goma, where Uzima partner kitchens source most of their produce.</p>
+          <p>This crisis is enormous, but it is not unsolvable. A meal costs <strong>thirty-three cents</strong>. A full medical kit costs fifty dollars. What's missing is not a miracle — it's a steady supply of people who refuse to look away. That's where you come in.</p>
+        </div>
+      </div>
+
+      <div class="steps" data-reveal>
+        <div class="step">
+          <span class="step-num">01</span>
+          <h4>You give securely</h4>
+          <p>Checkout takes under a minute, and a receipt lands with you instantly. 91 cents of every dollar goes straight into programs.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <h4>Local teams buy local</h4>
+          <p>Within 48 hours, partner kitchens and clinics purchase food and medicine from markets near the camps — keeping money inside the local economy.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <h4>Children eat. We publish.</h4>
+          <p>Meals are served, kids return to class, and every purchase is entered into a public ledger you can audit any time you like.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Donate ============ -->
+  <section class="donate" id="donate">
+    <svg class="contour donate-contour" viewBox="-190 -190 380 380" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+      <g>
+        <path d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.78) rotate(8)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.56) rotate(-10)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+        <path transform="scale(.36) rotate(12)" d="M148 6C146 82 84 146 6 148C-72 150 -144 88 -148 8C-152 -70 -88 -146 -8 -148C70 -150 150 -84 148 6Z"/>
+      </g>
+    </svg>
+
+    <div class="container">
+      <div class="donate-head" data-reveal>
+        <p class="eyebrow light"><span class="pulse-dot"></span>Give now</p>
+        <h2>Set a place at the table <em>tonight.</em></h2>
+        <p>It takes less than a minute. 91 cents of every dollar buys food, medicine, and clean water through vetted local partners in North Kivu and Ituri.</p>
+      </div>
+
+      <div class="widget" data-reveal style="--d:.1s">
+        <!-- Left: choose your gift -->
+        <div class="widget-give">
+          <p class="w-overline">Step 1 · Your gift</p>
+
+          <div class="seg" id="freqSeg" data-freq="once" role="tablist" aria-label="Giving frequency">
+            <span class="seg-ind" aria-hidden="true"></span>
+            <button type="button" class="seg-btn active" data-freq="once" role="tab" aria-selected="true">One-time</button>
+            <button type="button" class="seg-btn" data-freq="monthly" role="tab" aria-selected="false">Monthly <span class="seg-tag">×12 impact</span></button>
+          </div>
+
+          <div class="amount-grid" role="group" aria-label="Preset donation amounts">
+            <button type="button" class="amount-btn" data-amount="10"><span class="amt">$10</span><span class="amt-note">30 warm meals</span></button>
+            <button type="button" class="amount-btn active" data-amount="25"><span class="amt">$25</span><span class="amt-note">75 meals + a health check</span></button>
+            <button type="button" class="amount-btn" data-amount="50"><span class="amt">$50</span><span class="amt-note">a full medical kit</span></button>
+            <button type="button" class="amount-btn" data-amount="100"><span class="amt">$100</span><span class="amt-note">school meals for a month</span></button>
+          </div>
+
+          <label class="field">
+            <span class="f-label">Or choose your own amount</span>
+            <div class="input-wrap">
+              <span class="prefix">$</span>
+              <input type="text" id="customAmount" inputmode="decimal" autocomplete="off" placeholder="e.g. 40" aria-label="Custom donation amount in dollars">
+            </div>
+          </label>
+
+          <div class="echo" id="impactEcho" aria-live="polite">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5h16a8 8 0 0 1-16 0Z"/><path d="M9.5 8.5c0-1.6 1.2-1.7 1.2-3.3M13.6 8.5c0-1.6 1.2-1.7 1.2-3.3"/></svg>
+            <p id="impactEchoText"></p>
+          </div>
+        </div>
+
+        <!-- Right: secure checkout -->
+        <div class="widget-form">
+          <div class="form-head">
+            <p class="w-overline" style="margin-bottom:0">Step 2 · Secure details</p>
+            <span class="secure-pill">
+              <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.2"/><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5"/></svg>
+              SSL encrypted
+            </span>
+          </div>
+
+          <form id="donateForm" novalidate>
+            <label class="field">
+              <span class="f-label">Full name on card</span>
+              <input type="text" id="cardName" data-validate="name" autocomplete="cc-name" placeholder="Amelia Carter" aria-describedby="err-name">
+              <span class="err-msg" id="err-name" role="alert">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10.2v3.6m0 2.6v.01"/></svg>
+              </span>
+            </label>
+
+            <label class="field">
+              <span class="f-label">Email for your receipt</span>
+              <input type="email" id="cardEmail" data-validate="email" autocomplete="email" placeholder="you@example.com" aria-describedby="err-email">
+              <span class="err-msg" id="err-email" role="alert">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10.2v3.6m0 2.6v.01"/></svg>
+              </span>
+            </label>
+
+            <label class="field">
+              <span class="f-label">Card number</span>
+              <div class="input-wrap">
+                <input type="text" id="cardNumber" data-validate="card" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" aria-describedby="err-card">
+                <span class="brand-chips" id="brandChips" aria-hidden="true">
+                  <span class="brand-chip" data-brand="visa">VISA</span>
+                  <span class="brand-chip" data-brand="mastercard">
+                    <svg width="20" height="12" viewBox="0 0 20 12"><circle cx="7.4" cy="6" r="5.2" fill="currentColor" opacity=".9"/><circle cx="13" cy="6" r="5.2" fill="currentColor" opacity=".45"/></svg>
+                  </span>
+                  <span class="brand-chip" data-brand="amex">AMEX</span>
+                </span>
+              </div>
+              <span class="err-msg" id="err-card" role="alert">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10.2v3.6m0 2.6v.01"/></svg>
+              </span>
+            </label>
+
+            <div class="field-row">
+              <label class="field">
+                <span class="f-label">Expiry</span>
+                <input type="text" id="cardExpiry" data-validate="exp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" aria-describedby="err-exp">
+                <span class="err-msg" id="err-exp" role="alert">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10.2v3.6m0 2.6v.01"/></svg>
+                </span>
+              </label>
+              <label class="field">
+                <span class="f-label">CVV</span>
+                <input type="text" id="cardCvv" data-validate="cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" aria-describedby="err-cvv">
+                <span class="err-msg" id="err-cvv" role="alert">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10.2v3.6m0 2.6v.01"/></svg>
+                </span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-solid btn-submit" id="submitBtn">
+              <span class="spinner" aria-hidden="true"></span>
+              <svg class="icon icon-lock" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.2"/><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5"/></svg>
+              <span id="submitLabel">Give $25 today</span>
+            </button>
+
+            <p class="form-note">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.2"/><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5"/></svg>
+              Demonstration checkout — no real card is charged. Try the test number 4242 4242 4242 4242.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ Footer ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <a class="brand" href="#top" aria-label="Uzima Children's Fund — home">
+          <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M20 27c-4.7-3-7.4-5.7-7.4-8.6 0-2.2 1.7-4 3.9-4 1.4 0 2.7.7 3.5 1.9a4.5 4.5 0 0 1 3.5-1.9c2.2 0 3.9 1.8 3.9 4 0 2.9-2.7 5.6-7.4 8.6Z" fill="currentColor"/></svg>
+          <span class="brand-name">Uzima<small>Children's Fund</small></span>
+        </a>
+        <p class="f-mission">Uzima means life. We deliver it — one meal, one medical kit, one well at a time — through Congolese-led teams in North Kivu and Ituri.</p>
+      </div>
+      <div class="f-col">
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="#crisis">The crisis</a></li>
+          <li><a href="#impact">Our impact</a></li>
+          <li><a href="#story">Our story</a></li>
+          <li><a href="#donate">Donate</a></li>
+          <li><a href="/" style="color: var(--terra-light); font-weight: 600;">Turkana Clean Water (V1) →</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h5>Accountability</h5>
+        <ul>
+          <li><a href="#" data-demo>2024 impact report</a></li>
+          <li><a href="#" data-demo>Financial statements</a></li>
+          <li><a href="#" data-demo>Child safeguarding policy</a></li>
+          <li><a href="#" data-demo>Privacy &amp; terms</a></li>
+          <li><a href="/admin.html">Staff &amp; Operations Portal</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h5>Contact</h5>
+        <ul class="f-contact">
+          <li>
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.2"/><path d="m4.5 7 7.5 6 7.5-6"/></svg>
+            <a href="mailto:hello@uzimafund.org">hello@uzimafund.org</a>
+          </li>
+          <li>
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h3l1.5 4.5-2 1.5a12.5 12.5 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg>
+            <a href="tel:+15550134472">+1 (555) 013-4472</a>
+          </li>
+          <li>
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            <span>14 Avenue des Volcans, Goma, DRC</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <ul class="badges">
+      <li>
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 6v5.3c0 4.6-3 8.6-7 9.9-4-1.3-7-5.3-7-9.9V6l7-2.8Z"/><path d="m9.3 11.8 2 2 3.6-3.8"/></svg>
+        Registered international nonprofit · Reg. #88-0347216
+      </li>
+      <li>
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.2"/><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5"/></svg>
+        256-bit TLS · PCI-DSS aligned checkout
+      </li>
+      <li>
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg>
+        Independently audited · 2024 books published
+      </li>
+    </ul>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Uzima Children's Fund. All rights reserved.</span>
+      <span>Uzima is a demonstration website — no real donations are processed. Photos are placeholders.</span>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ Success modal ============ -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-x" id="modalClose" type="button" aria-label="Close dialog">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="modal-check" aria-hidden="true">
+      <svg viewBox="0 0 56 56" width="74" height="74" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <circle class="ring-c" cx="28" cy="28" r="25" stroke-width="2.4"/>
+        <path class="tick" d="M17.5 29.5l7.5 7.5L39 21.5" stroke-width="3.2"/>
+      </svg>
+    </div>
+    <h3 id="modalTitle">Thank you, <span id="rName">friend</span>.</h3>
+    <p class="modal-msg" id="modalMsg"></p>
+    <div class="receipt">
+      <div class="r-row"><span>Reference</span><strong id="rRef"></strong></div>
+      <div class="r-row"><span>Gift</span><strong id="rAmount"></strong></div>
+      <div class="r-row"><span>Payment method</span><strong id="rCard"></strong></div>
+      <div class="r-row"><span>Provides</span><strong id="rMeals"></strong></div>
+      <div class="r-row"><span>Processed</span><strong id="rDate"></strong></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="copyReceipt" type="button">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M5.5 14.5h-.7A1.8 1.8 0 0 1 3 12.7V5.3A1.8 1.8 0 0 1 4.8 3.5h7.4a1.8 1.8 0 0 1 1.8 1.8v.7"/></svg>
+        Copy receipt
+      </button>
+      <button class="btn btn-solid" id="modalDone" type="button">Done</button>
+    </div>
+    <p class="modal-foot">Receipt queued for <span id="rEmail"></span>. This is a demonstration — no card was charged and no funds moved. But the intention counts.</p>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<!-- Live Real-Time Multi-User Donation Notifications -->
+<script src="/js/realtime_notifications.js"></script>
+
+<script>
+'use strict';
+const $  = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmtInt   = n => Math.round(n).toLocaleString('en-US');
+const fmtMoney = n => n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+
+/* ---------- Header ---------- */
+const header = $('#siteHeader') || $('.site-header');
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const navToggle = $('#navToggle'), navPanel = $('#navPanel');
+navToggle.addEventListener('click', () => {
+  const open = navPanel.classList.toggle('open');
+  navToggle.classList.toggle('open', open);
+  navToggle.setAttribute('aria-expanded', open);
+});
+$$('#navPanel a').forEach(a => a.addEventListener('click', () => {
+  navPanel.classList.remove('open');
+  navToggle.classList.remove('open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}));
+
+/* ---------- Reveal on scroll ---------- */
+const revealIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); revealIO.unobserve(e.target); }
+  });
+}, { threshold: .15, rootMargin: '0px 0px -40px 0px' });
+$$('[data-reveal]').forEach(el => revealIO.observe(el));
+
+/* ---------- Animated counters ---------- */
+const easeOutQuart = p => 1 - Math.pow(1 - p, 4);
+function runCounter(el, from, target, dur = 1700) {
+  const dec = +(el.dataset.decimals || 0);
+  const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  if (reduced) { el.textContent = fmt(target); return; }
+  const t0 = performance.now();
+  (function tick(t) {
+    const p = Math.min(1, (t - t0) / dur);
+    el.textContent = fmt(from + (target - from) * easeOutQuart(p));
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+const countIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      runCounter(e.target, 0, parseFloat(e.target.dataset.count));
+      countIO.unobserve(e.target);
+    }
+  });
+}, { threshold: .4 });
+$$('.count').forEach(el => countIO.observe(el));
+
+/* Live meals total — bumped after each donation */
+const mealsCount = $('#mealsCount');
+let mealsVal = parseFloat(mealsCount.dataset.count);
+function bumpMeals(add) {
+  const from = mealsVal;
+  mealsVal += add;
+  mealsCount.dataset.count = mealsVal;
+  runCounter(mealsCount, from, mealsVal, 1300);
+  const wrap = mealsCount.closest('.impact-featured');
+  if (wrap) {
+    wrap.classList.add('bumped');
+    setTimeout(() => wrap.classList.remove('bumped'), 2400);
+  }
+}
+
+/* ---------- Allocation bars ---------- */
+const barIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.width = e.target.dataset.val + '%'; barIO.unobserve(e.target); }
+  });
+}, { threshold: .5 });
+$$('.alloc-fill').forEach(el => barIO.observe(el));
+
+/* ---------- Scroll spy ---------- */
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      $$('.nav-links a').forEach(a =>
+        a.classList.toggle('current', a.getAttribute('href') === '#' + e.target.id));
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+['crisis', 'impact', 'story'].forEach(id => {
+  const s = document.getElementById(id);
+  if (s) spy.observe(s);
+});
+
+/* ---------- Donation state ---------- */
+const seg = $('#freqSeg'), segBtns = $$('.seg-btn', seg);
+const amountBtns = $$('.amount-btn');
+const customInput = $('#customAmount');
+const echo = $('#impactEcho'), echoText = $('#impactEchoText');
+const submitBtn = $('#submitBtn'), submitLabel = $('#submitLabel');
+const state = { freq: 'once', amount: 25 };
+let lastPreset = 25;
+
+function updateEcho() {
+  const a = state.amount || 0;
+  if (a < 1) {
+    echoText.innerHTML = 'Choose an amount above to see exactly what your gift provides.';
+  } else {
+    const m = Math.round(a * 3);
+    const extra = a >= 50 ? ' — plus a full medical kit for a mobile clinic'
+               : a >= 25 ? ' — plus a health screening for one child' : '';
+    echoText.innerHTML =
+      `A gift of <strong>$${fmtMoney(a)}</strong> ${state.freq === 'monthly' ? 'every month' : 'today'}` +
+      ` puts about <strong>${m.toLocaleString()} warm meals</strong> on children&rsquo;s plates in eastern DRC${extra}.`;
+  }
+  echo.classList.remove('flash');
+  void echo.offsetWidth; /* restart animation */
+  echo.classList.add('flash');
+}
+function updateSubmit() {
+  submitLabel.textContent = `Give $${fmtMoney(state.amount)} ${state.freq === 'monthly' ? 'monthly' : 'today'}`;
+}
+function setFreq(f) {
+  state.freq = f;
+  seg.dataset.freq = f;
+  segBtns.forEach(b => {
+    const on = b.dataset.freq === f;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on);
+  });
+  updateEcho(); updateSubmit();
+}
+function setAmount(a, fromPreset) {
+  state.amount = a;
+  amountBtns.forEach(b => b.classList.toggle('active', fromPreset && +b.dataset.amount === a));
+  updateEcho(); updateSubmit();
+}
+segBtns.forEach(b => b.addEventListener('click', () => setFreq(b.dataset.freq)));
+amountBtns.forEach(b => b.addEventListener('click', () => {
+  lastPreset = +b.dataset.amount;
+  customInput.value = '';
+  setAmount(lastPreset, true);
+}));
+customInput.addEventListener('input', () => {
+  let v = customInput.value.replace(/[^\d.]/g, '');
+  const parts = v.split('.');
+  if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+  if (parts[1] !== undefined) v = parts[0] + '.' + parts[1].slice(0, 2);
+  customInput.value = v;
+  const n = parseFloat(v);
+  if (v && n >= 1) setAmount(Math.min(n, 100000), false);
+  else setAmount(lastPreset, true);
+});
+
+/* ---------- Form validation ---------- */
+const cardInput = $('#cardNumber');
+function detectBrand(d) {
+  if (/^3[47]/.test(d)) return 'amex';
+  if (/^4/.test(d)) return 'visa';
+  if (/^(5[1-5]|2[2-7])/.test(d)) return 'mastercard';
+  return '';
+}
+function luhn(d) {
+  let sum = 0, dbl = false;
+  for (let i = d.length - 1; i >= 0; i--) {
+    let n = +d[i];
+    if (dbl) { n *= 2; if (n > 9) n -= 9; }
+    sum += n; dbl = !dbl;
+  }
+  return sum % 10 === 0;
+}
+const VALIDATORS = {
+  name: v => v.trim().length >= 2 ? '' : 'Please enter the name exactly as it appears on the card.',
+  email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'Enter a valid email — your receipt goes here.',
+  card: v => {
+    const d = v.replace(/\s/g, '');
+    const ok = detectBrand(d) === 'amex'
+      ? (/^\d{15}$/.test(d) && luhn(d))
+      : (/^\d{16}$/.test(d) && luhn(d));
+    return ok ? '' : 'Enter a valid card number.';
+  },
+  exp: v => {
+    const m = v.match(/^(\d{2})\/(\d{2})$/);
+    if (!m) return 'Use MM/YY format.';
+    const mm = +m[1], yy = +m[2];
+    if (mm < 1 || mm > 12) return 'Month must be between 01 and 12.';
+    const now = new Date(), cy = now.getFullYear() % 100, cm = now.getMonth() + 1;
+    if (yy < cy || (yy === cy && mm < cm)) return 'This card has expired.';
+    if (yy > cy + 15) return 'Expiry year looks too far ahead.';
+    return '';
+  },
+  cvv: v => {
+    const len = detectBrand(cardInput.value.replace(/\s/g, '')) === 'amex' ? 4 : 3;
+    return new RegExp('^\\d{' + len + '}$').test(v) ? '' : `CVV must be ${len} digits.`;
+  }
+};
+function validateField(input) {
+  const field = input.closest('.field');
+  const msg = field.querySelector('.err-msg');
+  const text = VALIDATORS[input.dataset.validate](input.value);
+  if (text) {
+    field.classList.add('error');
+    msg.lastChild.textContent = text;
+    input.setAttribute('aria-invalid', 'true');
+    return false;
+  }
+  field.classList.remove('error');
+  input.setAttribute('aria-invalid', 'false');
+  return true;
+}
+
+/* Real-time formatting */
+function formatCard(v) {
+  const d = v.replace(/\D/g, '');
+  if (detectBrand(d) === 'amex')
+    return d.slice(0, 15).replace(/^(\d{1,4})(\d{1,6})?(\d{1,5})?$/, (m, a, b, c) => [a, b, c].filter(Boolean).join(' '));
+  return d.slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+function formatExp(v) {
+  const d = v.replace(/\D/g, '').slice(0, 4);
+  return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+}
+function setBrand(d) {
+  const brand = detectBrand(d);
+  $$('#brandChips .brand-chip').forEach(c => c.classList.toggle('on', c.dataset.brand === brand));
+}
+const formInputs = $$('#donateForm [data-validate]');
+formInputs.forEach(input => {
+  input.addEventListener('input', () => {
+    if (input.id === 'cardNumber') { input.value = formatCard(input.value); setBrand(input.value.replace(/\s/g, '')); }
+    if (input.id === 'cardExpiry') input.value = formatExp(input.value);
+    if (input.id === 'cardCvv')    input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    if (input.closest('.field').classList.contains('error')) validateField(input);
+  });
+  input.addEventListener('blur', () => { if (input.value) validateField(input); });
+});
+
+/* ---------- Toast ---------- */
+const toastWrap = $('#toastWrap');
+const TOAST_ICONS = {
+  ok:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg>',
+  warn: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 19.5H3L12 4Z"/><path d="M12 10.2v3.6m0 2.6v.01"/></svg>'
+};
+function toast(msg, type = 'ok') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = TOAST_ICONS[type] + '<span>' + msg + '</span>';
+  toastWrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3400);
+}
+
+/* ---------- Submit flow ---------- */
+$('#donateForm').addEventListener('submit', e => {
+  e.preventDefault();
+  let firstBad = null;
+  formInputs.forEach(i => { if (!validateField(i) && !firstBad) firstBad = i; });
+  if (firstBad) {
+    firstBad.focus();
+    toast('Please check the highlighted fields.', 'warn');
+    return;
+  }
+  const val = k => formInputs.find(i => i.dataset.validate === k).value;
+  const amount = state.amount, freq = state.freq;
+  const meals = Math.round(amount * 3);
+
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+  submitLabel.textContent = 'Processing your gift\u2026';
+
+  setTimeout(() => {
+    const fullName = val('name').trim();
+    const last4 = val('card').replace(/\s/g, '').slice(-4);
+    const ref = 'UZM-' + Date.now().toString(36).toUpperCase().slice(-6) + Math.floor(Math.random() * 90 + 10);
+    openModal({
+      first: (fullName.split(/\s+/)[0] || 'friend'),
+      fullName,
+      email: val('email').trim(),
+      amount, freq, meals, last4, ref
+    });
+    bumpMeals(meals);
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+    updateSubmit();
+
+    // Trigger cross-app real-time notification pop-up
+    if (window.TurkanaRealtime && typeof window.TurkanaRealtime.showPopup === 'function') {
+      window.TurkanaRealtime.showPopup({
+        id: ref,
+        donor_name: fullName || 'A generous supporter',
+        amount: amount,
+        currency: 'USD',
+        frequency: freq,
+        paystack_reference: ref
+      });
+    }
+
+    // Optional background log to backend
+    fetch('/api/donations/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        donor_name: fullName,
+        amount: amount,
+        currency: 'USD',
+        frequency: freq
+      })
+    }).catch(() => {});
+
+  }, 1900);
+});
+
+/* ---------- Success modal ---------- */
+const overlay = $('#modalOverlay'), modal = $('#modalBox');
+let lastFocus = null, currentReceipt = null;
+
+function openModal(r) {
+  currentReceipt = r;
+  lastFocus = document.activeElement;
+  $('#rName').textContent = r.first;
+  $('#modalMsg').innerHTML = r.freq === 'monthly'
+    ? `Your monthly gift of <strong>$${fmtMoney(r.amount)}</strong> will keep about <strong>${r.meals.toLocaleString()} warm meals</strong> coming every single month. We&rsquo;ve already added this month&rsquo;s to the live total.`
+    : `Your gift of <strong>$${fmtMoney(r.amount)}</strong> puts about <strong>${r.meals.toLocaleString()} warm meals</strong> on children&rsquo;s plates in eastern DRC — added to the live total already.`;
+  $('#rRef').textContent = r.ref;
+  $('#rAmount').textContent = `$${fmtMoney(r.amount)} · ${r.freq === 'monthly' ? 'Monthly' : 'One-time'}`;
+  $('#rCard').textContent = '\u2022\u2022\u2022\u2022 ' + r.last4;
+  $('#rMeals').textContent = '\u2248 ' + r.meals.toLocaleString() + ' warm meals';
+  $('#rDate').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  $('#rEmail').textContent = r.email;
+
+  overlay.hidden = false;
+  requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('show')));
+  modal.classList.remove('play');
+  void modal.offsetWidth;
+  modal.classList.add('play');
+  document.body.style.overflow = 'hidden';
+  $('#modalDone').focus();
+}
+function closeModal() {
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
+  setTimeout(() => { overlay.hidden = true; }, 280);
+  if (lastFocus) lastFocus.focus();
+  /* quietly reset for the next visitor */
+  $('#donateForm').reset();
+  $$('#donateForm .field.error').forEach(f => f.classList.remove('error'));
+  formInputs.forEach(i => i.setAttribute('aria-invalid', 'false'));
+  setBrand('');
+  customInput.value = '';
+  lastPreset = 25;
+  setAmount(25, true);
+}
+$('#modalClose').addEventListener('click', closeModal);
+$('#modalDone').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => {
+  if (overlay.hidden) return;
+  if (e.key === 'Escape') { closeModal(); return; }
+  if (e.key === 'Tab') {  /* keep focus inside the dialog */
+    const f = $$('button:not(:disabled)', modal);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+
+/* ---------- Copy receipt ---------- */
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); }
+  catch {
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+}
+$('#copyReceipt').addEventListener('click', () => {
+  if (!currentReceipt) return;
+  const r = currentReceipt;
+  copyText(
+    `UZIMA CHILDREN'S FUND — Donation receipt\n` +
+    `Reference: ${r.ref}\n` +
+    `Amount: $${fmtMoney(r.amount)} (${r.freq === 'monthly' ? 'monthly' : 'one-time'})\n` +
+    `Card: \u2022\u2022\u2022\u2022 ${r.last4}\n` +
+    `Provides: \u2248 ${r.meals} warm meals in eastern DRC\n` +
+    `Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n` +
+    `Thank you for feeding hope. (Demonstration receipt — no funds were collected.)`
+  ).then(() => toast('Receipt copied to your clipboard.'));
+});
+
+/* ---------- Demo links ---------- */
+$$('[data-demo]').forEach(el => el.addEventListener('click', e => {
+  e.preventDefault();
+  toast('This is a demonstration link — no page lives here yet.', 'warn');
+}));
+
+/* ---------- Init ---------- */
+setFreq('once');
+setAmount(25, true);
+$('#year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

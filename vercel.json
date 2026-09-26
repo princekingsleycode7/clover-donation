@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.ts" },
+    { "source": "/version2", "destination": "/version2.html" },
+    { "source": "/v2", "destination": "/version2.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/history", "destination": "/history.html" }
+  ]
+}

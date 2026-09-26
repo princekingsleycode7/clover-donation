@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Giving History &amp; Verified Supporter Wall — Turkana Wellspring</title>
+    <meta name="description" content="Audit verified donation receipts, manage lifetime giving, and see our community donor wall live from our database." />
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Core Stylesheet -->
+    <link rel="stylesheet" href="/css/style.css" />
+
+    <!-- Client-Safe Environment Variables & Supabase Client -->
+    <script>
+      (function() {
+        window.__ENV__ = {
+          paystackPublicKey: 'pk_test_2193bfe61dcf7971c220bb9b9a0027d4eb0e2ff3',
+          supabaseUrl: 'https://kljnyncmpsewrghkybcd.supabase.co',
+          supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtsam55bmNtcHNld3JnaGt5YmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjA0NTcsImV4cCI6MjEwNTg5NjQ1N30.rkiAJOyDqc_p-TUARyXnuVxo-k4IXeLSaQxATLOltWo'
+        };
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+      .portal-card {
+        background-color: var(--color-canvas-pure);
+        border: 1px solid var(--color-border-hairline);
+        border-radius: var(--radius-md);
+        padding: 2.25rem;
+        box-shadow: var(--shadow-card);
+        margin-bottom: 2.5rem;
+      }
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .metric-box {
+        background-color: var(--color-canvas-pure);
+        border: 1px solid var(--color-border-hairline);
+        border-radius: var(--radius-sm);
+        padding: 1.25rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .metric-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: var(--color-accent-primary);
+      }
+      .metric-value {
+        font-family: var(--font-mono);
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        line-height: 1.2;
+        margin-top: 0.25rem;
+      }
+      .metric-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+        font-weight: 600;
+      }
+      .leaderboard-table th {
+        background-color: var(--color-surface-subtle);
+        padding: 0.75rem 1.25rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+      }
+      .leaderboard-table td {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--color-border-hairline);
+      }
+      .rank-num {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        color: var(--color-accent-primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--color-surface-subtle);
+      }
+      .rank-1 .rank-num {
+        background: #FEF3C7;
+        color: #B45309;
+        box-shadow: 0 0 0 1px #FCD34D;
+      }
+      .rank-2 .rank-num {
+        background: #F1F5F9;
+        color: #475569;
+        box-shadow: 0 0 0 1px #CBD5E1;
+      }
+      .rank-3 .rank-num {
+        background: #FFEDD5;
+        color: #C2410C;
+        box-shadow: 0 0 0 1px #FDBA74;
+      }
+      .badge-success {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background: #DCFCE7;
+        color: #15803D;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .badge-pending {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background: #FEF3C7;
+        color: #B45309;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .badge-failed {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background: #FEE2E2;
+        color: #B91C1C;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .filter-btn {
+        background: var(--color-surface-subtle);
+        border: 1px solid var(--color-border-hairline);
+        color: var(--color-text-secondary);
+        padding: 0.4rem 0.85rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .filter-btn.active {
+        background: var(--color-accent-primary);
+        color: #fff;
+        border-color: var(--color-accent-primary);
+      }
+      .search-box {
+        width: 100%;
+        max-width: 320px;
+        padding: 0.5rem 0.85rem;
+        border: 1px solid var(--color-border-hairline);
+        border-radius: var(--radius-sm);
+        font-size: 0.825rem;
+        background: var(--color-surface-subtle);
+      }
+    </style>
+  </head>
+  <body>
+    
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a href="/" class="brand-wordmark">
+          Turkana <span>Wellspring</span>
+        </a>
+        <nav class="topbar-nav">
+          <a href="/#story">The Cause</a>
+          <a href="/#transparency">Transparency</a>
+          <a href="#givingHistorySection">Look Up Receipts</a>
+          <a href="#verifiedLedger">Verified Ledger</a>
+          <a href="#leaderboard">Supporter Wall</a>
+          <a href="/admin.html">Admin Portal</a>
+        </nav>
+        <div class="topbar-action">
+          <a href="/#donate" class="btn-primary-sm">Donate</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container" style="padding-top: 3rem; padding-bottom: 5rem; max-width: 1040px;">
+      
+      <!-- PAGE HEADER -->
+      <div style="margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <span class="section-kicker">Real-Time Financial Audit</span>
+            <h1 style="font-family: var(--font-serif); font-size: 2.35rem; margin-top: 0.25rem;">Giving History &amp; Verified Ledger</h1>
+            <p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 0.5rem; max-width: 65ch;">
+              Synchronized live with our Supabase database and verified by Paystack payment settlements. Zero simulated or mock records.
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #15803D; font-weight: 600; background: #DCFCE7; padding: 0.4rem 0.85rem; border-radius: 20px;">
+            <span class="live-pulse" style="background:#15803D;" aria-hidden="true"></span>
+            <span id="syncStatusText">Live Database Synchronized</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE PROGRESS STATUS BAR -->
+      <div class="progress-card" style="margin-bottom: 2rem;">
+        <div class="progress-header">
+          <div>
+            <span class="progress-raised-text">Current Verified Total: </span>
+            <span class="progress-raised-amount tabular-nums" id="cardTotalRaised">₦0</span>
+            <span class="progress-goal-text"> of <strong class="tabular-nums" id="cardGoalAmount">$75,000</strong> Goal</span>
+          </div>
+          <div class="progress-percentage tabular-nums" id="cardProgressPercentage">0%</div>
+        </div>
+
+        <div class="progress-bar-track">
+          <div id="cardProgressBarFill" class="progress-bar-fill" style="width: 0%;"></div>
+        </div>
+
+        <div class="progress-meta-row">
+          <span>Verified Supporters: <strong class="tabular-nums" id="cardDonorCount">0</strong> distinct donors</span>
+          <span>Remaining to Goal: <strong class="tabular-nums" id="cardRemainingAmount">$75,000</strong></span>
+        </div>
+      </div>
+
+      <!-- LIVE METRICS AUDIT CARDS -->
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-label">Total Verified Funds</div>
+          <div class="metric-value tabular-nums" id="metricTotalRaised">₦0</div>
+          <div style="font-size: 0.725rem; color: var(--color-text-muted); margin-top: 0.25rem;" id="metricSubTotalUSD">$0 USD eq.</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Verified Donors</div>
+          <div class="metric-value tabular-nums" id="metricDonorCount">0</div>
+          <div style="font-size: 0.725rem; color: var(--color-text-muted); margin-top: 0.25rem;">Distinct individuals</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Completed Contributions</div>
+          <div class="metric-value tabular-nums" id="metricContributionsCount">0</div>
+          <div style="font-size: 0.725rem; color: var(--color-text-muted); margin-top: 0.25rem;">Settled transactions</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Funding Progress</div>
+          <div class="metric-value tabular-nums" id="metricProgressPct">0%</div>
+          <div style="font-size: 0.725rem; color: var(--color-text-muted); margin-top: 0.25rem;" id="metricRemainingLabel">Remaining: $75,000</div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: PERSONAL DONOR RECEIPT & GIVING LOOKUP -->
+      <section class="portal-card" id="givingHistorySection">
+        <div class="section-header" style="text-align: left; margin-bottom: 1.25rem;">
+          <span class="section-kicker">Donor Portal</span>
+          <h2 style="font-family: var(--font-serif); font-size: 1.75rem; margin-top: 0.25rem;">Look Up My Giving Receipts</h2>
+          <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+            Enter the email address you used when donating to query your verified transaction receipts directly from the database.
+          </p>
+        </div>
+
+        <form id="donorLookupForm" style="display: flex; gap: 0.5rem; max-width: 520px; margin-bottom: 1.25rem;">
+          <input 
+            type="email" 
+            id="lookupEmailInput" 
+            class="form-input" 
+            placeholder="e.g. gret@gmail.com, peter@gmail.com" 
+            required 
+            style="flex: 1; background: var(--color-surface-subtle);" 
+          />
+          <button type="submit" id="lookupSubmitBtn" class="btn-primary-sm" style="white-space: nowrap; padding: 0.65rem 1.25rem;">
+            Search Records
+          </button>
+        </form>
+        <div id="lookupNotice" style="display: none; font-size: 0.825rem; margin-bottom: 1rem;"></div>
+
+        <!-- Personal Results Container -->
+        <div id="personalHistoryResult" style="display: none; background: var(--color-surface-subtle); border: 1px solid var(--color-border-hairline); border-radius: var(--radius-sm); padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-hairline); padding-bottom: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 700;">Donor Profile</span>
+              <div id="donorResultEmail" style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary);">donor@example.com</div>
+              <div id="donorResultTotal" style="font-size: 0.85rem; color: var(--color-accent-primary); font-weight: 600; margin-top: 0.15rem;"></div>
+            </div>
+            <button type="button" onclick="window.print()" class="btn-secondary-sm" style="font-size: 0.75rem;">Print Receipt Audit</button>
+          </div>
+
+          <div class="feed-table-container">
+            <table class="feed-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Date &amp; Time</th>
+                  <th>Amount</th>
+                  <th>Frequency</th>
+                  <th>Status</th>
+                  <th>Paystack Reference</th>
+                </tr>
+              </thead>
+              <tbody id="personalHistoryTableBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: LIVE PUBLIC VERIFIED DONATIONS LEDGER -->
+      <section class="portal-card" id="verifiedLedger">
+        <div class="section-header" style="text-align: left; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <span class="section-kicker">Public Audit</span>
+              <h2 style="font-family: var(--font-serif); font-size: 1.75rem; margin-top: 0.25rem;">Verified Donations Ledger</h2>
+              <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                Every transaction below represents funds received through Paystack and confirmed in our database.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" id="downloadCsvBtn" class="btn-secondary-sm" style="font-size: 0.75rem;">
+                ↓ Export CSV
+              </button>
+              <button type="button" id="refreshLedgerBtn" class="btn-secondary-sm" style="font-size: 0.75rem;">
+                ↻ Refresh Data
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+          <div class="filter-tabs">
+            <button type="button" class="filter-btn active" id="tabVerified">Verified Only (<span id="countVerifiedTab">0</span>)</button>
+            <button type="button" class="filter-btn" id="tabAll">All Records (<span id="countAllTab">0</span>)</button>
+          </div>
+          <div>
+            <input type="text" id="ledgerSearchInput" class="search-box" placeholder="Search by name, email or reference..." />
+          </div>
+        </div>
+
+        <div class="feed-table-container">
+          <table class="feed-table" style="width: 100%;" aria-label="Verified Donations Ledger">
+            <thead>
+              <tr>
+                <th scope="col">Supporter</th>
+                <th scope="col">Identifier / Email</th>
+                <th scope="col">Contribution</th>
+                <th scope="col">Type</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col">Audit Status</th>
+                <th scope="col">Paystack Reference</th>
+              </tr>
+            </thead>
+            <tbody id="publicLedgerTableBody">
+              <!-- Dynamically populated from live database -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 3: REAL COMMUNITY SUPPORTER WALL / LEADERBOARD -->
+      <section class="portal-card" id="leaderboard">
+        <div class="section-header" style="text-align: left; margin-bottom: 1.25rem;">
+          <span class="section-kicker">Community Honor Roll</span>
+          <h2 style="font-family: var(--font-serif); font-size: 1.75rem; margin-top: 0.25rem;">Wall of Supporters</h2>
+          <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+            Aggregated rankings calculated directly from confirmed contributions. (Supporters who select anonymous giving are recognized with name hidden).
+          </p>
+        </div>
+
+        <div class="feed-table-container">
+          <table class="feed-table leaderboard-table" style="width: 100%;">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Rank</th>
+                <th>Supporter Name</th>
+                <th>Total Contributed</th>
+                <th>Contributions Count</th>
+                <th>Last Donation</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardTableBody">
+              <!-- Dynamically populated from live database -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container" style="text-align: center; font-size: 0.8125rem; color: #78716C;">
+        Turkana Wellspring Initiative · WaterHarvest International Foundation (Reg. No: NGO-KEN-2019/84920B) · Lodwar Field Station
+      </div>
+    </footer>
+
+    <script src="/js/realtime_notifications.js"></script>
+    <script src="/js/history.js"></script>
+  </body>
+</html>
