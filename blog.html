@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFF8F8">
+<title>Stories &amp; updates — Wellspring</title>
+<meta name="description" content="Stories from the ground: the children, families and programs your support makes possible.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:rgb(1,24,216);
+  --accent:rgb(27,86,253);
+  --cream:rgb(233,223,195);
+  --paper:rgb(255,248,248);
+
+  --muted:rgba(1,24,216,.72);
+  --line:rgba(1,24,216,.16);
+  --line-strong:rgba(1,24,216,.34);
+  --accent-soft:rgba(27,86,253,.08);
+  --paper-muted:rgba(255,248,248,.75);
+
+  --hairline:1px solid var(--line);
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+
+  --maxw:1120px;
+  --pad-x:clamp(1.25rem,5vw,2.5rem);
+  --radius:8px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+/* ============ BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.7;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+img{max-width:100%;display:block}
+h1,h2,h3,p,figure,blockquote{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+::selection{background:var(--accent);color:var(--paper)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.img-placeholder{background:var(--accent-soft)}
+.icon{display:inline-block;vertical-align:middle;flex:none}
+
+.container{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad-x)}
+
+.label{
+  display:inline-flex;align-items:center;gap:.65rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);
+}
+.label::before{content:"";width:22px;height:1px;background:var(--accent);flex:none}
+
+h1,h2{font-family:var(--serif);font-weight:400}
+
+/* ============ MOTION GATING ============ */
+/* Elements are hidden only when JS confirms an animation engine is active.
+   No-JS and reduced-motion users always get fully visible content. */
+html.anim-gsap .reveal,
+html.anim-io .reveal{opacity:0}
+html.anim-io .reveal{
+  transform:translateY(14px);
+  transition:opacity .7s ease,transform .7s var(--ease);
+}
+html.anim-io .reveal.is-visible{opacity:1;transform:none}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html.anim-gsap .reveal,html.anim-io .reveal{opacity:1!important;transform:none!important}
+}
+
+/* ============ BUTTONS & LINKS ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+  border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;
+  font-weight:600;font-size:.95rem;line-height:1;padding:.85rem 1.7rem;
+  transition:scale .25s ease,box-shadow .25s ease,background-color .25s ease,color .25s ease;
+}
+.btn:hover{scale:1.04}
+.btn:active{scale:.99}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary:hover{background:var(--accent);box-shadow:0 14px 28px -14px rgba(1,24,216,.5)}
+.btn-sm{padding:.6rem 1.2rem;font-size:.85rem}
+.btn-block{width:100%;margin-top:1.5rem}
+.btn:disabled{opacity:.6;cursor:wait;scale:1}
+
+.link-arrow{
+  position:relative;display:inline-flex;align-items:center;gap:.5rem;
+  background:none;border:0;cursor:pointer;padding:.4rem 0;
+  font-weight:600;font-size:.95rem;text-decoration:none;color:var(--ink);
+}
+.link-arrow::after{
+  content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;
+  background:var(--ink);transform-origin:left;transition:background-color .25s ease,transform .25s var(--ease);
+}
+.link-arrow .icon{transition:translate .25s ease}
+.link-arrow:hover::after{background:var(--accent);transform:scaleX(1.06)}
+.link-arrow:hover .icon{translate:3px 0}
+
+/* ============ HEADER ============ */
+.site-header{position:sticky;top:0;z-index:100;background:var(--paper);border-bottom:var(--hairline)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:64px}
+.brand{
+  display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;
+  font-family:var(--serif);font-size:1.35rem;letter-spacing:-.01em;
+}
+.brand-logo{display:block;flex:none}
+.nav-links{display:none;align-items:center;gap:2.2rem}
+.nav-links a{
+  position:relative;font-size:.9rem;font-weight:500;color:var(--muted);
+  text-decoration:none;padding:.35rem 0;transition:color .25s ease;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease);
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.header-actions{display:flex;align-items:center;gap:.75rem}
+.menu-btn{
+  display:inline-flex;align-items:center;gap:.5rem;background:none;border:0;cursor:pointer;
+  font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .25rem;
+}
+.mobile-panel{
+  display:none;position:absolute;top:100%;left:0;right:0;
+  background:var(--paper);border-bottom:var(--hairline);
+  padding:.25rem var(--pad-x) 1.25rem;
+  animation:panelIn .25s var(--ease);
+}
+@keyframes panelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.menu-open .mobile-panel{display:block}
+.mobile-panel a{display:block;padding:.85rem 0;font-size:1rem;font-weight:500;text-decoration:none;border-top:var(--hairline)}
+.mobile-panel a:first-child{border-top:0}
+.mobile-panel a:hover{color:var(--muted)}
+@media (min-width:900px){
+  .nav-links{display:flex}
+  .menu-btn,.mobile-panel{display:none!important}
+}
+/* reading progress — sits on the header's bottom hairline */
+.read-progress{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--accent)}
+
+/* ============ POST HERO ============ */
+.post-hero{padding-block:clamp(3.25rem,7vw,5.5rem) 0}
+.post-hero-head{max-width:820px}
+.back-link{
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;margin-bottom:1.75rem;transition:color .2s ease;
+}
+.back-link:hover{color:var(--ink)}
+.post-hero h1{
+  font-size:clamp(2.5rem,5.2vw,4.1rem);
+  line-height:1.04;letter-spacing:-.015em;
+  margin-top:1.25rem;max-width:20ch;
+}
+.story-meta{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1.25rem;
+  margin-top:1.4rem;font-size:.8rem;color:var(--muted);
+}
+.story-lede{margin-top:1.6rem;max-width:58ch;font-size:1.2rem;line-height:1.6;color:var(--muted)}
+.post-hero-media{
+  position:relative;z-index:0;
+  margin-top:clamp(2.75rem,6vw,4.5rem);
+  aspect-ratio:4/3;
+}
+.img-clip{overflow:hidden;border-radius:var(--radius);width:100%;height:100%}
+.img-clip img{width:100%;height:114%;object-fit:cover}
+.framed::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  border:1px solid var(--accent);border-radius:var(--radius);
+  transform:translate(16px,16px);pointer-events:none;
+}
+@media (min-width:900px){
+  .post-hero-media{aspect-ratio:21/10}
+}
+
+/* ============ ARTICLE BODY ============ */
+.post-article{padding-block:clamp(3.5rem,7vw,5.5rem) clamp(3rem,6vw,4.5rem)}
+.story-col{max-width:65ch;margin-inline:auto}
+.story-col > p{margin-top:1.35em}
+.story-col > p:first-of-type{margin-top:0}
+.story-col > p:first-of-type::first-letter{
+  font-family:var(--serif);font-weight:400;
+  font-size:3.6em;line-height:.78;
+  float:left;padding:.06em .14em 0 0;
+}
+.story-col h2{
+  font-size:clamp(1.7rem,2.6vw,2.3rem);
+  margin:3.2rem 0 .4rem;letter-spacing:-.01em;
+}
+.pullquote{
+  border-block:var(--hairline);
+  padding:2.4rem 0;margin:3.2rem 0;
+}
+.pullquote p{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.6rem,3vw,2.15rem);line-height:1.28;letter-spacing:-.01em;
+}
+.pullquote p::before{content:"\201C";color:var(--accent);margin-right:.08em}
+.pullquote cite{
+  display:block;margin-top:1.2rem;font-style:normal;
+  font-size:.78rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+}
+.story-figure{margin:3.2rem 0}
+.story-figure .img-clip{aspect-ratio:3/2;height:auto}
+.story-figure img{height:100%}
+.story-figcaption{
+  margin-top:.85rem;font-size:.85rem;color:var(--muted);
+  display:flex;gap:.65rem;align-items:baseline;
+}
+.story-figcaption::before{content:"";width:18px;height:1px;background:var(--accent);flex:none;transform:translateY(-.25em)}
+
+/* ============ PREV / NEXT ============ */
+.post-nav{border-top:var(--hairline);padding-block:clamp(2.75rem,6vw,4.25rem)}
+.post-nav-grid{display:grid;gap:2.5rem}
+.post-nav-card h3{
+  font-family:var(--serif);font-weight:400;
+  font-size:1.45rem;line-height:1.2;letter-spacing:-.01em;margin-top:.85rem;
+}
+.post-nav-card a{text-decoration:none;transition:color .25s ease}
+.post-nav-card a:hover{color:var(--accent)}
+.post-nav-card.is-next{text-align:right}
+.post-nav-card.is-next .label::before{display:none}
+.post-nav-card.is-next .label::after{content:"";width:22px;height:1px;background:var(--accent);flex:none}
+@media (min-width:760px){
+  .post-nav-grid{grid-template-columns:1fr 1fr;gap:3rem}
+  .post-nav-card.solo-next{grid-column:2}
+}
+
+/* ============ GIVE BAND ============ */
+.give{background:var(--cream);border-block:var(--hairline);padding-block:clamp(4.5rem,9vw,9.5rem)}
+.give-grid{display:grid;gap:3rem;align-items:center}
+.give-copy p.give-sub{color:var(--muted);max-width:44ch;margin-top:1.2rem}
+.give .progress{margin-top:2.25rem}
+.give-trust{
+  display:flex;align-items:baseline;gap:.6rem;
+  margin-top:1.75rem;font-size:.85rem;color:var(--muted);max-width:44ch;
+}
+.give-trust .icon{color:var(--accent);transform:translateY(2px)}
+@media (min-width:980px){
+  .give-grid{grid-template-columns:1.05fr .95fr;gap:5rem}
+  .give .widget-card{margin:0}
+}
+
+/* ============ WIDGET (shared with the other pages) ============ */
+.widget-card{
+  background:var(--paper);border:var(--hairline);border-radius:10px;
+  padding:clamp(1.5rem,4vw,2.25rem);
+  max-width:520px;margin:1rem auto 0;text-align:left;width:100%;
+}
+.widget-top{display:flex;justify-content:flex-end;margin-bottom:1.4rem}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.seg-btn{
+  border:0;background:transparent;border-radius:999px;cursor:pointer;
+  padding:.4rem .95rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
+  transition:background-color .2s ease,color .2s ease;
+}
+.seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chips{display:flex;flex-wrap:wrap;gap:.55rem}
+.chip{
+  border:1px solid var(--line);background:var(--paper);border-radius:999px;cursor:pointer;
+  padding:.65rem 1.15rem;font-size:.9rem;font-weight:600;color:var(--ink);
+  transition:scale .2s ease,border-color .2s ease,background-color .2s ease,color .2s ease;
+  font-variant-numeric:tabular-nums;
+}
+.chip:hover{scale:1.06;border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.chip-custom{padding-inline:1.05rem}
+.custom-wrap{margin-top:1.15rem}
+.custom-field{
+  display:flex;align-items:center;gap:.55rem;max-width:240px;
+  border-bottom:1px solid var(--line-strong);padding:.35rem .15rem;
+  transition:border-color .2s ease;
+}
+.custom-field:focus-within{border-color:var(--ink)}
+.custom-symbol{font-weight:600;color:var(--muted)}
+.custom-field input{
+  border:0;outline:0;background:transparent;width:100%;
+  font-weight:600;font-size:1.05rem;color:var(--ink);
+}
+.custom-field input::-webkit-outer-spin-button,
+.custom-field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.custom-field input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.field-hint,.widget-error{
+  margin-top:.7rem;font-size:.85rem;font-weight:500;color:var(--ink);
+  border-left:2px solid var(--accent);padding-left:.65rem;
+}
+.widget-error{margin-top:1.1rem}
+.secure{
+  display:flex;align-items:center;justify-content:center;gap:.45rem;
+  margin-top:1.1rem;font-size:.8rem;color:var(--muted);
+}
+.mock-note{margin-top:.55rem;text-align:center;font-size:.74rem;font-style:italic;color:var(--muted)}
+.spinner{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,248,248,.35);border-top-color:var(--paper);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(1turn)}}
+.widget-success{text-align:center;padding:.5rem 0}
+.success-icon{color:var(--accent)}
+.success-title{font-family:var(--serif);font-size:1.8rem;font-weight:400;margin:1rem 0 .5rem}
+.widget-success p{max-width:38ch;margin:0 auto 1.4rem;font-size:.95rem;color:var(--muted)}
+
+/* ============ PROGRESS BARS ============ */
+.progress{
+  height:6px;border-radius:999px;overflow:hidden;
+  background:rgba(1,24,216,.08);border:1px solid var(--line-strong);
+}
+.progress-fill{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .9s var(--ease)}
+.progress.is-pulsing{animation:progressPulse 1.1s ease-out}
+@keyframes progressPulse{0%{box-shadow:0 0 0 0 rgba(27,86,253,.5)}100%{box-shadow:0 0 0 12px rgba(27,86,253,0)}}
+
+/* ============ FOOTER ============ */
+.site-footer{border-top:var(--hairline);padding:4.5rem 0 2.5rem;background:var(--paper)}
+body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem 4rem;padding-bottom:3rem}
+.footer-mission{max-width:36ch;margin-top:1rem;font-size:.95rem;color:var(--muted)}
+.footer-nav{display:flex;flex-wrap:wrap;gap:1rem 2rem}
+.footer-nav a{font-size:.9rem;color:var(--muted);text-decoration:none;transition:color .2s ease}
+.footer-nav a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.footer-meta{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem 2.5rem;
+  border-top:var(--hairline);padding-top:1.5rem;font-size:.85rem;color:var(--muted);
+}
+.footer-mail{text-decoration:none;transition:color .2s ease}
+.footer-mail:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.socials{display:flex;gap:1.5rem}
+.socials a{text-decoration:none;transition:color .2s ease}
+.socials a:hover{color:var(--ink)}
+.footer-reg{font-size:.8rem}
+.footer-copy{margin-top:1.4rem;font-size:.8rem;color:var(--muted)}
+
+/* ============ FLOATING DONATION BAR ============ */
+.donate-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:120;
+  background:var(--paper);border-top:var(--hairline);
+  transform:translateY(102%);visibility:hidden;
+  transition:transform .4s var(--ease),visibility 0s linear .4s;
+}
+.donate-bar.is-visible{transform:none;visibility:visible;transition:transform .4s var(--ease)}
+.donate-bar-inner{
+  display:flex;align-items:center;gap:1rem;
+  max-width:var(--maxw);margin-inline:auto;
+  padding:.6rem var(--pad-x);
+}
+.donate-bar-text{font-size:.88rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donate-bar-text strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.progress-mini{flex:1;max-width:220px;height:5px}
+.donate-bar-actions{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+.donate-bar-close{
+  display:inline-flex;background:none;border:0;cursor:pointer;
+  padding:.45rem;color:var(--muted);transition:color .2s ease;
+}
+.donate-bar-close:hover{color:var(--ink)}
+@media (max-width:520px){
+  .donate-bar-text{font-size:.78rem}
+  .donate-bar-inner{gap:.7rem}
+}
+
+/* skip link */
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:200;
+  background:var(--ink);color:var(--paper);padding:.7rem 1.1rem;border-radius:0 0 6px 0;
+  font-size:.85rem;font-weight:600;text-decoration:none;
+}
+.skip-link:focus{left:0}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- SVG sprite (inline, no external requests) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-kite" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2.6 19.4 10 12 16.4 4.6 10 12 2.6Z" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M12 2.6v13.8M4.6 10h14.8" stroke="var(--ink)" stroke-width="1" opacity=".45"/>
+    <path d="M12 16.4c-1.6 1.9 1.6 2.9 0 4.8" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="10.9" y="17.9" width="2.2" height="2.2" transform="rotate(45 12 19)" fill="var(--accent)"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 10h14M11.5 5 17 10l-5.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none">
+    <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.4"/>
+    <path d="m7.6 12.4 3 3.1 5.8-6.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 20 20" fill="none">
+    <path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 7h15M2.5 13h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="32" height="32">
+      <b style="font-weight: 800;letter-spacing: 2px; font-size: larger;">Wellspring</b>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="index.html#who-we-are">Who we are</a></li>
+        <li><a href="index.html#what-we-do">What we do</a></li>
+        <li><a href="index.html#partners">Partners</a></li>
+        <li><a href="amira.html">Amira's story</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-primary btn-sm" href="#give">Donate</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobilePanel">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-menu"/></svg>
+        Menu
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-panel" id="mobilePanel" aria-label="Mobile">
+    <a href="index.html#who-we-are">Who we are</a>
+    <a href="index.html#what-we-do">What we do</a>
+    <a href="index.html#partners">Partners</a>
+    <a href="amira.html">Amira's story</a>
+  </nav>
+  <span class="read-progress" id="readProgress" aria-hidden="true"></span>
+</header>
+
+<main id="main">
+
+  <!-- ============ POST HERO ============ -->
+  <section class="post-hero" aria-label="Article">
+    <div class="container">
+      <div class="post-hero-head" data-stagger>
+        <a class="back-link reveal" href="index.html#news">&larr; All updates</a>
+        <p class="label reveal" data-post-label>Program Impact</p>
+        <h1 class="reveal" data-post-title>Mia's Masterpiece: Coping Through Long Hospital Stays</h1>
+        <div class="story-meta reveal">
+          <span data-post-date>12 Jun 2026</span>
+          <span aria-hidden="true">·</span>
+          <span data-post-read>5 min read</span>
+        </div>
+        <p class="story-lede reveal" data-post-lede></p>
+      </div>
+      <figure class="post-hero-media framed reveal">
+        <div class="img-clip">
+          <img id="postHeroImg" class="img-placeholder" src="https://picsum.photos/seed/mia-paint-hands/1600/800.jpg" alt="" width="1600" height="800" fetchpriority="high">
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ ARTICLE BODY (rendered from CONFIG.posts) ============ -->
+  <article class="post-article" id="postArticle">
+    <div class="container">
+      <div class="story-col" id="postBody">
+        <noscript><p>This story needs JavaScript enabled to display. Please turn it on, or email us and we&rsquo;ll send you the article directly.</p></noscript>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ PREV / NEXT ============ -->
+  <nav class="post-nav" aria-label="More stories">
+    <div class="container post-nav-grid" id="postNav"></div>
+  </nav>
+
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html">
+             <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="32" height="32">
+         Wellspring
+        </a>
+        <p class="footer-mission">Helping children with serious medical conditions get the care, treatment and support their families can't afford alone.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="index.html#who-we-are">Who we are</a>
+        <a href="index.html#what-we-do">What we do</a>
+        <a href="index.html#partners">Partners</a>
+        <a href="amira.html">Amira's story</a>
+      </nav>
+    </div>
+    <div class="footer-meta">
+      <a class="footer-mail" data-org-email href="mailto:hello@kitefoundation.org">hello@kitefoundation.org</a>
+      <div class="socials">
+        <a href="#" rel="noopener">Instagram</a>
+        <a href="#" rel="noopener">LinkedIn</a>
+        <a href="#" rel="noopener">X</a>
+      </div>
+      <p class="footer-reg" data-org-registered>Registered non-profit</p>
+    </div>
+    <p class="footer-copy">© 2023 Wellspring. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ============ FLOATING DONATION BAR ============ -->
+<div class="donate-bar" id="donateBar" role="region" aria-label="Donation progress">
+  <div class="donate-bar-inner">
+    <p class="donate-bar-text"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+    <div class="progress progress-mini" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Campaign progress">
+      <span class="progress-fill" data-progress></span>
+    </div>
+    <div class="donate-bar-actions">
+      <a class="btn btn-primary btn-sm" href="#give">Donate</a>
+      <button class="donate-bar-close" data-bar-close aria-label="Dismiss donation bar">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ================================================================
+     CONFIG — all editable content lives here
+     ================================================================ */
+  var CONFIG = {
+    mockMode: true, // true = skip Flutterwave, simulate success, bump total locally
+    publicKey: 'FLWPUBK_TEST-REPLACE-WITH-YOUR-PUBLIC-KEY',
+    verifyUrl: '/verify-transaction',   // POST { tx_ref, transaction_id } — must return 2xx
+    totalUrl: '/donation-total',        // GET — { total: 12345 }, { raised: 12345 } or a plain number
+    campaign: { currency: 'USD', goal: 250000, defaultTotal: 12480 },
+    presets: [25, 50, 100, 250],
+    minDonation: 5,
+    currencySymbols: { USD: '$', GBP: '£' },
+
+    blogPath: 'blog.html', // used to build prev/next links
+    /* Pin this file to ONE post (for separate URLs like blog-mia.html):
+       set to 'mia', 'renley' or 'toys'. Leave '' to use ?post= in the URL. */
+    forceSlug: '',
+
+    /* ---------- THE THREE ARTICLES ----------
+       blocks: t = 'p' | 'h2' | 'quote' | 'fig'. Edit copy freely. */
+    posts: [
+      {
+        slug: 'mia',
+        tag: 'Program Impact',
+        date: '12 Jun 2026',
+        readTime: '5 min read',
+        title: 'Mia\u2019s Masterpiece: Coping Through Long Hospital Stays',
+        lede: 'Mia has mastered the art of waiting \u2014 in a hospital, she\u2019s spent most of her life practicing it. Born with a congenital heart defect and living with respiratory challenges, she has quietly turned her ward into something else: a studio.',
+        heroImg: 'miaHero',
+        heroAlt: 'A young girl in a hospital gown, paint on her hands, smiling at an easel by a bright window',
+        blocks: [
+          { t: 'p', html: 'Mia is nine, and she knows the fourth floor better than most people know their own street. She can tell you which elevator is fastest at eight in the morning, which nurse gives out the good stickers, and exactly how long the vending machine takes to consider your choice before giving it up. Her oxygen line trails behind her like a scarf. She moves through this hospital the way other kids move through a school day.' },
+          { t: 'h2', html: 'The year the walls stayed white' },
+          { t: 'p', html: 'The hardest part was never the procedures. It was the stays \u2014 three months at a stretch of the same corridor, the same beeping, the same ceiling tile above the bed. During one long admission last winter, Mia stopped talking much. Her mother noticed before she did: the sketchbook in the bottom drawer, unopened for weeks. \u201CShe wasn\u2019t sad,\u201D her mother says. \u201CShe was paused.\u201D' },
+          { t: 'p', html: 'That pause is what Wellspring\u2019s creative care program exists for. Art kits arrive on every tray table each week. On Fridays, a visiting artist sets up in the family room, and slowly the ward fills up with paint. The child-life team describes it plainly: when nearly everything in a child\u2019s day is decided by someone else \u2014 when to eat, when to test, when to sleep \u2014 making something is the one hour that belongs entirely to them.' },
+          { t: 'quote', text: 'I can\u2019t make my heart work better. But I can make this wall better.', cite: 'Mia, age 9' },
+          { t: 'h2', html: 'A masterpiece, four floors tall' },
+          { t: 'p', html: 'Last spring, the ward offered its longest-staying patients the corridor wall. Mia took the job more seriously than most people take their jobs. What grew across it is a garden \u2014 tall, strange, wonderful flowers climbing from the playroom to the nurses\u2019 station, one for every child on the floor. Every one is signed in the corner, in careful pencil.' },
+          { t: 'p', html: 'She has rules, and she will explain them: nobody copies anybody\u2019s flower, and every new kid who arrives gets to add one. The nurses now walk visiting families past it on their tours. Her mother says the change was immediate \u2014 Mia talks again, plans again, has something to do that isn\u2019t waiting.' },
+           { t: 'p', html: 'None of it \u2014 not the kits, not the Fridays, not the wall \u2014 is medicine. All of it is care. It\u2019s what your gifts fund quietly, week after week, and Mia\u2019s masterpiece is what that looks like when you give a child back an hour that belongs to her.' }
+        ]
+      },
+      {
+        slug: 'renley',
+        tag: 'Support',
+        date: '28 May 2025',
+        readTime: '6 min read',
+        title: 'A Heart Transplant Story: Changing What Waiting Felt Like',
+        lede: 'Unexpected moments of connection and positivity changed what hospitalization felt like for twelve-year-old Renley, who was living with a congenital heart defect \u2014 and a wait that had no fixed end date.',
+        heroImg: 'renleyHero',
+        heroAlt: 'A twelve-year-old boy looking out of a hospital window, sunlight across his face',
+        blocks: [
+          { t: 'p', html: 'Renley waited 214 days for a new heart. He never once counted them out loud \u2014 his mother counted enough for both of them \u2014 but the number lived in his fourth-floor window, in the row of tape marks his little sister left each weekend, marching slowly across the glass.' },
+          { t: 'h2', html: 'What waiting actually is' },
+          { t: 'p', html: 'Waiting for a transplant isn\u2019t one long moment. It\u2019s a thousand small ones on repeat: Monday blood draws, Wednesday echos, the same four walls learning your name. His mother watched her funny, loud kid go quiet. \u201CThe hospital had become his whole world,\u201D she says, \u201Cand none of it belonged to him.\u201D' },
+          { t: 'p', html: 'What changed wasn\u2019t one big thing. It was a stack of small ones. A volunteer who learned which team Renley followed and refused to watch the games alone. The boy in the next room \u2014 a rival at first, over a disputed game of cards \u2014 who became the friend he measured his days against. Friday movie nights where the popcorn was terrible and, for two hours, nobody missed home.' },
+          { t: 'quote', text: 'The list gave him a new heart. The people gave him back his twelve-year-old.', cite: 'Renley\u2019s mother' },
+           { t: 'h2', html: 'The call' },
+          { t: 'p', html: 'Then, on an ordinary evening in October, the transplant coordinator walked in wearing the face that makes every parent on a ward stand up. Renley looked at his mother, looked at the paused movie, and asked if he could finish it first. He remains, to this day, extremely proud of that.' },
+          { t: 'p', html: 'The surgery went well. The weeks that followed were hard in ways his mother doesn\u2019t dress up. He rebuilt himself the way everyone on that floor does \u2014 lap by lap down the hallway, counting. By December he was home. By spring he was back at school, taller than the tape marks, visiting the fourth floor whenever they\u2019ll have him and teaching the new kids his one trick for blood draws: wiggle your toes and think hard about pizza.' },
+            { t: 'p', html: 'Wellspring didn\u2019t perform the transplant \u2014 that belongs to Renley\u2019s extraordinary surgical team. What your support funded was the 214 days in between: the family\u2019s room a block from the hospital, the transport, the volunteer hours, the movie nights. The days between diagnosis and a new heart are where families live the longest. It\u2019s where we work.' },
+          { t: 'p', html: 'Renley\u2019s heart now beats with a rhythm that isn\u2019t his \u2014 a gift from a family he\u2019ll never meet. His mother says he was given two, really: one he can never thank by name, and one from every person who helped keep the waiting human.' }
+        ]
+      },
+      {
+        slug: 'toys',
+        tag: 'Support',
+        date: '3 May 2025',
+        readTime: '4 min read',
+        title: 'Wellspring\u2019s Inclusive Toys Uniquely Support Kids in Need',
+        lede: 'When a child is in the hospital, receiving a toy brings real joy \u2014 especially around the holidays. But toys aren\u2019t just for fun. Chosen carefully, they help kids feel calmer, safer and more at home in the hardest place to feel any of those things.',
+        heroImg: 'toysHero',
+        heroAlt: 'A colorful toy trolley being wheeled down a bright children\u2019s hospital ward',
+        blocks: [
+          { t: 'p', html: 'Every Thursday, the toy trolley comes around the ward. It is the most anticipated half hour of the week, and almost nothing on it was chosen by accident. The child-life team builds the shelf deliberately \u2014 by age, by need, by what a particular child\u2019s week looks like \u2014 because the right toy in a hospital does work that looks, from the outside, suspiciously like magic.' },
+          { t: 'h2', html: 'Not just for fun' },
+          { t: 'p', html: 'Play is how children process things. A doll with a little cast helps a four-year-old understand her own. Practicing an injection on a stuffed animal makes the real one tomorrow feel survivable. A construction set is a reason to sit up on a day the body argues against it. Before procedures, the team reaches for distraction toys first \u2014 a child absorbed in play goes into the same room calmer, and comes out of it calmer too.' },
+          { t: 'h2', html: 'Designed for every kind of kid' },
+          { t: 'p', html: 'This is where the shelf gets interesting. Alongside the usual crowd sit the adapted toys: cars and games wired to big, bright switches for children who can\u2019t grip or press a small button. Sensory-soft toys for kids overwhelmed by the noise a ward never stops making. Dolls with feeding tubes, hearing aids and scars \u2014 so a child browsing the trolley finds one that looks like them.' },
+          { t: 'quote', text: 'You watch a child who hasn\u2019t been able to hold anything switch a car on with their elbow, and you understand: the toy isn\u2019t the point. Access is.', cite: 'A child-life specialist, fourth floor' },
+           { t: 'p', html: 'The holidays bring wonderful waves of toy donations, and we\u2019re grateful for every single one. But children are in hospitals all year \u2014 in February, in August, on random Tuesdays \u2014 and the families in the hardest seasons rarely have the bandwidth to ask. The toy program smooths that out: funded by gifts, stocked deliberately, topped up weekly so the shelf never depends on a season.' },
+           { t: 'p', html: 'Of everything Wellspring funds, a toy costs the least and is mentioned the most. Families remember the surgery and the bill that never arrived. They also remember, years later, the trolley on Thursdays \u2014 and the half hour their kid got to be a kid instead of a patient.' }
+        ]
+      }
+    ],
+
+    org: {
+      name: 'Wellspring',
+      email: 'hello@kitefoundation.org',
+      registered: 'Registered non-profit \u00B7 No. 568-344'
+    }
+  };
+
+  /* ================================================================
+     IMAGES — swap these URLs for real photography
+     ================================================================ */
+  var IMAGES = {
+    /* Post heroes (21/10 crop) */
+    miaHero: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790626327/Screenshot_2026-09-28_211154_p9j1rx.png',
+    renleyHero: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790626210/Screenshot_2026-09-28_211009_wiz43f.png',
+    toysHero: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790626335/Screenshot_2026-09-28_211215_wlgapp.png',
+    /* Inline figures (3/2 crop) */
+    miaFig1: 'https://picsum.photos/seed/mia-art-session/900/600.jpg',
+    miaFig2: 'https://picsum.photos/seed/mia-mural-garden/900/600.jpg',
+
+  };
+
+  /* ---------- helpers ---------- */
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function getParam(name) {
+    try {
+      return new URLSearchParams(window.location.search).get(name);
+    } catch (e) {
+      var m = window.location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+  }
+
+  /* ---------- small content injections ---------- */
+  var emailEl = $('[data-org-email]');
+  if (emailEl) { emailEl.textContent = CONFIG.org.email; emailEl.href = 'mailto:' + CONFIG.org.email; }
+  var regEl = $('[data-org-registered]');
+  if (regEl) regEl.textContent = CONFIG.org.registered;
+
+  /* ================================================================
+     RENDER POST — resolves the slug (?post= → forceSlug → first)
+     and fills the hero, article body, prev/next, title & description
+     ================================================================ */
+  function blockNode(b) {
+    var el;
+    if (b.t === 'h2') {
+      el = document.createElement('h2');
+      el.className = 'reveal';
+      el.innerHTML = b.html;
+    } else if (b.t === 'quote') {
+      el = document.createElement('blockquote');
+      el.className = 'pullquote reveal';
+      el.innerHTML = '<p>' + b.text + '</p><cite>' + b.cite + '</cite>';
+    } else if (b.t === 'fig') {
+      el = document.createElement('figure');
+      el.className = 'story-figure reveal';
+      el.innerHTML =
+        '<div class="img-clip"><img class="img-placeholder" src="' + (IMAGES[b.img] || '') + '" alt="' + b.alt + '" width="900" height="600" loading="lazy" decoding="async"></div>' +
+        '<figcaption class="story-figcaption">' + b.caption + '</figcaption>';
+    } else {
+      el = document.createElement('p');
+      el.className = 'reveal';
+      el.innerHTML = b.html;
+    }
+    return el;
+  }
+
+  (function renderPost() {
+    var wanted = getParam('post') || CONFIG.forceSlug || '';
+    var idx = 0;
+    CONFIG.posts.forEach(function (p, i) { if (p.slug === wanted) idx = i; });
+    var post = CONFIG.posts[idx];
+
+    /* hero */
+    var labelEl = $('[data-post-label]');
+    var titleEl = $('[data-post-title]');
+    var dateEl = $('[data-post-date]');
+    var readEl = $('[data-post-read]');
+    var ledeEl = $('[data-post-lede]');
+    var heroImg = $('#postHeroImg');
+    if (labelEl) labelEl.textContent = post.tag;
+    if (titleEl) titleEl.textContent = post.title;
+    if (dateEl) dateEl.textContent = post.date;
+    if (readEl) readEl.textContent = post.readTime;
+    if (ledeEl) ledeEl.textContent = post.lede;
+    if (heroImg) {
+      if (IMAGES[post.heroImg]) heroImg.src = IMAGES[post.heroImg];
+      heroImg.alt = post.heroAlt;
+    }
+
+    /* document title + description */
+    document.title = post.title + ' — Wellspring';
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', post.lede);
+
+    /* article body */
+    var body = $('#postBody');
+    if (body) {
+      post.blocks.forEach(function (b) { body.appendChild(blockNode(b)); });
+    }
+
+    /* prev / next */
+    var nav = $('#postNav');
+    if (nav) {
+      var cards = [];
+      if (idx > 0) {
+        cards.push({ label: 'Previous story', post: CONFIG.posts[idx - 1], cls: '' });
+      }
+      if (idx < CONFIG.posts.length - 1) {
+        cards.push({ label: 'Next story', post: CONFIG.posts[idx + 1], cls: 'is-next' });
+      }
+      if (cards.length === 1 && cards[0].cls === 'is-next') cards[0].cls += ' solo-next';
+      nav.innerHTML = cards.map(function (c) {
+        return '<div class="post-nav-card ' + c.cls + ' reveal">' +
+          '<span class="label">' + c.label + '</span>' +
+          '<h3><a href="' + CONFIG.blogPath + '?post=' + c.post.slug + '">' + c.post.title + '</a></h3>' +
+          '</div>';
+      }).join('');
+    }
+  })();
+
+  /* ================================================================
+     TOTAL STORE — fetched + polled; bars arm on view, count-up once
+     (same behavior as amira.html)
+     ================================================================ */
+  var TotalStore = (function () {
+    var total = CONFIG.campaign.defaultTotal;
+    var firstRender = true;
+    var counted = false;
+    var textAnimating = false;
+    var latestPct = 0;
+    var sym = CONFIG.currencySymbols[CONFIG.campaign.currency] || '$';
+
+    function fmtCampaign(v) { return sym + Math.round(v).toLocaleString('en-US'); }
+
+    function emit(pulse) {
+      latestPct = Math.max(0, Math.min(100, (total / CONFIG.campaign.goal) * 100));
+      if (!textAnimating) {
+        var text = fmtCampaign(total);
+        $$('[data-total]').forEach(function (el) { el.textContent = text; });
+      }
+      $$('[data-goal-label]').forEach(function (el) { el.textContent = fmtCampaign(CONFIG.campaign.goal); });
+      $$('[data-progressbar]').forEach(function (bar) {
+        bar.setAttribute('aria-valuemax', String(CONFIG.campaign.goal));
+        bar.setAttribute('aria-valuenow', String(Math.round(total)));
+        if (bar.getAttribute('data-armed') === '1') {
+          var fill = bar.querySelector('[data-progress]');
+          if (fill) fill.style.width = latestPct + '%';
+        }
+        if (pulse && !firstRender) {
+          bar.classList.remove('is-pulsing');
+          void bar.offsetWidth; // restart animation
+          bar.classList.add('is-pulsing');
+        }
+      });
+      firstRender = false;
+    }
+
+    function armBar(bar) {
+      if (bar.getAttribute('data-armed') === '1') return;
+      bar.setAttribute('data-armed', '1');
+      var fill = bar.querySelector('[data-progress]');
+      if (fill) fill.style.width = latestPct + '%';
+    }
+
+    function countText() {
+      if (counted) return;
+      counted = true;
+      if (reducedMotion || !('requestAnimationFrame' in window)) return;
+      textAnimating = true;
+      var start = performance.now(), dur = 1400;
+      function frame(t) {
+        var p = Math.min((t - start) / dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        var v = fmtCampaign(total * e);
+        $$('[data-total]').forEach(function (el) { el.textContent = v; });
+        if (p < 1) {
+          window.requestAnimationFrame(frame);
+        } else {
+          textAnimating = false;
+          emit(false);
+        }
+      }
+      window.requestAnimationFrame(frame);
+    }
+
+    function refresh() {
+      return fetch(CONFIG.totalUrl, { headers: { 'Accept': 'application/json' } })
+        .then(function (res) {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function (data) {
+          if (data === null || data === undefined) return;
+          var n = typeof data === 'number' ? data : Number(data && (data.total != null ? data.total : data.raised));
+          if (isFinite(n) && n >= 0 && Math.round(n) !== Math.round(total)) {
+            total = n;
+            emit(true);
+          }
+        })
+        .catch(function () { /* no backend reachable — keep current total */ });
+    }
+
+    function add(n) {
+      if (isFinite(n) && n > 0) { total += n; emit(true); }
+    }
+
+    emit(false);
+    refresh();
+    window.setInterval(refresh, 60000);
+
+    $$('[data-progressbar]').forEach(function (el) {
+      el.addEventListener('animationend', function () { el.classList.remove('is-pulsing'); });
+    });
+
+    var bars = $$('[data-progressbar]');
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      bars.forEach(armBar);
+    } else {
+      var armIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          armBar(en.target);
+          countText();
+          armIO.unobserve(en.target);
+        });
+      }, { threshold: 0.2 });
+      bars.forEach(function (b) { armIO.observe(b); });
+    }
+
+    return { add: add, refresh: refresh };
+  })();
+
+  /* ================================================================
+     DONATION WIDGET — reusable: initDonationWidget(rootElement)
+     (same implementation as index.html and amira.html)
+     ================================================================ */
+  function initDonationWidget(root) {
+    if (!root) return;
+
+    var form = $('[data-form]', root);
+    var success = $('[data-success]', root);
+    var successMsg = $('[data-success-msg]', root);
+    var resetBtn = $('[data-reset]', root);
+    var chipsWrap = $('[data-chips]', root);
+    var customWrap = $('[data-custom-wrap]', root);
+    var customInput = $('#customAmount', root);
+    var symbolEl = $('[data-symbol]', root);
+    var hint = $('[data-hint]', root);
+    var errorEl = $('[data-error]', root);
+    var submitBtn = $('[data-submit]', root);
+    var submitLabel = $('[data-submit-label]', root);
+    var spinner = $('[data-spinner]', root);
+    var segBtns = $$('.seg-btn', root);
+    var mockNote = $('[data-mock-note]', root);
+
+    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, processing: false };
+
+    CONFIG.presets.forEach(function (p, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.setAttribute('data-amount', String(p));
+      b.setAttribute('aria-pressed', String(i === 0));
+      chipsWrap.appendChild(b);
+    });
+    var customChip = document.createElement('button');
+    customChip.type = 'button';
+    customChip.className = 'chip chip-custom';
+    customChip.setAttribute('data-amount', 'custom');
+    customChip.setAttribute('aria-pressed', 'false');
+    customChip.textContent = 'Custom';
+    chipsWrap.appendChild(customChip);
+    var chips = $$('.chip', root);
+
+    function sym(c) { return CONFIG.currencySymbols[c] || '$'; }
+    function fmtAmt(v, c) { return sym(c) + Number(v).toLocaleString('en-US'); }
+
+    function render() {
+      segBtns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-currency') === state.currency));
+      });
+      chips.forEach(function (ch) {
+        if (ch.getAttribute('data-amount') === 'custom') {
+          ch.setAttribute('aria-pressed', String(state.custom));
+        } else {
+          ch.textContent = fmtAmt(ch.getAttribute('data-amount'), state.currency);
+          ch.setAttribute('aria-pressed', String(!state.custom && Number(ch.getAttribute('data-amount')) === state.amount));
+        }
+      });
+      symbolEl.textContent = sym(state.currency);
+      if (!state.processing) submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency);
+    }
+
+    function setProcessing(on) {
+      state.processing = on;
+      submitBtn.disabled = on;
+      spinner.hidden = !on;
+      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency);
+    }
+
+    function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
+    function clearError() { errorEl.hidden = true; }
+
+    segBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.currency = b.getAttribute('data-currency');
+        render();
+      });
+    });
+
+    chips.forEach(function (ch) {
+      ch.addEventListener('click', function () {
+        clearError();
+        if (ch.getAttribute('data-amount') === 'custom') {
+          state.custom = true;
+          customWrap.hidden = false;
+          customInput.focus();
+        } else {
+          state.custom = false;
+          state.amount = Number(ch.getAttribute('data-amount'));
+          customWrap.hidden = true;
+          hint.hidden = true;
+          customInput.value = '';
+          customInput.removeAttribute('aria-invalid');
+        }
+        render();
+      });
+    });
+
+    customInput.addEventListener('input', function () {
+      var v = Number(customInput.value);
+      if (customInput.value !== '' && v >= CONFIG.minDonation) {
+        state.amount = v;
+        hint.hidden = true;
+        customInput.removeAttribute('aria-invalid');
+      }
+      render();
+    });
+
+    function finish(amount, currency) {
+      setProcessing(false);
+      successMsg.textContent =
+        'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to a child who needs it. ' +
+        'A confirmation will follow shortly.' +
+        (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
+      if (CONFIG.mockMode) TotalStore.add(amount);
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    }
+
+    function verifyPayment(resp) {
+      /* Server confirms the transaction before we show the thank-you state */
+      fetch(CONFIG.verifyUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tx_ref: resp.tx_ref,
+          transaction_id: resp.transaction_id,
+          amount: state.amount,
+          currency: state.currency,
+          fund: 'general'
+        })
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('verify failed');
+          TotalStore.refresh();
+          finish(state.amount, state.currency);
+        })
+        .catch(function () {
+          setProcessing(false);
+          showError('We received your payment but couldn\u2019t confirm it just yet. Please email ' +
+            CONFIG.org.email + ' with reference ' + (resp.tx_ref || '') + ' and we\u2019ll make it right.');
+        });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (state.processing) return;
+      clearError();
+
+      if (state.custom) {
+        var v = Number(customInput.value);
+        if (customInput.value === '' || !isFinite(v) || v < CONFIG.minDonation) {
+          hint.textContent = 'Please enter at least ' + sym(state.currency) + CONFIG.minDonation + '.';
+          hint.hidden = false;
+          customInput.setAttribute('aria-invalid', 'true');
+          customInput.focus();
+          return;
+        }
+        state.amount = v;
+      }
+
+      setProcessing(true);
+
+      /* Mock mode: no Flutterwave, simulate success, bump the local total */
+      if (CONFIG.mockMode) {
+        window.setTimeout(function () { finish(state.amount, state.currency); }, 1200);
+        return;
+      }
+
+      if (typeof window.FlutterwaveCheckout !== 'function') {
+        setProcessing(false);
+        render();
+        showError("Payment couldn't be loaded. Please check your connection and try again.");
+        return;
+      }
+
+      var txRef = 'KF-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      var completed = false;
+      var modal;
+      try {
+        /* Note: swap in a real donor email field before production use */
+        modal = window.FlutterwaveCheckout({
+          public_key: CONFIG.publicKey,
+          tx_ref: txRef,
+          amount: state.amount,
+          currency: state.currency,
+          payment_options: 'card,banktransfer',
+          customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
+          customizations: { title: 'Wellspring', description: "Children's medical aid donation" },
+          callback: function (resp) {
+            completed = true;
+            try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
+            if (resp && resp.status === 'successful') {
+              verifyPayment(resp);
+            } else {
+              setProcessing(false);
+              render();
+              showError("Your payment didn't go through. Nothing was charged \u2014 please try again.");
+            }
+          },
+          onclose: function () {
+            if (!completed) { setProcessing(false); render(); }
+          }
+        });
+      } catch (err) {
+        setProcessing(false);
+        render();
+        showError('Something went wrong opening the payment window. Please try again.');
+      }
+    });
+
+    resetBtn.addEventListener('click', function () {
+      success.hidden = true;
+      form.hidden = false;
+      clearError();
+      hint.hidden = true;
+      customWrap.hidden = !state.custom;
+      render();
+      submitBtn.focus();
+    });
+
+    if (CONFIG.mockMode && mockNote) mockNote.hidden = false;
+    render();
+  }
+  initDonationWidget($('#donateWidget'));
+
+  /* ================================================================
+     SMOOTH SCROLL — Lenis, integrated with GSAP's ticker + ScrollTrigger
+     ================================================================ */
+  var hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+  var lenis = null;
+
+  if (!reducedMotion && typeof window.Lenis === 'function') {
+    lenis = new window.Lenis({ duration: 1.1, smoothWheel: true });
+    if (hasGsap) {
+      lenis.on('scroll', window.ScrollTrigger.update);
+      window.gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+      window.gsap.ticker.lagSmoothing(0);
+    } else {
+      var rafLoop = function (time) { lenis.raf(time); window.requestAnimationFrame(rafLoop); };
+      window.requestAnimationFrame(rafLoop);
+    }
+  }
+
+  /* in-page anchors route through Lenis (or smooth fallback) */
+  $$('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (a.classList.contains('skip-link')) return;
+      var id = a.getAttribute('href');
+      if (id.length < 2) return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -72 });
+      } else if (!reducedMotion) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        target.scrollIntoView();
+      }
+    });
+  });
+
+  /* placeholder links ("#") shouldn't jump the page */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href="#"]') : null;
+    if (a) e.preventDefault();
+  });
+
+  /* ================================================================
+     SCROLL REVEALS — GSAP + ScrollTrigger, with IO fallback.
+     Hero staggers as a group; article blocks each reveal on their
+     own trigger so a long story animates as you read it.
+     ================================================================ */
+  (function initReveals() {
+    var root = document.documentElement;
+
+    if (reducedMotion || (!hasGsap && !('IntersectionObserver' in window))) {
+      root.classList.add('anim-none');
+      return;
+    }
+
+    if (hasGsap) {
+      root.classList.add('anim-gsap');
+      try {
+        window.gsap.registerPlugin(window.ScrollTrigger);
+        window.gsap.set('.reveal', { opacity: 0, y: 26 });
+
+        /* hero group — 80ms stagger */
+        $$('[data-stagger]').forEach(function (group) {
+          window.gsap.to($$('.reveal', group), {
+            opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+            stagger: 0.08,
+            scrollTrigger: { trigger: group, start: 'top 85%', once: true }
+          });
+        });
+
+        /* everything else reveals individually as it enters view */
+        $$('.reveal').filter(function (el) {
+          return !el.closest('[data-stagger]');
+        }).forEach(function (el) {
+          window.gsap.to(el, {
+            opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          });
+        });
+
+        /* soft hero image parallax (matches the other pages) */
+        var heroImgEl = $('.post-hero-media img');
+        if (heroImgEl) {
+          window.gsap.fromTo(heroImgEl,
+            { yPercent: -6 },
+            { yPercent: 6, ease: 'none',
+              scrollTrigger: { trigger: '.post-hero', start: 'top top', end: 'bottom top', scrub: true } });
+        }
+
+        /* reading progress — 2px line along the header hairline */
+        if ($('#readProgress') && $('#postArticle') && !reducedMotion) {
+          window.gsap.to('#readProgress', {
+            width: '100%', ease: 'none',
+            scrollTrigger: { trigger: '#postArticle', start: 'top 64px', end: 'bottom 85%', scrub: true }
+          });
+        }
+
+        window.addEventListener('load', function () { window.ScrollTrigger.refresh(); });
+      } catch (err) {
+        root.classList.remove('anim-gsap');
+        root.classList.add('anim-none');
+      }
+      return;
+    }
+
+    /* fallback: vanilla IntersectionObserver, same 80ms stagger */
+    root.classList.add('anim-io');
+    var els = $$('.reveal');
+    $$('[data-stagger]').forEach(function (group) {
+      $$('.reveal', group).forEach(function (el, i) {
+        el.setAttribute('data-stagger-index', String(i));
+      });
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        var idx = Number(el.getAttribute('data-stagger-index') || 0);
+        window.setTimeout(function () { el.classList.add('is-visible'); }, idx * 80);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  /* ================================================================
+     MOBILE MENU
+     ================================================================ */
+  (function initMenu() {
+    var header = $('#siteHeader');
+    var menuBtn = $('#menuBtn');
+    if (!header || !menuBtn) return;
+    function close() {
+      header.classList.remove('menu-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    menuBtn.addEventListener('click', function () {
+      var open = header.classList.toggle('menu-open');
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+    $$('.mobile-panel a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && header.classList.contains('menu-open')) {
+        close();
+        menuBtn.focus();
+      }
+    });
+  })();
+
+  /* ================================================================
+     FLOATING DONATION BAR — appears after scrolling past the post hero
+     ================================================================ */
+  (function initFloatingBar() {
+    var bar = $('#donateBar');
+    var hero = $('.post-hero');
+    if (!bar || !hero || !('IntersectionObserver' in window)) return;
+    var dismissed = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var past = !en.isIntersecting && en.boundingClientRect.top < 0;
+        var show = past && !dismissed;
+        bar.classList.toggle('is-visible', show);
+        document.body.classList.toggle('bar-visible', show);
+      });
+    }, { threshold: 0 });
+    io.observe(hero);
+    var closeBtn = $('[data-bar-close]', bar);
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        dismissed = true;
+        bar.classList.remove('is-visible');
+        document.body.classList.remove('bar-visible');
+      });
+    }
+  })();
+
+})();
+</script>
+</body>
+</html>
