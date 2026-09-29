@@ -304,14 +304,36 @@ html.anim-io .reveal.is-visible{opacity:1;transform:none}
   padding:clamp(1.5rem,4vw,2.25rem);
   max-width:520px;margin:1rem auto 0;text-align:left;width:100%;
 }
-.widget-top{display:flex;justify-content:flex-end;margin-bottom:1.4rem}
-.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.widget-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(1,24,216,.02)}
 .seg-btn{
   border:0;background:transparent;border-radius:999px;cursor:pointer;
   padding:.4rem .95rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
   transition:background-color .2s ease,color .2s ease;
 }
 .seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.monthly-impact-note{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  margin-top:.85rem;
+  font-size:.82rem;
+  font-weight:500;
+  color:var(--muted);
+  background:rgba(27,86,253,.07);
+  border:1px solid rgba(27,86,253,.15);
+  border-radius:6px;
+  padding:.5rem .75rem;
+  animation:panelIn .25s var(--ease);
+}
+.monthly-impact-note .icon{color:var(--accent);flex:none}
 .chips{display:flex;flex-wrap:wrap;gap:.55rem}
 .chip{
   border:1px solid var(--line);background:var(--paper);border-radius:999px;cursor:pointer;
@@ -505,7 +527,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           <p class="progress-note"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
         </div>
         <div class="story-actions reveal">
-          <a class="btn btn-primary" href="#give">Give to Amira</a>
+          <a class="btn btn-primary" href="#give">Donate to Amira</a>
           <a class="link-arrow" href="#costs">See where the money goes
             <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
           </a>
@@ -583,7 +605,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         <div class="story-cta reveal">
           <h2>Help write Amira's next chapter.</h2>
           <div class="story-cta-actions">
-            <a class="btn btn-primary" href="#give">Give to Amira</a>
+            <a class="btn btn-primary" href="#give">Donate to Amira</a>
             <a class="link-arrow" href="index.html#how">How Wellspring works
               <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
             </a>
@@ -598,7 +620,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
   <section id="give" class="give">
     <div class="container give-grid" data-stagger>
       <div class="give-copy">
-        <p class="label reveal">Give to Amira</p>
+        <p class="label reveal">Donate to Amira</p>
         <h2 class="reveal">Every gift moves her closer.</h2>
         <p class="give-sub reveal">Last year, 98 cents of every dollar we received reached direct care. For Amira, that means every dollar above is a week earlier off the waiting bridge.</p>
         <div class="reveal">
@@ -618,12 +640,20 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       <div class="widget-card reveal" id="donateWidget">
         <form data-form novalidate>
           <div class="widget-top">
-            <div class="seg" role="group" aria-label="Currency">
+            <div class="seg seg-freq" role="group" aria-label="Deposit frequency">
+              <button type="button" class="seg-btn" data-freq="one_time" aria-pressed="true">One-time</button>
+              <button type="button" class="seg-btn" data-freq="monthly" aria-pressed="false">Monthly</button>
+            </div>
+            <div class="seg seg-curr" role="group" aria-label="Currency">
               <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
               <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
             </div>
           </div>
           <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+          <div class="monthly-impact-note" data-monthly-note hidden>
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Monthly recurring deposit · Sustaining Amira's care every month · Cancel anytime</span>
+          </div>
           <div class="custom-wrap" data-custom-wrap hidden>
             <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
             <div class="custom-field">
@@ -963,10 +993,12 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     var submitBtn = $('[data-submit]', root);
     var submitLabel = $('[data-submit-label]', root);
     var spinner = $('[data-spinner]', root);
-    var segBtns = $$('.seg-btn', root);
+    var currBtns = $$('[data-currency]', root);
+    var freqBtns = $$('[data-freq]', root);
+    var monthlyNote = $('[data-monthly-note]', root);
     var mockNote = $('[data-mock-note]', root);
 
-    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, processing: false };
+    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, frequency: 'one_time', processing: false };
 
     CONFIG.presets.forEach(function (p, i) {
       var b = document.createElement('button');
@@ -989,9 +1021,15 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     function fmtAmt(v, c) { return sym(c) + Number(v).toLocaleString('en-US'); }
 
     function render() {
-      segBtns.forEach(function (b) {
+      currBtns.forEach(function (b) {
         b.setAttribute('aria-pressed', String(b.getAttribute('data-currency') === state.currency));
       });
+      freqBtns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-freq') === state.frequency));
+      });
+      if (monthlyNote) {
+        monthlyNote.hidden = (state.frequency !== 'monthly');
+      }
       chips.forEach(function (ch) {
         if (ch.getAttribute('data-amount') === 'custom') {
           ch.setAttribute('aria-pressed', String(state.custom));
@@ -1001,22 +1039,33 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         }
       });
       symbolEl.textContent = sym(state.currency);
-      if (!state.processing) submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency);
+      if (!state.processing) {
+        var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+        submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
+      }
     }
 
     function setProcessing(on) {
       state.processing = on;
       submitBtn.disabled = on;
       spinner.hidden = !on;
-      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency);
+      var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
     }
 
     function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
     function clearError() { errorEl.hidden = true; }
 
-    segBtns.forEach(function (b) {
+    currBtns.forEach(function (b) {
       b.addEventListener('click', function () {
         state.currency = b.getAttribute('data-currency');
+        render();
+      });
+    });
+
+    freqBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.frequency = b.getAttribute('data-freq');
         render();
       });
     });
@@ -1050,12 +1099,12 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       render();
     });
 
-    function finish(amount, currency) {
+    function finish(amount, currency, frequency) {
       setProcessing(false);
-      successMsg.textContent =
-        'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to Amira\u2019s care team. ' +
-        'A confirmation will follow shortly.' +
-        (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
+      var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
+      successMsg.textContent = isMonthly
+        ? 'Thank you! Your recurring monthly gift of ' + fmtAmt(amount, currency) + ' is confirmed and will sustain Amira\u2019s care each month.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '')
+        : 'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to Amira\u2019s care team. A confirmation will follow shortly.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
       if (CONFIG.mockMode) TotalStore.add(amount);
       form.hidden = true;
       success.hidden = false;
@@ -1072,13 +1121,14 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           transaction_id: resp.transaction_id,
           amount: state.amount,
           currency: state.currency,
+          frequency: state.frequency,
           fund: 'amira'
         })
       })
         .then(function (res) {
           if (!res.ok) throw new Error('verify failed');
           TotalStore.refresh();
-          finish(state.amount, state.currency);
+          finish(state.amount, state.currency, state.frequency);
         })
         .catch(function () {
           setProcessing(false);
@@ -1119,7 +1169,14 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
             currency: state.currency,
             payment_options: 'card,banktransfer',
             customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
-            customizations: { title: 'Wellspring — Amira\u2019s fund', description: 'Bone marrow transplant fund' },
+            customizations: {
+              title: 'Wellspring — Amira\u2019s fund',
+              description: state.frequency === 'monthly' ? "Amira's monthly recurring care fund" : "Bone marrow transplant fund"
+            },
+            meta: {
+              frequency: state.frequency,
+              fund: 'amira'
+            },
             callback: function (resp) {
               completed = true;
               try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
@@ -1148,17 +1205,22 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         body: JSON.stringify({
           amount: state.amount,
           currency: state.currency,
+          frequency: state.frequency,
           tx_ref: txRef,
-          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef),
+          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef) + '&frequency=' + encodeURIComponent(state.frequency),
           customer: {
             email: 'donor@kitefoundation.org',
             name: 'Wellspring Donor'
           },
+          meta: {
+            frequency: state.frequency,
+            fund: 'amira'
+          },
           customizations: {
             title: 'Wellspring — Amira\u2019s fund',
+            description: state.frequency === 'monthly' ? "Amira's monthly recurring care fund" : "Bone marrow transplant fund",
             logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
-          },
-          meta: { fund: 'amira' }
+          }
         })
       })
         .then(function (res) { return res.json(); })
@@ -1175,7 +1237,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         })
         .catch(function () {
           if (CONFIG.mockMode) {
-            finish(state.amount, state.currency);
+            finish(state.amount, state.currency, state.frequency);
           } else {
             setProcessing(false);
             render();

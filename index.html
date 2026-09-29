@@ -321,7 +321,80 @@ html.anim-io .reveal.is-visible{opacity:1;transform:none}
 .amira-media{position:relative;z-index:0;aspect-ratio:4/5;width:min(100%,300px);margin-inline:auto}
 .amira-media img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius)}
 .amira h2{max-width:22ch}
-.amira-teaser{max-width:50ch;color:var(--muted);margin-top:1.4rem}
+.amira-story{max-width:54ch;color:var(--muted);margin-top:1.25rem;font-size:1.02rem;line-height:1.75}
+.amira-story p{margin-top:1rem}
+.amira-story p:first-child{margin-top:0}
+.amira-quote-highlight{
+  font-family:var(--serif);
+  font-size:1.5rem;
+  line-height:1.3;
+  color:var(--ink);
+  font-style:italic;
+  margin-block:1.1rem!important;
+  padding-left:1rem;
+  border-left:2px solid var(--accent);
+}
+.amira-story-toggle-wrap{margin-top:1.35rem;display:flex;align-items:center}
+.story-toggle-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.65rem;
+  background:rgba(1,24,216,.06);
+  border:1px solid var(--line);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:.88rem;
+  font-weight:600;
+  padding:.45rem .95rem .45rem 1.1rem;
+  border-radius:999px;
+  cursor:pointer;
+  transition:background .25s ease,border-color .25s ease,transform .2s ease,box-shadow .25s ease;
+}
+.story-toggle-btn:hover{
+  background:rgba(27,86,253,.12);
+  border-color:var(--accent);
+  transform:translateY(-1px);
+}
+.story-toggle-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--paper);
+  color:var(--accent);
+  transition:transform .4s var(--ease),background .25s ease,color .25s ease;
+}
+.story-toggle-btn[aria-expanded="true"] .story-toggle-badge{
+  transform:rotate(180deg);
+  background:var(--accent);
+  color:var(--paper);
+}
+.story-toggle-btn[aria-expanded="true"]{
+  background:rgba(1,24,216,.1);
+}
+.amira-story-expandable{
+  display:grid;
+  grid-template-rows:0fr;
+  opacity:0;
+  transition:grid-template-rows .65s var(--ease),opacity .45s ease,margin-top .35s ease;
+  overflow:hidden;
+  margin-top:0;
+}
+.amira-story-expandable.is-expanded{
+  grid-template-rows:1fr;
+  opacity:1;
+  margin-top:1.25rem;
+}
+.amira-story-content{min-height:0}
+.amira-emphasis{font-weight:600;color:var(--ink);margin-block:1.1rem!important}
+.amira-story-list{margin:1rem 0;padding-left:1.2rem;list-style:none}
+.amira-story-list li{position:relative;padding-left:.85rem;margin-top:.45rem;color:var(--ink);font-weight:500}
+.amira-story-list li::before{
+  content:"";position:absolute;left:0;top:.68em;width:5px;height:5px;border-radius:50%;background:var(--accent);
+}
+.amira-closing-call{font-family:var(--serif);font-size:1.35rem;color:var(--ink);margin-top:1.5rem!important}
 .amira-progress{margin-top:2rem;max-width:440px}
 .progress-note{margin-top:.65rem;font-size:.9rem;color:var(--muted)}
 .progress-note strong{color:var(--ink);font-variant-numeric:tabular-nums}
@@ -363,14 +436,36 @@ html.anim-io .reveal.is-visible{opacity:1;transform:none}
   padding:clamp(1.5rem,4vw,2.25rem);
   max-width:520px;margin:3rem auto 0;text-align:left;
 }
-.widget-top{display:flex;justify-content:flex-end;margin-bottom:1.4rem}
-.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.widget-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(1,24,216,.02)}
 .seg-btn{
   border:0;background:transparent;border-radius:999px;cursor:pointer;
   padding:.4rem .95rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
   transition:background-color .2s ease,color .2s ease;
 }
 .seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.monthly-impact-note{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  margin-top:.85rem;
+  font-size:.82rem;
+  font-weight:500;
+  color:var(--muted);
+  background:rgba(27,86,253,.07);
+  border:1px solid rgba(27,86,253,.15);
+  border-radius:6px;
+  padding:.5rem .75rem;
+  animation:panelIn .25s var(--ease);
+}
+.monthly-impact-note .icon{color:var(--accent);flex:none}
 .chips{display:flex;flex-wrap:wrap;gap:.55rem}
 .chip{
   border:1px solid var(--line);background:var(--paper);border-radius:999px;cursor:pointer;
@@ -698,8 +793,69 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       </figure>
       <div class="amira-copy" data-stagger>
         <p class="label reveal">Featured story</p>
-        <h2 class="reveal">Amira is seven. She needs a bone marrow transplant.</h2>
-        <p class="amira-teaser reveal">Amira's days are spent between a hospital ward and her bedroom window, waiting for a match that may not come in time. Her doctors know exactly what she needs — a bone marrow transplant — and her family has already sold what they can to get her there. What's missing is $250,000, and the people willing to help.</p>
+        <h2 class="reveal">Am I gonna die?</h2>
+        <div class="amira-story reveal">
+          <div class="amira-story-preview">
+            <p>Amira would always ask the doctor that.</p>
+            <p>Her eyes filled with tears. Her little voice would shake as she waited for an answer no child should ever have to hear.</p>
+            <p class="amira-quote-highlight">“Am I gonna die?”</p>
+            <p>She is only seven years old.</p>
+            <p>While other children her age are supposed to be worrying about school, cartoons, birthday parties, and what they want to be when they grow up, Amira is spending her days between hospital rooms, doctors, tests, and waiting.</p>
+          </div>
+
+          <div class="amira-story-toggle-wrap">
+            <button type="button" class="story-toggle-btn" id="amiraStoryToggle" aria-expanded="false" aria-controls="amiraStoryExtended">
+              <span class="story-toggle-label">Read full story</span>
+              <span class="story-toggle-badge">
+                <svg class="story-toggle-icon" width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+          <div class="amira-story-expandable" id="amiraStoryExtended" aria-hidden="true">
+            <div class="amira-story-content">
+              <p>Waiting for a match.</p>
+              <p>Waiting for the phone to ring.</p>
+              <p>Waiting for someone to tell her that her life can finally begin again.</p>
+              <p>Amira needs a bone marrow transplant.</p>
+              <p>Her doctors know what she needs. Her family knows what she needs. But knowing the treatment is possible doesn't make the waiting any easier.</p>
+              <p>Every day that passes is another day her family has to watch their little girl fight something she never asked for.</p>
+              <p>And every night, there is the same terrifying question hanging over them:</p>
+              <p class="amira-emphasis">Will we find the help she needs in time?</p>
+              <p>Her family has already sold what they could and done everything within their power to keep her going. They have raised $12,480 toward the $250,000 needed for her treatment and care.</p>
+              <p>But they are still far from the finish line.</p>
+              <p>And that's where we come in.</p>
+              <p>You don't have to know Amira personally to care about what happens to her.</p>
+              <p>You don't have to be a doctor.</p>
+              <p>You don't have to have thousands of dollars.</p>
+              <p>You just have to be someone who believes that a seven-year-old child deserves the chance to grow up.</p>
+              <ul class="amira-story-list">
+                <li>To go to school.</li>
+                <li>To laugh with her friends.</li>
+                <li>To annoy her parents.</li>
+                <li>To have her first crush.</li>
+                <li>To graduate.</li>
+                <li>To become whoever she dreams of becoming.</li>
+              </ul>
+              <p class="amira-emphasis">She deserves to have a future.</p>
+              <p>Imagine being seven years old and asking whether you're going to die.</p>
+              <p>Now imagine being her parent and having to hear that question.</p>
+              <p>What would you do if she were your daughter?</p>
+              <p>You would probably do anything.</p>
+              <p>Today, you have the opportunity to do something too.</p>
+              <p>Your donation could help Amira's family get closer to the treatment she desperately needs. Even if you cannot give much, your contribution can be part of the support that keeps her moving forward.</p>
+              <p>And if you can't donate, you can still help.</p>
+              <p>Share Amira's story.</p>
+              <p>Send it to someone who might be able to help.</p>
+              <p>Because somewhere out there, there may be a person who can make a difference in Amira's life.</p>
+              <p>She is not asking for a perfect life.</p>
+              <p>She is asking for the chance to have one.</p>
+              <p class="amira-closing-call">Please help us give Amira that chance.</p>
+            </div>
+          </div>
+        </div>
         <div class="amira-progress reveal">
           <div class="progress" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Amira's transplant fund progress">
             <span class="progress-fill" data-progress></span>
@@ -707,7 +863,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           <p class="progress-note"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
         </div>
         <div class="amira-actions reveal">
-          <a class="btn btn-primary" href="#donate">Give to Amira</a>
+          <a class="btn btn-primary" href="#donate">Donate to Amira</a>
           <a class="link-arrow" href="/amira">Read Amira's story
             <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
           </a>
@@ -755,12 +911,20 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       <div class="widget-card reveal" id="donateWidget">
         <form data-form novalidate>
           <div class="widget-top">
-            <div class="seg" role="group" aria-label="Currency">
+            <div class="seg seg-freq" role="group" aria-label="Deposit frequency">
+              <button type="button" class="seg-btn" data-freq="one_time" aria-pressed="true">One-time</button>
+              <button type="button" class="seg-btn" data-freq="monthly" aria-pressed="false">Monthly</button>
+            </div>
+            <div class="seg seg-curr" role="group" aria-label="Currency">
               <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
               <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
             </div>
           </div>
           <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+          <div class="monthly-impact-note" data-monthly-note hidden>
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Monthly recurring deposit · Sustaining direct care every month · Cancel anytime</span>
+          </div>
           <div class="custom-wrap" data-custom-wrap hidden>
             <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
             <div class="custom-field">
@@ -1182,10 +1346,12 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     var submitBtn = $('[data-submit]', root);
     var submitLabel = $('[data-submit-label]', root);
     var spinner = $('[data-spinner]', root);
-    var segBtns = $$('.seg-btn', root);
+    var currBtns = $$('[data-currency]', root);
+    var freqBtns = $$('[data-freq]', root);
+    var monthlyNote = $('[data-monthly-note]', root);
     var mockNote = $('[data-mock-note]', root);
 
-    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, processing: false };
+    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, frequency: 'one_time', processing: false };
 
     CONFIG.presets.forEach(function (p, i) {
       var b = document.createElement('button');
@@ -1208,9 +1374,15 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     function fmtAmt(v, c) { return sym(c) + Number(v).toLocaleString('en-US'); }
 
     function render() {
-      segBtns.forEach(function (b) {
+      currBtns.forEach(function (b) {
         b.setAttribute('aria-pressed', String(b.getAttribute('data-currency') === state.currency));
       });
+      freqBtns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-freq') === state.frequency));
+      });
+      if (monthlyNote) {
+        monthlyNote.hidden = (state.frequency !== 'monthly');
+      }
       chips.forEach(function (ch) {
         if (ch.getAttribute('data-amount') === 'custom') {
           ch.setAttribute('aria-pressed', String(state.custom));
@@ -1220,22 +1392,33 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         }
       });
       symbolEl.textContent = sym(state.currency);
-      if (!state.processing) submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency);
+      if (!state.processing) {
+        var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+        submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
+      }
     }
 
     function setProcessing(on) {
       state.processing = on;
       submitBtn.disabled = on;
       spinner.hidden = !on;
-      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency);
+      var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
     }
 
     function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
     function clearError() { errorEl.hidden = true; }
 
-    segBtns.forEach(function (b) {
+    currBtns.forEach(function (b) {
       b.addEventListener('click', function () {
         state.currency = b.getAttribute('data-currency');
+        render();
+      });
+    });
+
+    freqBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.frequency = b.getAttribute('data-freq');
         render();
       });
     });
@@ -1269,12 +1452,12 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       render();
     });
 
-    function finish(amount, currency) {
+    function finish(amount, currency, frequency) {
       setProcessing(false);
-      successMsg.textContent =
-        'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to a child who needs it. ' +
-        'A confirmation will follow shortly.' +
-        (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
+      var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
+      successMsg.textContent = isMonthly
+        ? 'Thank you! Your recurring monthly gift of ' + fmtAmt(amount, currency) + ' is confirmed and will sustain care each month.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '')
+        : 'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to a child who needs it. A confirmation will follow shortly.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
       if (CONFIG.mockMode) TotalStore.add(amount);
       form.hidden = true;
       success.hidden = false;
@@ -1290,13 +1473,15 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           tx_ref: resp.tx_ref,
           transaction_id: resp.transaction_id,
           amount: state.amount,
-          currency: state.currency
+          currency: state.currency,
+          frequency: state.frequency,
+          fund: 'general'
         })
       })
         .then(function (res) {
           if (!res.ok) throw new Error('verify failed');
           TotalStore.refresh();
-          finish(state.amount, state.currency);
+          finish(state.amount, state.currency, state.frequency);
         })
         .catch(function () {
           setProcessing(false);
@@ -1337,7 +1522,13 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
             currency: state.currency,
             payment_options: 'card,banktransfer',
             customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
-            customizations: { title: 'Wellspring', description: "Children's medical aid donation" },
+            customizations: {
+              title: 'Wellspring',
+              description: state.frequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation"
+            },
+            meta: {
+              frequency: state.frequency
+            },
             callback: function (resp) {
               completed = true;
               try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
@@ -1366,14 +1557,19 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         body: JSON.stringify({
           amount: state.amount,
           currency: state.currency,
+          frequency: state.frequency,
           tx_ref: txRef,
-          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef),
+          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef) + '&frequency=' + encodeURIComponent(state.frequency),
           customer: {
             email: 'donor@kitefoundation.org',
             name: 'Wellspring Donor'
           },
+          meta: {
+            frequency: state.frequency
+          },
           customizations: {
             title: 'Wellspring',
+            description: state.frequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation",
             logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
           }
         })
@@ -1392,7 +1588,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         })
         .catch(function () {
           if (CONFIG.mockMode) {
-            finish(state.amount, state.currency);
+            finish(state.amount, state.currency, state.frequency);
           } else {
             setProcessing(false);
             render();
@@ -1455,6 +1651,33 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
   })();
 
   initDonationWidget($('#donateWidget'));
+
+  /* ================================================================
+     AMIRA STORY EXPAND / COLLAPSE
+     ================================================================ */
+  (function initAmiraStory() {
+    var toggleBtn = $('#amiraStoryToggle');
+    var extended = $('#amiraStoryExtended');
+    if (!toggleBtn || !extended) return;
+
+    var isExpanded = false;
+    var label = toggleBtn.querySelector('.story-toggle-label');
+
+    toggleBtn.addEventListener('click', function () {
+      isExpanded = !isExpanded;
+      toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+      extended.setAttribute('aria-hidden', String(!isExpanded));
+      extended.classList.toggle('is-expanded', isExpanded);
+      if (label) {
+        label.textContent = isExpanded ? 'Show less' : 'Read full story';
+      }
+      if (typeof window.ScrollTrigger !== 'undefined') {
+        window.setTimeout(function () {
+          window.ScrollTrigger.refresh();
+        }, 400);
+      }
+    });
+  })();
 
   /* ================================================================
      NEWSLETTER — POSTs to CONFIG.newsletterUrl when set,

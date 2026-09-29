@@ -444,6 +444,7 @@ async function handleFlutterwavePayment(req: Request, res: Response) {
     const {
       amount,
       currency = 'USD',
+      frequency = 'one_time',
       tx_ref,
       redirect_url,
       customer,
@@ -462,6 +463,7 @@ async function handleFlutterwavePayment(req: Request, res: Response) {
     const cleanPhone = (customer?.phone_number || '').trim() || undefined;
     const finalTxRef = tx_ref || `KF-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     const normalizedCurrency = String(currency || 'USD').toUpperCase();
+    const normalizedFrequency = (frequency === 'monthly' || meta?.frequency === 'monthly') ? 'monthly' : 'one_time';
 
     // Insert pending donation record in Supabase
     let donationId = `flw_${Date.now()}`;
@@ -473,7 +475,7 @@ async function handleFlutterwavePayment(req: Request, res: Response) {
           donor_email: cleanEmail,
           amount: parsedAmount,
           currency: normalizedCurrency,
-          frequency: 'one_time',
+          frequency: normalizedFrequency,
           paystack_reference: finalTxRef,
           status: 'pending',
           is_anonymous: !cleanName
@@ -493,7 +495,7 @@ async function handleFlutterwavePayment(req: Request, res: Response) {
       const origin = req.headers.origin || `${req.protocol}://${req.get('host')}`;
       const defaultRedirect = `${origin}/amira?status=successful`;
 
-      const flwPayload = {
+      const flwPayload: Record<string, any> = {
         tx_ref: finalTxRef,
         amount: parsedAmount,
         currency: normalizedCurrency,
@@ -505,10 +507,14 @@ async function handleFlutterwavePayment(req: Request, res: Response) {
         },
         customizations: customizations || {
           title: 'Wellspring',
+          description: normalizedFrequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation",
           logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
         },
         payment_options: payment_options || 'card, ussd, banktransfer',
-        meta: meta || {}
+        meta: {
+          ...(meta || {}),
+          frequency: normalizedFrequency
+        }
       };
 
       const flwRes = await fetch('https://api.flutterwave.com/v3/payments', {
@@ -890,7 +896,13 @@ async function handleVerifyByReference(req: Request, res: Response) {
           .select();
 
         const don = updated?.[0];
+        const passedFrequency = (req.body?.frequency || req.query?.frequency || transactionData.meta?.frequency || don?.frequency || 'one_time') === 'monthly' ? 'monthly' : 'one_time';
+        
         if (don) {
+          if (passedFrequency !== don.frequency) {
+            await supabase.from('donations').update({ frequency: passedFrequency }).eq('id', don.id);
+            don.frequency = passedFrequency;
+          }
           broadcastDonationEvent({
             id: don.id,
             donor_name: don.is_anonymous ? 'A generous supporter' : (don.donor_name || 'A generous supporter'),
@@ -911,7 +923,7 @@ async function handleVerifyByReference(req: Request, res: Response) {
             donor_email: donorEmail,
             amount: finalAmount,
             currency: finalCurrency,
-            frequency: 'one_time',
+            frequency: passedFrequency,
             paystack_reference: txRef,
             status: 'success',
             is_anonymous: false
@@ -922,7 +934,7 @@ async function handleVerifyByReference(req: Request, res: Response) {
             donor_name: donorName,
             amount: finalAmount,
             currency: finalCurrency,
-            frequency: 'one_time',
+            frequency: passedFrequency,
             paystack_reference: txRef
           });
         }

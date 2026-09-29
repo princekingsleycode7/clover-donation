@@ -266,14 +266,36 @@ html.anim-io .reveal.is-visible{opacity:1;transform:none}
   padding:clamp(1.5rem,4vw,2.25rem);
   max-width:520px;margin:1rem auto 0;text-align:left;width:100%;
 }
-.widget-top{display:flex;justify-content:flex-end;margin-bottom:1.4rem}
-.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.widget-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(1,24,216,.02)}
 .seg-btn{
   border:0;background:transparent;border-radius:999px;cursor:pointer;
   padding:.4rem .95rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
   transition:background-color .2s ease,color .2s ease;
 }
 .seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.monthly-impact-note{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  margin-top:.85rem;
+  font-size:.82rem;
+  font-weight:500;
+  color:var(--muted);
+  background:rgba(27,86,253,.07);
+  border:1px solid rgba(27,86,253,.15);
+  border-radius:6px;
+  padding:.5rem .75rem;
+  animation:panelIn .25s var(--ease);
+}
+.monthly-impact-note .icon{color:var(--accent);flex:none}
 .chips{display:flex;flex-wrap:wrap;gap:.55rem}
 .chip{
   border:1px solid var(--line);background:var(--paper);border-radius:999px;cursor:pointer;
@@ -508,12 +530,20 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       <div class="widget-card reveal" id="donateWidget">
         <form data-form novalidate>
           <div class="widget-top">
-            <div class="seg" role="group" aria-label="Currency">
+            <div class="seg seg-freq" role="group" aria-label="Deposit frequency">
+              <button type="button" class="seg-btn" data-freq="one_time" aria-pressed="true">One-time</button>
+              <button type="button" class="seg-btn" data-freq="monthly" aria-pressed="false">Monthly</button>
+            </div>
+            <div class="seg seg-curr" role="group" aria-label="Currency">
               <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
               <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
             </div>
           </div>
           <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+          <div class="monthly-impact-note" data-monthly-note hidden>
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Monthly recurring deposit · Sustaining direct care every month · Cancel anytime</span>
+          </div>
           <div class="custom-wrap" data-custom-wrap hidden>
             <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
             <div class="custom-field">
@@ -978,10 +1008,12 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     var submitBtn = $('[data-submit]', root);
     var submitLabel = $('[data-submit-label]', root);
     var spinner = $('[data-spinner]', root);
-    var segBtns = $$('.seg-btn', root);
+    var currBtns = $$('[data-currency]', root);
+    var freqBtns = $$('[data-freq]', root);
+    var monthlyNote = $('[data-monthly-note]', root);
     var mockNote = $('[data-mock-note]', root);
 
-    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, processing: false };
+    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, frequency: 'one_time', processing: false };
 
     CONFIG.presets.forEach(function (p, i) {
       var b = document.createElement('button');
@@ -1004,9 +1036,15 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     function fmtAmt(v, c) { return sym(c) + Number(v).toLocaleString('en-US'); }
 
     function render() {
-      segBtns.forEach(function (b) {
+      currBtns.forEach(function (b) {
         b.setAttribute('aria-pressed', String(b.getAttribute('data-currency') === state.currency));
       });
+      freqBtns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-freq') === state.frequency));
+      });
+      if (monthlyNote) {
+        monthlyNote.hidden = (state.frequency !== 'monthly');
+      }
       chips.forEach(function (ch) {
         if (ch.getAttribute('data-amount') === 'custom') {
           ch.setAttribute('aria-pressed', String(state.custom));
@@ -1016,22 +1054,33 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         }
       });
       symbolEl.textContent = sym(state.currency);
-      if (!state.processing) submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency);
+      if (!state.processing) {
+        var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+        submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
+      }
     }
 
     function setProcessing(on) {
       state.processing = on;
       submitBtn.disabled = on;
       spinner.hidden = !on;
-      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency);
+      var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
     }
 
     function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
     function clearError() { errorEl.hidden = true; }
 
-    segBtns.forEach(function (b) {
+    currBtns.forEach(function (b) {
       b.addEventListener('click', function () {
         state.currency = b.getAttribute('data-currency');
+        render();
+      });
+    });
+
+    freqBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.frequency = b.getAttribute('data-freq');
         render();
       });
     });
@@ -1065,12 +1114,12 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       render();
     });
 
-    function finish(amount, currency) {
+    function finish(amount, currency, frequency) {
       setProcessing(false);
-      successMsg.textContent =
-        'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to a child who needs it. ' +
-        'A confirmation will follow shortly.' +
-        (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
+      var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
+      successMsg.textContent = isMonthly
+        ? 'Thank you! Your recurring monthly gift of ' + fmtAmt(amount, currency) + ' is confirmed and will sustain care each month.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '')
+        : 'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to a child who needs it. A confirmation will follow shortly.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
       if (CONFIG.mockMode) TotalStore.add(amount);
       form.hidden = true;
       success.hidden = false;
@@ -1087,13 +1136,14 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           transaction_id: resp.transaction_id,
           amount: state.amount,
           currency: state.currency,
+          frequency: state.frequency,
           fund: 'general'
         })
       })
         .then(function (res) {
           if (!res.ok) throw new Error('verify failed');
           TotalStore.refresh();
-          finish(state.amount, state.currency);
+          finish(state.amount, state.currency, state.frequency);
         })
         .catch(function () {
           setProcessing(false);
@@ -1121,52 +1171,92 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
 
       setProcessing(true);
 
-      /* Mock mode: no Flutterwave, simulate success, bump the local total */
-      if (CONFIG.mockMode) {
-        window.setTimeout(function () { finish(state.amount, state.currency); }, 1200);
-        return;
-      }
-
-      if (typeof window.FlutterwaveCheckout !== 'function') {
-        setProcessing(false);
-        render();
-        showError("Payment couldn't be loaded. Please check your connection and try again.");
-        return;
-      }
-
       var txRef = 'KF-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
       var completed = false;
-      var modal;
-      try {
-        /* Note: swap in a real donor email field before production use */
-        modal = window.FlutterwaveCheckout({
-          public_key: CONFIG.publicKey,
-          tx_ref: txRef,
+
+      // 1. If inline checkout modal is available with configured key:
+      if (typeof window.FlutterwaveCheckout === 'function' && CONFIG.publicKey && !CONFIG.publicKey.includes('REPLACE')) {
+        try {
+          var modal = window.FlutterwaveCheckout({
+            public_key: CONFIG.publicKey,
+            tx_ref: txRef,
+            amount: state.amount,
+            currency: state.currency,
+            payment_options: 'card,banktransfer',
+            customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
+            customizations: {
+              title: 'Wellspring',
+              description: state.frequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation"
+            },
+            meta: {
+              frequency: state.frequency
+            },
+            callback: function (resp) {
+              completed = true;
+              try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
+              if (resp && (resp.status === 'successful' || resp.status === 'completed')) {
+                verifyPayment(resp);
+              } else {
+                setProcessing(false);
+                render();
+                showError("Your payment didn't go through. Nothing was charged \u2014 please try again.");
+              }
+            },
+            onclose: function () {
+              if (!completed) { setProcessing(false); render(); }
+            }
+          });
+          return;
+        } catch (err) {
+          /* Fall through to Standard API */
+        }
+      }
+
+      // 2. Standard API Checkout (POST /api/payments)
+      fetch('/api/payments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           amount: state.amount,
           currency: state.currency,
-          payment_options: 'card,banktransfer',
-          customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
-          customizations: { title: 'Wellspring', description: "Children's medical aid donation" },
-          callback: function (resp) {
-            completed = true;
-            try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
-            if (resp && resp.status === 'successful') {
-              verifyPayment(resp);
-            } else {
-              setProcessing(false);
-              render();
-              showError("Your payment didn't go through. Nothing was charged \u2014 please try again.");
-            }
+          frequency: state.frequency,
+          tx_ref: txRef,
+          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef) + '&frequency=' + encodeURIComponent(state.frequency),
+          customer: {
+            email: 'donor@kitefoundation.org',
+            name: 'Wellspring Donor'
           },
-          onclose: function () {
-            if (!completed) { setProcessing(false); render(); }
+          meta: {
+            frequency: state.frequency
+          },
+          customizations: {
+            title: 'Wellspring',
+            description: state.frequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation",
+            logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
+          }
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.data && data.data.link) {
+            if (data.message && data.message.includes('Simulated')) {
+              verifyPayment({ tx_ref: txRef, transaction_id: 'demo_' + Date.now() });
+            } else {
+              window.location.href = data.data.link;
+            }
+          } else {
+            verifyPayment({ tx_ref: txRef });
+          }
+        })
+        .catch(function () {
+          if (CONFIG.mockMode) {
+            finish(state.amount, state.currency, state.frequency);
+          } else {
+            setProcessing(false);
+            render();
+            showError("Unable to initialize secure checkout. Please check your connection and try again.");
           }
         });
-      } catch (err) {
-        setProcessing(false);
-        render();
-        showError('Something went wrong opening the payment window. Please try again.');
-      }
     });
 
     resetBtn.addEventListener('click', function () {
