@@ -13,6 +13,10 @@
     { "source": "/version2", "destination": "/version2.html" },
     { "source": "/v2", "destination": "/version2.html" },
     { "source": "/amira", "destination": "/amira.html" },
+    { "source": "/blog", "destination": "/blog.html" },
+    { "source": "/blog/(.*)", "destination": "/blog.html?post=$1" },
+    { "source": "/stories", "destination": "/blog.html" },
+    { "source": "/stories/(.*)", "destination": "/blog.html?post=$1" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/history", "destination": "/history.html" }
   ]

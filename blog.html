@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#FFF8F8">
 <title>Stories &amp; updates — Wellspring</title>
 <meta name="description" content="Stories from the ground: the children, families and programs your support makes possible.">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="shortcut icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -482,6 +485,58 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     <div class="container post-nav-grid" id="postNav"></div>
   </nav>
 
+  <!-- ============ GIVE SECTION ============ -->
+  <section id="give" class="give">
+    <div class="container give-grid" data-stagger>
+      <div class="give-copy">
+        <p class="label reveal">Support our children</p>
+        <h2 class="reveal">Every gift brings real hope and care.</h2>
+        <p class="give-sub reveal">Direct, verified medical support for children facing critical treatments and long hospital stays. 100% transparent and accountable.</p>
+        <div class="reveal">
+          <div class="progress" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Campaign fund progress">
+            <span class="progress-fill" data-progress></span>
+          </div>
+          <p class="progress-note" style="margin-top:0.75rem;font-size:0.9rem;color:var(--muted);"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+        </div>
+        <p class="give-trust reveal">
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-lock"/></svg>
+          Direct care funding for hospital treatments and family aid. You'll receive a full verified impact update within 30 days.
+        </p>
+      </div>
+
+      <!-- Reusable widget -->
+      <div class="widget-card reveal" id="donateWidget">
+        <form data-form novalidate>
+          <div class="widget-top">
+            <div class="seg" role="group" aria-label="Currency">
+              <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
+              <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
+            </div>
+          </div>
+          <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+          <div class="custom-wrap" data-custom-wrap hidden>
+            <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
+            <div class="custom-field">
+              <span class="custom-symbol" data-symbol aria-hidden="true">$</span>
+              <input id="customAmount" name="customAmount" type="number" inputmode="numeric" min="5" step="1" placeholder="Enter amount" autocomplete="off">
+            </div>
+            <p class="field-hint" data-hint aria-live="polite" hidden>Please enter at least $5.</p>
+          </div>
+          <p class="widget-error" data-error role="alert" hidden></p>
+          <button class="btn btn-primary btn-block" type="submit" data-submit>
+            <span class="spinner" data-spinner hidden aria-hidden="true"></span>
+            <span data-submit-label>Donate $25</span>
+          </button>
+        </form>
+        <div class="widget-success" data-success tabindex="-1" hidden>
+          <svg class="success-icon" width="46" height="46" aria-hidden="true"><use href="#i-check"/></svg>
+          <h3 class="success-title">Thank you.</h3>
+          <p data-success-msg></p>
+          <button type="button" class="link-arrow" data-reset>Make another gift</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </main>
 
@@ -654,11 +709,38 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
 
   function getParam(name) {
     try {
-      return new URLSearchParams(window.location.search).get(name);
+      var search = window.location.search;
+      if (search) {
+        var val = new URLSearchParams(search).get(name) || new URLSearchParams(search).get('slug') || new URLSearchParams(search).get('story');
+        if (val) return val.toLowerCase();
+      }
     } catch (e) {
       var m = window.location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
-      return m ? decodeURIComponent(m[1]) : null;
+      if (m) return decodeURIComponent(m[1]).toLowerCase();
     }
+
+    // Also support pathnames like /blog/mia, /blog/renley, /blog/toys
+    try {
+      var pathParts = window.location.pathname.split('/').filter(Boolean);
+      if (pathParts.length > 0) {
+        var lastPart = pathParts[pathParts.length - 1].replace(/\.html$/, '').toLowerCase();
+        for (var i = 0; i < CONFIG.posts.length; i++) {
+          if (CONFIG.posts[i].slug === lastPart) return lastPart;
+        }
+      }
+    } catch (e) {}
+
+    // Also support hash like #mia, #renley, #toys
+    try {
+      var hash = (window.location.hash || '').replace(/^#/, '').toLowerCase();
+      if (hash) {
+        for (var j = 0; j < CONFIG.posts.length; j++) {
+          if (CONFIG.posts[j].slug === hash) return hash;
+        }
+      }
+    } catch (e) {}
+
+    return null;
   }
 
   /* ---------- small content injections ---------- */
@@ -695,7 +777,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     return el;
   }
 
-  (function renderPost() {
+  function renderPost() {
     var wanted = getParam('post') || CONFIG.forceSlug || '';
     var idx = 0;
     CONFIG.posts.forEach(function (p, i) { if (p.slug === wanted) idx = i; });
@@ -726,6 +808,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     /* article body */
     var body = $('#postBody');
     if (body) {
+      body.innerHTML = '';
       post.blocks.forEach(function (b) { body.appendChild(blockNode(b)); });
     }
 
@@ -747,7 +830,21 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           '</div>';
       }).join('');
     }
-  })();
+  }
+
+  renderPost();
+
+  window.addEventListener('popstate', function () {
+    renderPost();
+    if (typeof window.ScrollTrigger !== 'undefined') window.ScrollTrigger.refresh();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  window.addEventListener('hashchange', function () {
+    renderPost();
+    if (typeof window.ScrollTrigger !== 'undefined') window.ScrollTrigger.refresh();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   /* ================================================================
      TOTAL STORE — fetched + polled; bars arm on view, count-up once

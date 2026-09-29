@@ -1660,6 +1660,25 @@ app.get('/v2', (_req: Request, res: Response) => {
 app.get('/amira', (_req: Request, res: Response) => {
   res.redirect('/amira.html');
 });
+app.get('/blog', (req: Request, res: Response) => {
+  const query = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+  res.redirect(`/blog.html${query}`);
+});
+app.get('/blog/:slug', (req: Request, res: Response) => {
+  const slug = req.params.slug;
+  if (slug.endsWith('.html')) {
+    return res.redirect(`/blog.html`);
+  }
+  res.redirect(`/blog.html?post=${encodeURIComponent(slug)}`);
+});
+app.get('/stories', (req: Request, res: Response) => {
+  const query = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+  res.redirect(`/blog.html${query}`);
+});
+app.get('/stories/:slug', (req: Request, res: Response) => {
+  const slug = req.params.slug;
+  res.redirect(`/blog.html?post=${encodeURIComponent(slug)}`);
+});
 
 // ----------------------------------------------------------------------------
 // VITE INTEGRATION & SERVER STARTUP

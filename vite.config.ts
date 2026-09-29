@@ -49,6 +49,7 @@ export default defineConfig(() => {
           history: path.resolve(__dirname, 'history.html'),
           version2: path.resolve(__dirname, 'version2.html'),
           amira: path.resolve(__dirname, 'amira.html'),
+          blog: path.resolve(__dirname, 'blog.html'),
         },
       },
     },
