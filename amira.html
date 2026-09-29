@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFF8F8">
+<title>Amira's story — Wellspring</title>
+<meta name="description" content="Amira is seven. She needs a bone marrow transplant that costs $250,000. Here is her story — and how your gift gets her there.">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="shortcut icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:rgb(1,24,216);
+  --accent:rgb(27,86,253);
+  --cream:rgb(233,223,195);
+  --paper:rgb(255,248,248);
+
+  --muted:rgba(1,24,216,.72);
+  --line:rgba(1,24,216,.16);
+  --line-strong:rgba(1,24,216,.34);
+  --accent-soft:rgba(27,86,253,.08);
+  --paper-muted:rgba(255,248,248,.75);
+
+  --hairline:1px solid var(--line);
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+
+  --maxw:1120px;
+  --pad-x:clamp(1.25rem,5vw,2.5rem);
+  --section-y:clamp(4.5rem,9vw,9.5rem);
+  --radius:8px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+/* ============ BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.7;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+img{max-width:100%;display:block}
+h1,h2,h3,p,figure,dl,dd,dt,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+::selection{background:var(--accent);color:var(--paper)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.img-placeholder{background:var(--accent-soft)}
+.icon{display:inline-block;vertical-align:middle;flex:none}
+
+.container{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad-x)}
+.section{padding-block:var(--section-y)}
+
+.label{
+  display:inline-flex;align-items:center;gap:.65rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);
+}
+.label::before{content:"";width:22px;height:1px;background:var(--accent);flex:none}
+
+h1,h2{font-family:var(--serif);font-weight:400}
+h2{
+  font-size:clamp(2.05rem,3.8vw,3.1rem);
+  line-height:1.08;letter-spacing:-.01em;
+  margin-top:1.1rem;
+}
+
+/* ============ MOTION GATING ============ */
+/* Elements are hidden only when JS confirms an animation engine is active.
+   No-JS and reduced-motion users always get fully visible content. */
+html.anim-gsap .reveal,
+html.anim-io .reveal{opacity:0}
+html.anim-io .reveal{
+  transform:translateY(14px);
+  transition:opacity .7s ease,transform .7s var(--ease);
+}
+html.anim-io .reveal.is-visible{opacity:1;transform:none}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html.anim-gsap .reveal,html.anim-io .reveal{opacity:1!important;transform:none!important}
+}
+
+/* ============ BUTTONS & LINKS ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+  border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;
+  font-weight:600;font-size:.95rem;line-height:1;padding:.85rem 1.7rem;
+  transition:scale .25s ease,box-shadow .25s ease,background-color .25s ease,color .25s ease;
+}
+.btn:hover{scale:1.04}
+.btn:active{scale:.99}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary:hover{background:var(--accent);box-shadow:0 14px 28px -14px rgba(1,24,216,.5)}
+.btn-sm{padding:.6rem 1.2rem;font-size:.85rem}
+.btn-block{width:100%;margin-top:1.5rem}
+.btn:disabled{opacity:.6;cursor:wait;scale:1}
+
+.link-arrow{
+  position:relative;display:inline-flex;align-items:center;gap:.5rem;
+  background:none;border:0;cursor:pointer;padding:.4rem 0;
+  font-weight:600;font-size:.95rem;text-decoration:none;color:var(--ink);
+}
+.link-arrow::after{
+  content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;
+  background:var(--ink);transform-origin:left;transition:background-color .25s ease,transform .25s var(--ease);
+}
+.link-arrow .icon{transition:translate .25s ease}
+.link-arrow:hover::after{background:var(--accent);transform:scaleX(1.06)}
+.link-arrow:hover .icon{translate:3px 0}
+
+/* ============ HEADER ============ */
+.site-header{position:sticky;top:0;z-index:100;background:var(--paper);border-bottom:var(--hairline)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:64px}
+.brand{
+  display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;
+  font-family:var(--serif);font-size:1.35rem;letter-spacing:-.01em;
+}
+.brand-logo{display:block;flex:none}
+.nav-links{display:none;align-items:center;gap:2.2rem}
+.nav-links a{
+  position:relative;font-size:.9rem;font-weight:500;color:var(--muted);
+  text-decoration:none;padding:.35rem 0;transition:color .25s ease;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease);
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-links a[aria-current="page"]{color:var(--ink)}
+.nav-links a[aria-current="page"]::after{transform:scaleX(1)}
+.header-actions{display:flex;align-items:center;gap:.75rem}
+.menu-btn{
+  display:inline-flex;align-items:center;gap:.5rem;background:none;border:0;cursor:pointer;
+  font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .25rem;
+}
+.mobile-panel{
+  display:none;position:absolute;top:100%;left:0;right:0;
+  background:var(--paper);border-bottom:var(--hairline);
+  padding:.25rem var(--pad-x) 1.25rem;
+  animation:panelIn .25s var(--ease);
+}
+@keyframes panelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.menu-open .mobile-panel{display:block}
+.mobile-panel a{display:block;padding:.85rem 0;font-size:1rem;font-weight:500;text-decoration:none;border-top:var(--hairline)}
+.mobile-panel a:first-child{border-top:0}
+.mobile-panel a:hover{color:var(--muted)}
+.mobile-panel a[aria-current="page"]{color:var(--ink)}
+@media (min-width:900px){
+  .nav-links{display:flex}
+  .menu-btn,.mobile-panel{display:none!important}
+}
+
+/* ============ STORY HERO ============ */
+.story-hero{padding-block:clamp(3.5rem,7vw,6rem) clamp(3rem,6vw,5rem)}
+.story-hero-grid{display:grid;gap:3rem;align-items:center}
+.story-hero-copy{max-width:640px}
+.story-meta{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1.25rem;
+  margin-top:1.4rem;font-size:.8rem;color:var(--muted);
+}
+.story-hero h1{
+  font-size:clamp(2.6rem,5.6vw,4.3rem);
+  line-height:1.03;letter-spacing:-.015em;
+  margin-top:1.3rem;
+}
+.story-lede{margin-top:1.6rem;max-width:50ch;font-size:1.2rem;line-height:1.6;color:var(--muted)}
+.story-progress{margin-top:2.25rem;max-width:460px}
+.progress-note{margin-top:.65rem;font-size:.9rem;color:var(--muted)}
+.progress-note strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.story-actions{display:flex;align-items:center;flex-wrap:wrap;gap:1.1rem 2rem;margin-top:2rem}
+.story-hero-media{
+  position:relative;z-index:0;
+  aspect-ratio:4/5;width:min(100%,360px);justify-self:center;
+}
+.img-clip{overflow:hidden;border-radius:var(--radius);width:100%;height:100%}
+.img-clip img{width:100%;height:114%;object-fit:cover}
+.framed::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  border:1px solid var(--accent);border-radius:var(--radius);
+  transform:translate(16px,16px);pointer-events:none;
+}
+@media (min-width:900px){
+  .story-hero-grid{grid-template-columns:1.15fr .85fr;gap:4.5rem}
+  .story-hero-media{width:100%;max-width:420px;justify-self:end}
+}
+
+/* ============ ARTICLE ============ */
+.story-col{max-width:65ch;margin-inline:auto}
+.story-col > p{margin-top:1.35em}
+.story-col > p:first-of-type{margin-top:0}
+.story-col > p:first-of-type::first-letter{
+  font-family:var(--serif);font-weight:400;
+  font-size:3.6em;line-height:.78;
+  float:left;padding:.06em .14em 0 0;
+}
+.story-col h2{
+  font-size:clamp(1.7rem,2.6vw,2.3rem);
+  margin:3.2rem 0 .4rem;letter-spacing:-.01em;
+}
+.pullquote{
+  border-block:var(--hairline);
+  padding:2.4rem 0;margin:3.2rem 0;
+}
+.pullquote p{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.6rem,3vw,2.15rem);line-height:1.28;letter-spacing:-.01em;
+}
+.pullquote p::before{content:"\201C";color:var(--accent);margin-right:.08em}
+.pullquote cite{
+  display:block;margin-top:1.2rem;font-style:normal;
+  font-size:.78rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+}
+.story-figure{margin:3.2rem 0}
+.story-figure .img-clip{aspect-ratio:3/2;height:auto}
+.story-figure img{height:100%}
+.story-figcaption{
+  margin-top:.85rem;font-size:.85rem;color:var(--muted);
+  display:flex;gap:.65rem;align-items:baseline;
+}
+.story-figcaption::before{content:"";width:18px;height:1px;background:var(--accent);flex:none;transform:translateY(-.25em)}
+
+/* ============ COST BREAKDOWN ============ */
+.costs{margin-top:4rem}
+.cost-list{margin-top:2.25rem}
+.cost-row{
+  display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;
+  border-top:var(--hairline);padding:1.15rem 0;
+}
+.cost-row dt{font-size:.98rem;color:var(--muted)}
+.cost-row dd{
+  font-family:var(--serif);font-size:1.45rem;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;
+}
+.cost-row.is-total{border-top:1px solid var(--line-strong)}
+.cost-row.is-total dt{color:var(--ink);font-weight:600}
+.cost-row.is-total dd{font-size:1.8rem;color:var(--accent)}
+.cost-note{margin-top:1.25rem;font-size:.85rem;color:var(--muted)}
+
+/* ============ FAQ ============ */
+.faq{margin-top:4.5rem}
+.faq-list{margin-top:2rem}
+.faq-list details{border-top:var(--hairline)}
+.faq-list details:last-child{border-bottom:var(--hairline)}
+.faq-list summary{
+  cursor:pointer;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:1.25rem;
+  padding:1.25rem 0;font-weight:600;font-size:1rem;
+}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-icon{flex:none;color:var(--accent);display:inline-flex}
+.faq-icon svg{transform:rotate(45deg);transition:transform .25s var(--ease)}
+.faq-list details[open] .faq-icon svg{transform:rotate(0deg)}
+.faq-list details p{padding:0 0 1.4rem;color:var(--muted);font-size:.95rem;max-width:56ch}
+
+/* ============ STORY CTA ============ */
+.story-cta{margin-top:4.5rem;text-align:center;padding-top:3rem;border-top:var(--hairline)}
+.story-cta h2{max-width:18ch;margin-inline:auto}
+.story-cta-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1.1rem 2rem;margin-top:2rem}
+
+/* ============ MINI STATS ============ */
+.mini-stats{display:flex;flex-wrap:wrap;gap:1.5rem 2.75rem;margin-top:2.25rem}
+.mini-stat .ms-num{
+  display:block;font-family:var(--serif);font-size:2.2rem;line-height:1;
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums;
+}
+.mini-stat .ms-label{
+  display:block;margin-top:.4rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+
+/* ============ GIVE BAND ============ */
+.give{background:var(--cream);border-block:var(--hairline);padding-block:var(--section-y)}
+.give-grid{display:grid;gap:3rem;align-items:center}
+.give-copy p.give-sub{color:var(--muted);max-width:44ch;margin-top:1.2rem}
+.give .progress{margin-top:2.25rem}
+.give-trust{
+  display:flex;align-items:baseline;gap:.6rem;
+  margin-top:1.75rem;font-size:.85rem;color:var(--muted);max-width:44ch;
+}
+.give-trust .icon{color:var(--accent);transform:translateY(2px)}
+@media (min-width:980px){
+  .give-grid{grid-template-columns:1.05fr .95fr;gap:5rem}
+  .give .widget-card{margin:0}
+}
+
+/* ============ WIDGET (shared with homepage) ============ */
+.widget-card{
+  background:var(--paper);border:var(--hairline);border-radius:10px;
+  padding:clamp(1.5rem,4vw,2.25rem);
+  max-width:520px;margin:1rem auto 0;text-align:left;width:100%;
+}
+.widget-top{display:flex;justify-content:flex-end;margin-bottom:1.4rem}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.seg-btn{
+  border:0;background:transparent;border-radius:999px;cursor:pointer;
+  padding:.4rem .95rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
+  transition:background-color .2s ease,color .2s ease;
+}
+.seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chips{display:flex;flex-wrap:wrap;gap:.55rem}
+.chip{
+  border:1px solid var(--line);background:var(--paper);border-radius:999px;cursor:pointer;
+  padding:.65rem 1.15rem;font-size:.9rem;font-weight:600;color:var(--ink);
+  transition:scale .2s ease,border-color .2s ease,background-color .2s ease,color .2s ease;
+  font-variant-numeric:tabular-nums;
+}
+.chip:hover{scale:1.06;border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.chip-custom{padding-inline:1.05rem}
+.custom-wrap{margin-top:1.15rem}
+.custom-field{
+  display:flex;align-items:center;gap:.55rem;max-width:240px;
+  border-bottom:1px solid var(--line-strong);padding:.35rem .15rem;
+  transition:border-color .2s ease;
+}
+.custom-field:focus-within{border-color:var(--ink)}
+.custom-symbol{font-weight:600;color:var(--muted)}
+.custom-field input{
+  border:0;outline:0;background:transparent;width:100%;
+  font-weight:600;font-size:1.05rem;color:var(--ink);
+}
+.custom-field input::-webkit-outer-spin-button,
+.custom-field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.custom-field input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.field-hint,.widget-error{
+  margin-top:.7rem;font-size:.85rem;font-weight:500;color:var(--ink);
+  border-left:2px solid var(--accent);padding-left:.65rem;
+}
+.widget-error{margin-top:1.1rem}
+.secure{
+  display:flex;align-items:center;justify-content:center;gap:.45rem;
+  margin-top:1.1rem;font-size:.8rem;color:var(--muted);
+}
+.mock-note{margin-top:.55rem;text-align:center;font-size:.74rem;font-style:italic;color:var(--muted)}
+.spinner{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,248,248,.35);border-top-color:var(--paper);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(1turn)}}
+.widget-success{text-align:center;padding:.5rem 0}
+.success-icon{color:var(--accent)}
+.success-title{font-family:var(--serif);font-size:1.8rem;font-weight:400;margin:1rem 0 .5rem}
+.widget-success p{max-width:38ch;margin:0 auto 1.4rem;font-size:.95rem;color:var(--muted)}
+
+/* ============ PROGRESS BARS ============ */
+.progress{
+  height:6px;border-radius:999px;overflow:hidden;
+  background:rgba(1,24,216,.08);border:1px solid var(--line-strong);
+}
+.progress-fill{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .9s var(--ease)}
+.progress.is-pulsing{animation:progressPulse 1.1s ease-out}
+@keyframes progressPulse{0%{box-shadow:0 0 0 0 rgba(27,86,253,.5)}100%{box-shadow:0 0 0 12px rgba(27,86,253,0)}}
+
+/* ============ FOOTER ============ */
+.site-footer{border-top:var(--hairline);padding:4.5rem 0 2.5rem;background:var(--paper)}
+body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem 4rem;padding-bottom:3rem}
+.footer-mission{max-width:36ch;margin-top:1rem;font-size:.95rem;color:var(--muted)}
+.footer-nav{display:flex;flex-wrap:wrap;gap:1rem 2rem}
+.footer-nav a{font-size:.9rem;color:var(--muted);text-decoration:none;transition:color .2s ease}
+.footer-nav a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.footer-meta{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem 2.5rem;
+  border-top:var(--hairline);padding-top:1.5rem;font-size:.85rem;color:var(--muted);
+}
+.footer-mail{text-decoration:none;transition:color .2s ease}
+.footer-mail:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.socials{display:flex;gap:1.5rem}
+.socials a{text-decoration:none;transition:color .2s ease}
+.socials a:hover{color:var(--ink)}
+.footer-reg{font-size:.8rem}
+.footer-copy{margin-top:1.4rem;font-size:.8rem;color:var(--muted)}
+
+/* ============ FLOATING DONATION BAR ============ */
+.donate-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:120;
+  background:var(--paper);border-top:var(--hairline);
+  transform:translateY(102%);visibility:hidden;
+  transition:transform .4s var(--ease),visibility 0s linear .4s;
+}
+.donate-bar.is-visible{transform:none;visibility:visible;transition:transform .4s var(--ease)}
+.donate-bar-inner{
+  display:flex;align-items:center;gap:1rem;
+  max-width:var(--maxw);margin-inline:auto;
+  padding:.6rem var(--pad-x);
+}
+.donate-bar-text{font-size:.88rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donate-bar-text strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.progress-mini{flex:1;max-width:220px;height:5px}
+.donate-bar-actions{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+.donate-bar-close{
+  display:inline-flex;background:none;border:0;cursor:pointer;
+  padding:.45rem;color:var(--muted);transition:color .2s ease;
+}
+.donate-bar-close:hover{color:var(--ink)}
+@media (max-width:520px){
+  .donate-bar-text{font-size:.78rem}
+  .donate-bar-inner{gap:.7rem}
+}
+
+/* skip link */
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:200;
+  background:var(--ink);color:var(--paper);padding:.7rem 1.1rem;border-radius:0 0 6px 0;
+  font-size:.85rem;font-weight:600;text-decoration:none;
+}
+.skip-link:focus{left:0}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- SVG sprite (inline, no external requests) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-kite" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2.6 19.4 10 12 16.4 4.6 10 12 2.6Z" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M12 2.6v13.8M4.6 10h14.8" stroke="var(--ink)" stroke-width="1" opacity=".45"/>
+    <path d="M12 16.4c-1.6 1.9 1.6 2.9 0 4.8" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="10.9" y="17.9" width="2.2" height="2.2" transform="rotate(45 12 19)" fill="var(--accent)"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 10h14M11.5 5 17 10l-5.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none">
+    <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.4"/>
+    <path d="m7.6 12.4 3 3.1 5.8-6.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 20 20" fill="none">
+    <path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 7h15M2.5 13h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="32" height="32">
+      <b style="font-weight: 800;letter-spacing: 2px; font-size: larger;">Wellspring</b>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="index.html#who-we-are">Who we are</a></li>
+        <li><a href="index.html#what-we-do">What we do</a></li>
+        <li><a href="index.html#partners">Partners</a></li>
+        <li><a href="amira.html" aria-current="page">Amira's story</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-primary btn-sm" href="#give">Donate</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobilePanel">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-menu"/></svg>
+        Menu
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-panel" id="mobilePanel" aria-label="Mobile">
+    <a href="index.html#who-we-are">Who we are</a>
+    <a href="index.html#what-we-do">What we do</a>
+    <a href="index.html#partners">Partners</a>
+    <a href="amira.html" aria-current="page">Amira's story</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ STORY HERO ============ -->
+  <section class="story-hero" aria-label="Amira's story">
+    <div class="container story-hero-grid" data-stagger>
+      <div class="story-hero-copy">
+        <p class="label reveal">Featured story</p>
+        <h1 class="reveal">Amira is seven. She needs a bone marrow transplant.</h1>
+        <p class="story-lede reveal">Two years ago, Amira was the fastest girl in her class. Then her bone marrow quietly stopped doing its job — and her family learned that the hardest part of saving a child's life can be the price of it.</p>
+        <div class="story-meta reveal">
+          <span>Updated 12 Jun 2025</span>
+          <span aria-hidden="true">·</span>
+          <span>6 min read</span>
+        </div>
+        <div class="story-progress reveal">
+          <div class="progress" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Amira's transplant fund progress">
+            <span class="progress-fill" data-progress></span>
+          </div>
+          <p class="progress-note"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+        </div>
+        <div class="story-actions reveal">
+          <a class="btn btn-primary" href="#give">Give to Amira</a>
+          <a class="link-arrow" href="#costs">See where the money goes
+            <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+      </div>
+      <figure class="story-hero-media framed reveal">
+        <div class="img-clip">
+          <img class="img-placeholder" data-img="amira" alt="Amira, a seven-year-old girl with a quiet smile, photographed in soft natural light" width="860" height="1075" fetchpriority="high">
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ STORY BODY ============ -->
+  <article>
+    <div class="container">
+      <div class="story-col" data-stagger>
+
+        <p class="reveal">Amira's hospital room has a big window, and taped to the glass is a row of kites she has drawn — one for every month since her diagnosis. She is seven. She will tell you, very seriously, that she draws them "so I can see what up there looks like." Her little brother thinks they should have longer strings. She concedes the point, redoes the string, and signs the corner like an artist.</p>
+
+        <p class="reveal">Before any of this, Amira was the fastest girl in her class and the undisputed queen of the playground. The bruises came first — small, unexplained, easy to dismiss. Then the fevers that wouldn't break, then the tiredness that turned into naps, then into days.</p>
+
+        <h2 class="reveal">The day everything changed</h2>
+        <p class="reveal">In March of last year, after three weeks of tests her parents still can't talk about calmly, a doctor sat them down and explained that Amira's bone marrow — the factory inside her bones that makes blood — had all but stopped working. The words for it are bone marrow failure. The treatment her team recommends is a transplant: replace the factory, rebuild her blood, give her body back.</p>
+        <p class="reveal">Her mother remembers asking a single question: how much. She remembers the answer less as a number than as a wall.</p>
+
+        <h2 class="reveal">What the doctors said</h2>
+        <p class="reveal">Medically, Amira's path is unusually clear. Her transfusions keep her stable, a matching donor has been found, and her surgical team has done this operation hundreds of times. What they cannot schedule is the funding.</p>
+
+        <blockquote class="pullquote reveal">
+          <p>Medically, her path is clear. Financially, it's a wall — and walls move when enough people push.</p>
+          <cite>A member of Amira's transplant team</cite>
+        </blockquote>
+
+        <figure class="story-figure reveal">
+          <div class="img-clip"><img class="img-placeholder" data-img="story1" alt="Morning light falling across a quiet children's hospital ward" width="900" height="600" loading="lazy" decoding="async"></div>
+          <figcaption class="story-figcaption">Morning rounds on Amira's ward.</figcaption>
+        </figure>
+
+        <p class="reveal">A transplant like Amira's is not one bill but a hundred of them arriving in sequence: the search and matching, the procedure itself, the hundred days of protective isolation that follow while her new marrow learns its job, the medications, the blood products, the follow-ups. Each one is non-negotiable. Together they come to $250,000.</p>
+
+        <h2 class="reveal">What her family has done</h2>
+        <p class="reveal">Her parents have sold what can be sold and borrowed what can be borrowed. Her father has taken night shifts; her mother has not been away from the hospital for more than a weekend in fourteen months. People keep asking how they stay hopeful.</p>
+
+        <blockquote class="pullquote reveal">
+          <p>Amira sets the tone. She still laughs louder than the machines.</p>
+          <cite>Amira's mother</cite>
+        </blockquote>
+
+        <figure class="story-figure reveal">
+          <div class="img-clip"><img class="img-placeholder" data-img="story2" alt="A child's colorful drawing of kites taped to a bright window" width="900" height="600" loading="lazy" decoding="async"></div>
+            </figure>
+
+        <h2 class="reveal">What happens next</h2>
+        <p class="reveal">Wellspring has verified Amira's treatment plan directly with her hospital and has committed to pay every provider directly — no money passes through private hands. When the fund completes, her transplant can be scheduled within weeks. The transfusions are holding her steady, but they are a bridge, not a destination.</p>
+        <p class="reveal">She is seven, and she is waiting. Her kites are up to fourteen.</p>
+
+        <!-- ============ COST BREAKDOWN ============
+             Costs are placeholders — confirm the hospital's itemized estimate before publishing. -->
+        <section class="costs" id="costs" aria-labelledby="costsTitle">
+          <p class="label reveal">Where the money goes</p>
+          <h2 class="reveal" id="costsTitle">What $250,000 actually covers.</h2>
+          <dl class="cost-list" id="costList" data-stagger></dl>
+          <p class="cost-note reveal">Estimates confirmed with Amira's care team. Any funds raised beyond her verified costs are ring-fenced for the next child on our waiting list.</p>
+        </section>
+
+        <!-- ============ FAQ ============ -->
+        <section class="faq" id="faq" aria-labelledby="faqTitle">
+          <p class="label reveal">Your questions</p>
+          <h2 class="reveal" id="faqTitle">Asked often, answered plainly.</h2>
+          <div class="faq-list" id="faqList" data-stagger></div>
+        </section>
+
+        <!-- ============ CTA ============ -->
+        <div class="story-cta reveal">
+          <h2>Help write Amira's next chapter.</h2>
+          <div class="story-cta-actions">
+            <a class="btn btn-primary" href="#give">Give to Amira</a>
+            <a class="link-arrow" href="index.html#how">How Wellspring works
+              <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ GIVE TO AMIRA ============ -->
+  <section id="give" class="give">
+    <div class="container give-grid" data-stagger>
+      <div class="give-copy">
+        <p class="label reveal">Give to Amira</p>
+        <h2 class="reveal">Every gift moves her closer.</h2>
+        <p class="give-sub reveal">Last year, 98 cents of every dollar we received reached direct care. For Amira, that means every dollar above is a week earlier off the waiting bridge.</p>
+        <div class="reveal">
+          <div class="progress" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Amira's transplant fund progress">
+            <span class="progress-fill" data-progress></span>
+          </div>
+          <p class="progress-note"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+        </div>
+        <div class="mini-stats" id="giveStats" data-stagger></div>
+        <p class="give-trust reveal">
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-lock"/></svg>
+          Paid directly to her hospital and care providers — never through private hands. You'll get a plain-language update within 30 days.
+        </p>
+      </div>
+
+      <!-- Reusable widget: same markup and init as the homepage -->
+      <div class="widget-card reveal" id="donateWidget">
+        <form data-form novalidate>
+          <div class="widget-top">
+            <div class="seg" role="group" aria-label="Currency">
+              <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
+              <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
+            </div>
+          </div>
+          <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+          <div class="custom-wrap" data-custom-wrap hidden>
+            <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
+            <div class="custom-field">
+              <span class="custom-symbol" data-symbol aria-hidden="true">$</span>
+              <input id="customAmount" name="customAmount" type="number" inputmode="numeric" min="5" step="1" placeholder="Enter amount" autocomplete="off">
+            </div>
+            <p class="field-hint" data-hint aria-live="polite" hidden>Please enter at least $5.</p>
+          </div>
+          <p class="widget-error" data-error role="alert" hidden></p>
+          <button class="btn btn-primary btn-block" type="submit" data-submit>
+            <span class="spinner" data-spinner hidden aria-hidden="true"></span>
+            <span data-submit-label>Donate $25</span>
+          </button>
+  </form>
+        <div class="widget-success" data-success tabindex="-1" hidden>
+          <svg class="success-icon" width="46" height="46" aria-hidden="true"><use href="#i-check"/></svg>
+          <h3 class="success-title">Thank you.</h3>
+          <p data-success-msg></p>
+          <button type="button" class="link-arrow" data-reset>Make another gift</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html">
+       <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="32" height="32">
+     Wellspring
+        </a>
+        <p class="footer-mission">Helping children with serious medical conditions get the care, treatment and support their families can't afford alone.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="index.html#who-we-are">Who we are</a>
+        <a href="index.html#what-we-do">What we do</a>
+        <a href="index.html#partners">Partners</a>
+        <a href="amira.html">Amira's story</a>
+      </nav>
+    </div>
+    <div class="footer-meta">
+      <a class="footer-mail" data-org-email href="mailto:hello@kitefoundation.org">hello@kitefoundation.org</a>
+      <div class="socials">
+        <a href="#" rel="noopener">Instagram</a>
+        <a href="#" rel="noopener">LinkedIn</a>
+        <a href="#" rel="noopener">X</a>
+      </div>
+      <p class="footer-reg" data-org-registered>Registered non-profit</p>
+    </div>
+    <p class="footer-copy">© 2023 Wellspring. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ============ FLOATING DONATION BAR ============ -->
+<div class="donate-bar" id="donateBar" role="region" aria-label="Donation progress">
+  <div class="donate-bar-inner">
+    <p class="donate-bar-text"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+    <div class="progress progress-mini" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Campaign progress">
+      <span class="progress-fill" data-progress></span>
+    </div>
+    <div class="donate-bar-actions">
+      <a class="btn btn-primary btn-sm" href="#give">Donate</a>
+      <button class="donate-bar-close" data-bar-close aria-label="Dismiss donation bar">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ================================================================
+     CONFIG — all editable content lives here
+     ================================================================ */
+  var CONFIG = {
+    mockMode: true, // true = skip Flutterwave, simulate success, bump total locally
+    publicKey: 'FLWPUBK_TEST-REPLACE-WITH-YOUR-PUBLIC-KEY',
+    verifyUrl: '/verify-transaction',   // POST { tx_ref, transaction_id } — must return 2xx
+    totalUrl: '/donation-total',        // GET — { total: 12345 }, { raised: 12345 } or a plain number
+    campaign: { currency: 'USD', goal: 250000, defaultTotal: 12480 },
+    presets: [25, 50, 100, 250],
+    minDonation: 5,
+    currencySymbols: { USD: '$', GBP: '£' },
+    /* Itemized costs — placeholders; confirm with the hospital before publishing */
+    costs: [
+      { label: 'Donor search & tissue matching', amount: 38000 },
+      { label: 'The transplant procedure', amount: 142000 },
+      { label: '100 days of isolation & recovery care', amount: 45000 },
+      { label: 'Medication, blood products & follow-up', amount: 25000 },
+      { label: 'Total — Amira\u2019s transplant fund', amount: 250000, strong: true }
+    ],
+    /* Human-scale numbers in the giving band (count up on view) */
+    givingStats: [
+      { value: 312, label: 'gifts so far' },
+      { value: 14, label: 'months waiting' },
+      { value: 1, label: 'matching donor found' }
+    ],
+    faq: [
+      {
+        q: 'Is my gift used only for Amira?',
+        a: 'Yes. Gifts to this fund are restricted: they are paid directly to Amira\u2019s hospital and care providers against her verified treatment plan — never into private hands.'
+      },
+      {
+        q: 'What happens if the fund passes $250,000?',
+        a: 'Any amount raised beyond Amira\u2019s verified costs is ring-fenced for the next child on our waiting list, and we publish exactly where it goes. You\u2019ll receive an update either way.'
+      },
+      {
+        q: 'How do you make sure the money reaches her care?',
+        a: 'Every invoice is verified with the hospital, and payments go directly to providers. Within 30 days of your gift, you\u2019ll get a plain-language update on how the funds were used.'
+      },
+      {
+        q: 'Can I give from outside the US?',
+        a: 'Yes. The donation form accepts cards in USD and GBP, with secure automatic currency conversion at checkout.'
+      }
+    ],
+    org: {
+      name: 'Wellspring',
+      email: 'hello@kitefoundation.org',
+      registered: 'Registered non-profit \u00B7 No. 568-344'
+    }
+  };
+
+  /* ================================================================
+     IMAGES — swap these URLs for real photography
+     ================================================================ */
+  var IMAGES = {
+    /* Amira — same photo as the homepage, so she's recognizably the same child */
+    amira: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790625989/Screenshot_2026-09-28_204447_cddjyp.png',
+    story1: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790698666/Gemini_Generated_Image_j0drd8j0drd8j0dr_mg1naf.jpg',
+    story2: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790698551/Gemini_Generated_Image_cej3x3cej3x3cej3_ru3cju.jpg'
+  };
+
+  /* ---------- helpers ---------- */
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- images ---------- */
+  $$('img[data-img]').forEach(function (img) {
+    var key = img.getAttribute('data-img');
+    if (IMAGES[key]) img.src = IMAGES[key];
+  });
+
+  /* ---------- small content injections ---------- */
+  var emailEl = $('[data-org-email]');
+  if (emailEl) { emailEl.textContent = CONFIG.org.email; emailEl.href = 'mailto:' + CONFIG.org.email; }
+  var regEl = $('[data-org-registered]');
+  if (regEl) regEl.textContent = CONFIG.org.registered;
+
+  /* ---------- render cost breakdown ---------- */
+  var costList = $('#costList');
+  if (costList) {
+    CONFIG.costs.forEach(function (c) {
+      var row = document.createElement('div');
+      row.className = 'cost-row reveal' + (c.strong ? ' is-total' : '');
+      var amt = '$' + c.amount.toLocaleString('en-US');
+      row.innerHTML = '<dt>' + c.label + '</dt><dd>' + (c.strong ? '<strong>' + amt + '</strong>' : amt) + '</dd>';
+      costList.appendChild(row);
+    });
+  }
+
+  /* ---------- render FAQ ---------- */
+  var faqList = $('#faqList');
+  if (faqList) {
+    faqList.innerHTML = CONFIG.faq.map(function (f) {
+      return '<details class="reveal">' +
+        '<summary>' + f.q +
+        '<span class="faq-icon" aria-hidden="true"><svg class="icon" width="15" height="15"><use href="#i-close"/></svg></span>' +
+        '</summary><p>' + f.a + '</p></details>';
+    }).join('');
+  }
+
+  /* ---------- render mini stats ---------- */
+  function fmtNum(v, d) {
+    return v.toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+  }
+  var giveStats = $('#giveStats');
+  var statNums = [];
+  if (giveStats) {
+    CONFIG.givingStats.forEach(function (s) {
+      var div = document.createElement('div');
+      div.className = 'mini-stat reveal';
+      var num = document.createElement('span');
+      num.className = 'ms-num';
+      num.textContent = reducedMotion ? fmtNum(s.value) : '0';
+      var lab = document.createElement('span');
+      lab.className = 'ms-label';
+      lab.textContent = s.label;
+      div.appendChild(num); div.appendChild(lab);
+      giveStats.appendChild(div);
+      statNums.push(num);
+    });
+  }
+
+  /* ================================================================
+     TOTAL STORE — campaign total, fetched + polled.
+     - Each progress bar "arms" (draws its fill) when it scrolls into view.
+     - The first bar to appear also triggers a one-time count-up of the
+       raised amount, so the hero summary animates immediately.
+     ================================================================ */
+  var TotalStore = (function () {
+    var total = CONFIG.campaign.defaultTotal;
+    var firstRender = true;
+    var counted = false;
+    var textAnimating = false;
+    var latestPct = 0;
+    var sym = CONFIG.currencySymbols[CONFIG.campaign.currency] || '$';
+
+    function fmtCampaign(v) { return sym + Math.round(v).toLocaleString('en-US'); }
+
+    function emit(pulse) {
+      latestPct = Math.max(0, Math.min(100, (total / CONFIG.campaign.goal) * 100));
+      if (!textAnimating) {
+        var text = fmtCampaign(total);
+        $$('[data-total]').forEach(function (el) { el.textContent = text; });
+      }
+      $$('[data-goal-label]').forEach(function (el) { el.textContent = fmtCampaign(CONFIG.campaign.goal); });
+      $$('[data-progressbar]').forEach(function (bar) {
+        bar.setAttribute('aria-valuemax', String(CONFIG.campaign.goal));
+        bar.setAttribute('aria-valuenow', String(Math.round(total)));
+        if (bar.getAttribute('data-armed') === '1') {
+          var fill = bar.querySelector('[data-progress]');
+          if (fill) fill.style.width = latestPct + '%';
+        }
+        if (pulse && !firstRender) {
+          bar.classList.remove('is-pulsing');
+          void bar.offsetWidth; // restart animation
+          bar.classList.add('is-pulsing');
+        }
+      });
+      firstRender = false;
+    }
+
+    function armBar(bar) {
+      if (bar.getAttribute('data-armed') === '1') return;
+      bar.setAttribute('data-armed', '1');
+      var fill = bar.querySelector('[data-progress]');
+      if (fill) fill.style.width = latestPct + '%';
+    }
+
+    function countText() {
+      if (counted) return;
+      counted = true;
+      if (reducedMotion || !('requestAnimationFrame' in window)) return;
+      textAnimating = true;
+      var start = performance.now(), dur = 1400;
+      function frame(t) {
+        var p = Math.min((t - start) / dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        var v = fmtCampaign(total * e);
+        $$('[data-total]').forEach(function (el) { el.textContent = v; });
+        if (p < 1) {
+          window.requestAnimationFrame(frame);
+        } else {
+          textAnimating = false;
+          emit(false);
+        }
+      }
+      window.requestAnimationFrame(frame);
+    }
+
+    function refresh() {
+      return fetch(CONFIG.totalUrl, { headers: { 'Accept': 'application/json' } })
+        .then(function (res) {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function (data) {
+          if (data === null || data === undefined) return;
+          var n = typeof data === 'number' ? data : Number(data && (data.total != null ? data.total : data.raised));
+          if (isFinite(n) && n >= 0 && Math.round(n) !== Math.round(total)) {
+            total = n;
+            emit(true);
+          }
+        })
+        .catch(function () { /* no backend reachable — keep current total */ });
+    }
+
+    function add(n) {
+      if (isFinite(n) && n > 0) { total += n; emit(true); }
+    }
+
+    emit(false);
+    refresh();
+    window.setInterval(refresh, 60000);
+
+    $$('[data-progressbar]').forEach(function (el) {
+      el.addEventListener('animationend', function () { el.classList.remove('is-pulsing'); });
+    });
+
+    /* arm bars (and count the raised figure) as they come into view */
+    var bars = $$('[data-progressbar]');
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      bars.forEach(armBar);
+    } else {
+      var armIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          armBar(en.target);
+          countText();
+          armIO.unobserve(en.target);
+        });
+      }, { threshold: 0.2 });
+      bars.forEach(function (b) { armIO.observe(b); });
+    }
+
+    return { add: add, refresh: refresh };
+  })();
+
+  /* ================================================================
+     DONATION WIDGET — reusable: initDonationWidget(rootElement)
+     (same implementation as the homepage)
+     ================================================================ */
+  function initDonationWidget(root) {
+    if (!root) return;
+
+    var form = $('[data-form]', root);
+    var success = $('[data-success]', root);
+    var successMsg = $('[data-success-msg]', root);
+    var resetBtn = $('[data-reset]', root);
+    var chipsWrap = $('[data-chips]', root);
+    var customWrap = $('[data-custom-wrap]', root);
+    var customInput = $('#customAmount', root);
+    var symbolEl = $('[data-symbol]', root);
+    var hint = $('[data-hint]', root);
+    var errorEl = $('[data-error]', root);
+    var submitBtn = $('[data-submit]', root);
+    var submitLabel = $('[data-submit-label]', root);
+    var spinner = $('[data-spinner]', root);
+    var segBtns = $$('.seg-btn', root);
+    var mockNote = $('[data-mock-note]', root);
+
+    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, processing: false };
+
+    CONFIG.presets.forEach(function (p, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.setAttribute('data-amount', String(p));
+      b.setAttribute('aria-pressed', String(i === 0));
+      chipsWrap.appendChild(b);
+    });
+    var customChip = document.createElement('button');
+    customChip.type = 'button';
+    customChip.className = 'chip chip-custom';
+    customChip.setAttribute('data-amount', 'custom');
+    customChip.setAttribute('aria-pressed', 'false');
+    customChip.textContent = 'Custom';
+    chipsWrap.appendChild(customChip);
+    var chips = $$('.chip', root);
+
+    function sym(c) { return CONFIG.currencySymbols[c] || '$'; }
+    function fmtAmt(v, c) { return sym(c) + Number(v).toLocaleString('en-US'); }
+
+    function render() {
+      segBtns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-currency') === state.currency));
+      });
+      chips.forEach(function (ch) {
+        if (ch.getAttribute('data-amount') === 'custom') {
+          ch.setAttribute('aria-pressed', String(state.custom));
+        } else {
+          ch.textContent = fmtAmt(ch.getAttribute('data-amount'), state.currency);
+          ch.setAttribute('aria-pressed', String(!state.custom && Number(ch.getAttribute('data-amount')) === state.amount));
+        }
+      });
+      symbolEl.textContent = sym(state.currency);
+      if (!state.processing) submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency);
+    }
+
+    function setProcessing(on) {
+      state.processing = on;
+      submitBtn.disabled = on;
+      spinner.hidden = !on;
+      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency);
+    }
+
+    function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
+    function clearError() { errorEl.hidden = true; }
+
+    segBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.currency = b.getAttribute('data-currency');
+        render();
+      });
+    });
+
+    chips.forEach(function (ch) {
+      ch.addEventListener('click', function () {
+        clearError();
+        if (ch.getAttribute('data-amount') === 'custom') {
+          state.custom = true;
+          customWrap.hidden = false;
+          customInput.focus();
+        } else {
+          state.custom = false;
+          state.amount = Number(ch.getAttribute('data-amount'));
+          customWrap.hidden = true;
+          hint.hidden = true;
+          customInput.value = '';
+          customInput.removeAttribute('aria-invalid');
+        }
+        render();
+      });
+    });
+
+    customInput.addEventListener('input', function () {
+      var v = Number(customInput.value);
+      if (customInput.value !== '' && v >= CONFIG.minDonation) {
+        state.amount = v;
+        hint.hidden = true;
+        customInput.removeAttribute('aria-invalid');
+      }
+      render();
+    });
+
+    function finish(amount, currency) {
+      setProcessing(false);
+      successMsg.textContent =
+        'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to Amira\u2019s care team. ' +
+        'A confirmation will follow shortly.' +
+        (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
+      if (CONFIG.mockMode) TotalStore.add(amount);
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    }
+
+    function verifyPayment(resp) {
+      /* Server confirms the transaction before we show the thank-you state */
+      fetch(CONFIG.verifyUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tx_ref: resp.tx_ref,
+          transaction_id: resp.transaction_id,
+          amount: state.amount,
+          currency: state.currency,
+          fund: 'amira'
+        })
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('verify failed');
+          TotalStore.refresh();
+          finish(state.amount, state.currency);
+        })
+        .catch(function () {
+          setProcessing(false);
+          showError('We received your payment but couldn\u2019t confirm it just yet. Please email ' +
+            CONFIG.org.email + ' with reference ' + (resp.tx_ref || '') + ' and we\u2019ll make it right.');
+        });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (state.processing) return;
+      clearError();
+
+      if (state.custom) {
+        var v = Number(customInput.value);
+        if (customInput.value === '' || !isFinite(v) || v < CONFIG.minDonation) {
+          hint.textContent = 'Please enter at least ' + sym(state.currency) + CONFIG.minDonation + '.';
+          hint.hidden = false;
+          customInput.setAttribute('aria-invalid', 'true');
+          customInput.focus();
+          return;
+        }
+        state.amount = v;
+      }
+
+      setProcessing(true);
+
+      var txRef = 'KF-AMIRA-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      var completed = false;
+
+      // 1. If inline checkout modal is available with configured key:
+      if (typeof window.FlutterwaveCheckout === 'function' && CONFIG.publicKey && !CONFIG.publicKey.includes('REPLACE')) {
+        try {
+          var modal = window.FlutterwaveCheckout({
+            public_key: CONFIG.publicKey,
+            tx_ref: txRef,
+            amount: state.amount,
+            currency: state.currency,
+            payment_options: 'card,banktransfer',
+            customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
+            customizations: { title: 'Wellspring — Amira\u2019s fund', description: 'Bone marrow transplant fund' },
+            callback: function (resp) {
+              completed = true;
+              try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
+              if (resp && (resp.status === 'successful' || resp.status === 'completed')) {
+                verifyPayment(resp);
+              } else {
+                setProcessing(false);
+                render();
+                showError("Your payment didn't go through. Nothing was charged \u2014 please try again.");
+              }
+            },
+            onclose: function () {
+              if (!completed) { setProcessing(false); render(); }
+            }
+          });
+          return;
+        } catch (err) {
+          /* Fall through to Standard API */
+        }
+      }
+
+      // 2. Standard API Checkout (POST /api/payments)
+      fetch('/api/payments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: state.amount,
+          currency: state.currency,
+          tx_ref: txRef,
+          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef),
+          customer: {
+            email: 'donor@kitefoundation.org',
+            name: 'Wellspring Donor'
+          },
+          customizations: {
+            title: 'Wellspring — Amira\u2019s fund',
+            logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
+          },
+          meta: { fund: 'amira' }
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.data && data.data.link) {
+            if (data.message && data.message.includes('Simulated')) {
+              verifyPayment({ tx_ref: txRef, transaction_id: 'demo_' + Date.now() });
+            } else {
+              window.location.href = data.data.link;
+            }
+          } else {
+            verifyPayment({ tx_ref: txRef });
+          }
+        })
+        .catch(function () {
+          if (CONFIG.mockMode) {
+            finish(state.amount, state.currency);
+          } else {
+            setProcessing(false);
+            render();
+            showError("Unable to initialize secure checkout. Please check your connection and try again.");
+          }
+        });
+    });
+
+    resetBtn.addEventListener('click', function () {
+      success.hidden = true;
+      form.hidden = false;
+      clearError();
+      hint.hidden = true;
+      customWrap.hidden = !state.custom;
+      render();
+      submitBtn.focus();
+    });
+
+    if (CONFIG.mockMode && mockNote) mockNote.hidden = false;
+    render();
+  }
+
+  /* Auto-confirm and display thank-you state upon return from hosted checkout */
+  (function checkRedirectReturn() {
+    var params = new URLSearchParams(window.location.search);
+    var status = params.get('status');
+    var txRef = params.get('tx_ref');
+    var txId = params.get('transaction_id');
+
+    if ((status === 'successful' || status === 'completed') && (txRef || txId)) {
+      var widget = $('#donateWidget');
+      if (widget) {
+        var form = $('[data-form]', widget);
+        var success = $('[data-success]', widget);
+        var successMsg = $('[data-success-msg]', widget);
+        if (form && success) {
+          form.hidden = true;
+          success.hidden = false;
+          if (successMsg) {
+            successMsg.textContent = 'Your gift is already on its way to Amira\u2019s care team. A confirmation will follow shortly.';
+          }
+          fetch(CONFIG.verifyUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tx_ref: txRef,
+              transaction_id: txId,
+              fund: 'amira'
+            })
+          }).then(function () {
+            TotalStore.refresh();
+          }).catch(function () {});
+
+          if (window.history && window.history.replaceState) {
+            var cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+          }
+        }
+      }
+    }
+  })();
+
+  initDonationWidget($('#donateWidget'));
+
+  /* ================================================================
+     SMOOTH SCROLL — Lenis, integrated with GSAP's ticker + ScrollTrigger
+     ================================================================ */
+  var hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+  var lenis = null;
+
+  if (!reducedMotion && typeof window.Lenis === 'function') {
+    lenis = new window.Lenis({ duration: 1.1, smoothWheel: true });
+    if (hasGsap) {
+      lenis.on('scroll', window.ScrollTrigger.update);
+      window.gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+      window.gsap.ticker.lagSmoothing(0);
+    } else {
+      var rafLoop = function (time) { lenis.raf(time); window.requestAnimationFrame(rafLoop); };
+      window.requestAnimationFrame(rafLoop);
+    }
+  }
+
+  /* in-page anchors route through Lenis (or smooth fallback) */
+  $$('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (a.classList.contains('skip-link')) return;
+      var id = a.getAttribute('href');
+      if (id.length < 2) return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -72 });
+      } else if (!reducedMotion) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        target.scrollIntoView();
+      }
+    });
+  });
+
+  /* placeholder links ("#") shouldn't jump the page */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href="#"]') : null;
+    if (a) e.preventDefault();
+  });
+
+  /* ================================================================
+     SCROLL REVEALS — GSAP + ScrollTrigger, with IO fallback
+     ================================================================ */
+  (function initReveals() {
+    var root = document.documentElement;
+
+    if (reducedMotion || (!hasGsap && !('IntersectionObserver' in window))) {
+      root.classList.add('anim-none');
+      return;
+    }
+
+    if (hasGsap) {
+      root.classList.add('anim-gsap');
+      try {
+        window.gsap.registerPlugin(window.ScrollTrigger);
+        window.gsap.set('.reveal', { opacity: 0, y: 26 });
+
+        /* staggered groups */
+        $$('[data-stagger]').forEach(function (group) {
+          window.gsap.to($$('.reveal', group), {
+            opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+            stagger: 0.08,
+            scrollTrigger: { trigger: group, start: 'top 85%', once: true }
+          });
+        });
+
+        /* standalone reveals (pull quotes, figures, subheads, CTA) */
+        $$('.reveal').filter(function (el) {
+          return !el.closest('[data-stagger]');
+        }).forEach(function (el) {
+          window.gsap.to(el, {
+            opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          });
+        });
+
+        /* soft portrait parallax (matches the homepage hero) */
+        var heroImg = $('.story-hero .img-clip img');
+        if (heroImg) {
+          window.gsap.fromTo(heroImg,
+            { yPercent: -6 },
+            { yPercent: 6, ease: 'none',
+              scrollTrigger: { trigger: '.story-hero', start: 'top top', end: 'bottom top', scrub: true } });
+        }
+
+        window.addEventListener('load', function () { window.ScrollTrigger.refresh(); });
+      } catch (err) {
+        root.classList.remove('anim-gsap');
+        root.classList.add('anim-none');
+      }
+      return;
+    }
+
+    /* fallback: vanilla IntersectionObserver, same 80ms stagger */
+    root.classList.add('anim-io');
+    var els = $$('.reveal');
+    $$('[data-stagger]').forEach(function (group) {
+      $$('.reveal', group).forEach(function (el, i) {
+        el.setAttribute('data-stagger-index', String(i));
+      });
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        var idx = Number(el.getAttribute('data-stagger-index') || 0);
+        window.setTimeout(function () { el.classList.add('is-visible'); }, idx * 80);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  /* ================================================================
+     MINI STAT COUNT-UP (vanilla — works in every mode)
+     ================================================================ */
+  (function initStats() {
+    if (!giveStats || !statNums.length) return;
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      statNums.forEach(function (el, i) { el.textContent = fmtNum(CONFIG.givingStats[i].value); });
+      return;
+    }
+    function countUp(el, target) {
+      var dur = 1300, t0 = performance.now();
+      function frame(t) {
+        var p = Math.min((t - t0) / dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmtNum(target * e);
+        if (p < 1) window.requestAnimationFrame(frame);
+      }
+      window.requestAnimationFrame(frame);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        statNums.forEach(function (el, i) {
+          window.setTimeout(function () { countUp(el, CONFIG.givingStats[i].value); }, i * 120);
+        });
+        io.disconnect();
+      });
+    }, { threshold: 0.3 });
+    io.observe(giveStats);
+  })();
+
+  /* ================================================================
+     MOBILE MENU
+     ================================================================ */
+  (function initMenu() {
+    var header = $('#siteHeader');
+    var menuBtn = $('#menuBtn');
+    if (!header || !menuBtn) return;
+    function close() {
+      header.classList.remove('menu-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    menuBtn.addEventListener('click', function () {
+      var open = header.classList.toggle('menu-open');
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+    $$('.mobile-panel a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && header.classList.contains('menu-open')) {
+        close();
+        menuBtn.focus();
+      }
+    });
+  })();
+
+  /* ================================================================
+     FLOATING DONATION BAR — appears after scrolling past the story hero
+     ================================================================ */
+  (function initFloatingBar() {
+    var bar = $('#donateBar');
+    var hero = $('.story-hero');
+    if (!bar || !hero || !('IntersectionObserver' in window)) return;
+    var dismissed = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var past = !en.isIntersecting && en.boundingClientRect.top < 0;
+        var show = past && !dismissed;
+        bar.classList.toggle('is-visible', show);
+        document.body.classList.toggle('bar-visible', show);
+      });
+    }, { threshold: 0 });
+    io.observe(hero);
+    var closeBtn = $('[data-bar-close]', bar);
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        dismissed = true;
+        bar.classList.remove('is-visible');
+        document.body.classList.remove('bar-visible');
+      });
+    }
+  })();
+
+})();
+</script>
+</body>
+</html>

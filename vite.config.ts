@@ -44,9 +44,11 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          version1: path.resolve(__dirname, 'version1.html'),
           admin: path.resolve(__dirname, 'admin.html'),
           history: path.resolve(__dirname, 'history.html'),
           version2: path.resolve(__dirname, 'version2.html'),
+          amira: path.resolve(__dirname, 'amira.html'),
         },
       },
     },

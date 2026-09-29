@@ -64,7 +64,9 @@ This project is configured with zero-config Vercel support via `vercel.json` and
 - **Build Command**: `npm run build` (runs Vite build and copies all `/js`, `/css`, and asset bundles into `dist/`)
 - **Output Directory**: `dist`
 - **Routing & Rewrites** (managed automatically by `vercel.json`):
-  - `/` → `dist/index.html` (Turkana Clean Water Campaign)
+  - `/` → `dist/index.html` (Wellspring Children's Healthcare Campaign)
+  - `/amira` → `dist/amira.html` (Amira's Bone Marrow Transplant Story)
+  - `/version1` & `/v1` → `dist/version1.html` (Turkana Clean Water Campaign)
   - `/version2` & `/v2` → `dist/version2.html` (Uzima Children's Fund Campaign)
   - `/admin` → `dist/admin.html` (Staff Operations Portal)
   - `/history` → `dist/history.html` (Supporter Giving Ledger & Wall)
