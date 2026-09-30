@@ -547,7 +547,7 @@
 
     btn.addEventListener('click', async () => {
       btn.disabled = true;
-      btn.textContent = 'Scanning Paystack Transactions...';
+      btn.textContent = 'Scanning Flutterwave Transactions...';
       try {
         const res = await callAdminAction('trigger_reconciliation');
         if (notice) {
@@ -564,7 +564,7 @@
         }
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Run Paystack Reconciliation Now';
+        btn.textContent = 'Run Flutterwave Reconciliation Now';
       }
     });
   }
@@ -877,30 +877,30 @@
   // DEV KEYS & API CREDENTIALS MANAGEMENT (Admin Section)
   // ----------------------------------------------------------------------------
   function loadDevKeysInputs() {
-    const paystackKey = localStorage.getItem('twp_paystack_key') || 'pk_test_2193bfe61dcf7971c220bb9b9a0027d4eb0e2ff3';
-    const paystackSecret = localStorage.getItem('twp_paystack_secret') || '';
+    const flwKey = localStorage.getItem('twp_flutterwave_key') || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
+    const flwSecret = localStorage.getItem('twp_flutterwave_secret') || '';
     const supabaseUrl = localStorage.getItem('twp_supabase_url') || 'https://kljnyncmpsewrghkybcd.supabase.co';
     const supabaseKey = localStorage.getItem('twp_supabase_anon_key') || '';
 
     // Populate Tab inputs
-    const tabPaystack = document.getElementById('adminPaystackKeyInput');
-    const tabSecret = document.getElementById('adminPaystackSecretInput');
+    const tabFlw = document.getElementById('adminFlutterwaveKeyInput');
+    const tabSecret = document.getElementById('adminFlutterwaveSecretInput');
     const tabUrl = document.getElementById('adminSupabaseUrlInput');
     const tabKey = document.getElementById('adminSupabaseKeyInput');
 
-    if (tabPaystack) tabPaystack.value = paystackKey;
-    if (tabSecret) tabSecret.value = paystackSecret;
+    if (tabFlw) tabFlw.value = flwKey;
+    if (tabSecret) tabSecret.value = flwSecret;
     if (tabUrl) tabUrl.value = supabaseUrl;
     if (tabKey) tabKey.value = supabaseKey;
 
     // Populate Modal inputs
-    const modalPaystack = document.getElementById('modalPaystackKeyInput');
-    const modalSecret = document.getElementById('modalPaystackSecretInput');
+    const modalFlw = document.getElementById('modalFlutterwaveKeyInput');
+    const modalSecret = document.getElementById('modalFlutterwaveSecretInput');
     const modalUrl = document.getElementById('modalSupabaseUrlInput');
     const modalKey = document.getElementById('modalSupabaseKeyInput');
 
-    if (modalPaystack) modalPaystack.value = paystackKey;
-    if (modalSecret) modalSecret.value = paystackSecret;
+    if (modalFlw) modalFlw.value = flwKey;
+    if (modalSecret) modalSecret.value = flwSecret;
     if (modalUrl) modalUrl.value = supabaseUrl;
     if (modalKey) modalKey.value = supabaseKey;
   }
@@ -924,13 +924,13 @@
     }
 
     // Live validation for Tab input
-    const tabPaystack = document.getElementById('adminPaystackKeyInput');
+    const tabFlw = document.getElementById('adminFlutterwaveKeyInput');
     const tabWarning = document.getElementById('adminPubKeyWarning');
-    if (tabPaystack && tabWarning) {
-      tabPaystack.addEventListener('input', () => {
-        const val = tabPaystack.value.trim();
-        if (val.startsWith('sk_')) {
-          tabWarning.textContent = '⚠️ You entered a Secret Key (starts with sk_). Public keys start with pk_test_! Browser checkout strictly requires a Public Key.';
+    if (tabFlw && tabWarning) {
+      tabFlw.addEventListener('input', () => {
+        const val = tabFlw.value.trim();
+        if (val.startsWith('FLWSECK_')) {
+          tabWarning.textContent = '⚠️ You entered a Secret Key (starts with FLWSECK_). Public keys start with FLWPUBK_! Browser checkout strictly requires a Public Key.';
           tabWarning.style.display = 'block';
         } else {
           tabWarning.style.display = 'none';
@@ -939,13 +939,13 @@
     }
 
     // Live validation for Modal input
-    const modalPaystack = document.getElementById('modalPaystackKeyInput');
+    const modalFlw = document.getElementById('modalFlutterwaveKeyInput');
     const modalWarning = document.getElementById('modalPubKeyWarning');
-    if (modalPaystack && modalWarning) {
-      modalPaystack.addEventListener('input', () => {
-        const val = modalPaystack.value.trim();
-        if (val.startsWith('sk_')) {
-          modalWarning.textContent = '⚠️ You entered a Secret Key (starts with sk_). Public keys start with pk_test_! Browser checkout strictly requires a Public Key.';
+    if (modalFlw && modalWarning) {
+      modalFlw.addEventListener('input', () => {
+        const val = modalFlw.value.trim();
+        if (val.startsWith('FLWSECK_')) {
+          modalWarning.textContent = '⚠️ You entered a Secret Key (starts with FLWSECK_). Public keys start with FLWPUBK_! Browser checkout strictly requires a Public Key.';
           modalWarning.style.display = 'block';
         } else {
           modalWarning.style.display = 'none';
@@ -957,8 +957,8 @@
     wireKeyControls({
       saveBtnId: 'adminSaveKeysBtn',
       diagnoseBtnId: 'adminDiagnoseBtn',
-      pubKeyInputId: 'adminPaystackKeyInput',
-      secretKeyInputId: 'adminPaystackSecretInput',
+      pubKeyInputId: 'adminFlutterwaveKeyInput',
+      secretKeyInputId: 'adminFlutterwaveSecretInput',
       urlInputId: 'adminSupabaseUrlInput',
       anonKeyInputId: 'adminSupabaseKeyInput',
       successMsgId: 'adminKeySuccessMsg',
@@ -969,8 +969,8 @@
     wireKeyControls({
       saveBtnId: 'modalSaveKeysBtn',
       diagnoseBtnId: 'modalDiagnoseBtn',
-      pubKeyInputId: 'modalPaystackKeyInput',
-      secretKeyInputId: 'modalPaystackSecretInput',
+      pubKeyInputId: 'modalFlutterwaveKeyInput',
+      secretKeyInputId: 'modalFlutterwaveSecretInput',
       urlInputId: 'modalSupabaseUrlInput',
       anonKeyInputId: 'modalSupabaseKeyInput',
       successMsgId: 'modalKeySuccessMsg',
@@ -981,7 +981,7 @@
     loadDevKeysInputs();
 
     // ------------------------------------------------------------------------
-    // Paystack Webhook Controls & Live Testing
+    // Flutterwave Webhook Controls & Live Testing
     // ------------------------------------------------------------------------
     const webhookInput = document.getElementById('adminWebhookUrlInput');
     const copyWebhookBtn = document.getElementById('copyWebhookUrlBtn');
@@ -992,7 +992,7 @@
     const webhookLogsList = document.getElementById('adminWebhookLogsList');
 
     if (webhookInput) {
-      const webhookUrl = `${window.location.origin}/api/paystack-webhook`;
+      const webhookUrl = `${window.location.origin}/api/flutterwave/webhook`;
       webhookInput.value = webhookUrl;
     }
 
@@ -1021,7 +1021,7 @@
     async function loadWebhookLogs() {
       if (!webhookLogsList || !webhookLogsContainer) return;
       try {
-        const res = await fetch('/api/paystack-webhook/logs');
+        const res = await fetch('/api/flutterwave/webhook/logs');
         const data = await res.json();
         webhookLogsContainer.style.display = 'block';
         if (!data.events || data.events.length === 0) {
@@ -1034,7 +1034,7 @@
             <span style="font-weight:700;">${escapeHtml(ev.currency)} ${(ev.amount || 0).toLocaleString()}</span> · 
             <span style="color: var(--color-text-secondary);">${escapeHtml(ev.donor_email)}</span> · 
             <span class="tabular-nums" style="color: var(--color-text-muted); font-size:0.7rem;">${new Date(ev.timestamp).toLocaleTimeString()}</span>
-            ${ev.verified_signature ? '<span style="color:#15803d; font-weight:700;"> [HMAC Verified]</span>' : '<span style="color:#d97706;"> [Dev Mode]</span>'}
+            ${ev.verified_signature ? '<span style="color:#15803d; font-weight:700;"> [Verified]</span>' : '<span style="color:#d97706;"> [Dev Mode]</span>'}
           </div>
         `).join('');
       } catch (e) {
@@ -1049,17 +1049,17 @@
           webhookTestStatus.style.background = 'var(--color-surface-card)';
           webhookTestStatus.style.color = 'var(--color-accent-primary)';
           webhookTestStatus.style.border = '1px solid var(--color-border-hairline)';
-          webhookTestStatus.textContent = '⚡ Dispatching simulated Paystack charge.success webhook...';
+          webhookTestStatus.textContent = '⚡ Dispatching simulated Flutterwave charge.completed webhook...';
         }
 
         try {
-          const res = await fetch('/api/paystack-webhook/test', {
+          const res = await fetch('/api/flutterwave/webhook/test', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: 15000,
-              currency: 'NGN',
-              donor_name: 'Amara Eze (Live Webhook Test)',
+              amount: 50,
+              currency: 'USD',
+              donor_name: 'Amara Eze (Flutterwave Webhook Test)',
               email: 'amara.eze@example.org'
             })
           });
@@ -1069,7 +1069,7 @@
             webhookTestStatus.style.background = '#DCFCE7';
             webhookTestStatus.style.color = '#15803D';
             webhookTestStatus.style.border = '1px solid #86EFAC';
-            webhookTestStatus.innerHTML = `✓ Webhook processed successfully! Event: <code>charge.success</code> · Reference: <code>${data.reference}</code>. Database updated and real-time pop-up notification broadcasted across active users!`;
+            webhookTestStatus.innerHTML = `✓ Flutterwave webhook processed successfully! Event: <code>charge.completed</code>. Database updated and real-time pop-up notification broadcasted across active users!`;
           }
 
           loadDonations(0);
@@ -1103,15 +1103,15 @@
       diagnoseBtn.addEventListener('click', async () => {
         if (!diagResults) return;
         diagResults.style.display = 'block';
-        diagResults.innerHTML = '<div style="color:var(--color-accent-primary); font-weight:600;">Testing connection with Paystack and Supabase...</div>';
+        diagResults.innerHTML = '<div style="color:var(--color-accent-primary); font-weight:600;">Testing connection with Flutterwave and Supabase...</div>';
 
         try {
           const res = await fetch('/api/diagnose-keys', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              paystackPublicKey: pubKeyInput ? pubKeyInput.value.trim() : '',
-              paystackSecretKey: secretKeyInput ? secretKeyInput.value.trim() : '',
+              flutterwavePublicKey: pubKeyInput ? pubKeyInput.value.trim() : '',
+              flutterwaveSecretKey: secretKeyInput ? secretKeyInput.value.trim() : '',
               supabaseUrl: urlInput ? urlInput.value.trim() : '',
               supabaseAnonKey: anonKeyInput ? anonKeyInput.value.trim() : ''
             })
@@ -1119,22 +1119,22 @@
 
           const diag = await res.json();
           let html = '<div style="font-weight:700; margin-bottom:0.35rem;">Diagnostics Report:</div>';
-          if (diag.paystack.publicKeyValid) {
-            html += '<div style="color:#15803d; margin-bottom:3px;">✓ Paystack Public Key format valid</div>';
+          if (diag.flutterwave?.publicKeyValid) {
+            html += '<div style="color:#15803d; margin-bottom:3px;">✓ Flutterwave Public Key format valid</div>';
           } else {
-            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Paystack Public Key: ${diag.paystack.publicKeyError || 'Invalid format'}</div>`;
+            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Flutterwave Public Key: ${diag.flutterwave?.publicKeyError || 'Invalid format'}</div>`;
           }
 
-          if (diag.paystack.secretKeyValid) {
-            html += `<div style="color:#15803d; margin-bottom:3px;">✓ Paystack Secret Key active (Supported: ${diag.paystack.supportedCurrencies.join(', ') || 'NGN'})</div>`;
-          } else if (diag.paystack.error) {
-            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Paystack Secret Key: ${diag.paystack.error}</div>`;
+          if (diag.flutterwave?.secretKeyValid) {
+            html += `<div style="color:#15803d; margin-bottom:3px;">✓ Flutterwave Secret Key active (Supported: ${diag.flutterwave.supportedCurrencies.join(', ') || 'USD, NGN'})</div>`;
+          } else if (diag.flutterwave?.error) {
+            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Flutterwave Secret Key: ${diag.flutterwave.error}</div>`;
           }
 
-          if (diag.supabase.connected) {
+          if (diag.supabase?.connected) {
             html += '<div style="color:#15803d; margin-bottom:3px;">✓ Supabase Database connected</div>';
           } else {
-            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Supabase: ${diag.supabase.error || 'Connection failed'}</div>`;
+            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Supabase: ${diag.supabase?.error || 'Connection failed'}</div>`;
           }
 
           diagResults.innerHTML = html;
@@ -1148,14 +1148,14 @@
       saveBtn.addEventListener('click', () => {
         if (pubKeyInput) {
           const raw = pubKeyInput.value.trim();
-          if (raw.startsWith('sk_')) {
-            alert('Cannot save a Secret Key (sk_...) as Public Key. Please place Secret Key in the Secret Key input.');
+          if (raw.startsWith('FLWSECK_')) {
+            alert('Cannot save a Secret Key (FLWSECK_...) as Public Key. Please place Secret Key in the Secret Key input.');
             return;
           }
-          localStorage.setItem('twp_paystack_key', raw);
+          localStorage.setItem('twp_flutterwave_key', raw);
         }
         if (secretKeyInput) {
-          localStorage.setItem('twp_paystack_secret', secretKeyInput.value.trim());
+          localStorage.setItem('twp_flutterwave_secret', secretKeyInput.value.trim());
         }
         if (urlInput) {
           localStorage.setItem('twp_supabase_url', urlInput.value.trim());

@@ -289,7 +289,7 @@
         return;
       }
 
-      const headers = ['Supporter', 'Identifier', 'Amount', 'Currency', 'Frequency', 'Status', 'Date', 'Paystack Reference'];
+      const headers = ['Supporter', 'Identifier', 'Amount', 'Currency', 'Frequency', 'Status', 'Date', 'Transaction Reference'];
       const rows = dataToExport.map(d => [
         `"${(d.donor_display_name || '').replace(/"/g, '""')}"`,
         `"${(d.donor_email_masked || d.donor_email || '').replace(/"/g, '""')}"`,

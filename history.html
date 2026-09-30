@@ -21,7 +21,7 @@
     <script>
       (function() {
         window.__ENV__ = {
-          paystackPublicKey: 'pk_test_2193bfe61dcf7971c220bb9b9a0027d4eb0e2ff3',
+          flutterwavePublicKey: 'FLWPUBK_TEST-SANDBOXDEMOKEY-X',
           supabaseUrl: 'https://kljnyncmpsewrghkybcd.supabase.co',
           supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtsam55bmNtcHNld3JnaGt5YmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjA0NTcsImV4cCI6MjEwNTg5NjQ1N30.rkiAJOyDqc_p-TUARyXnuVxo-k4IXeLSaQxATLOltWo'
         };
@@ -210,7 +210,7 @@
             <span class="section-kicker">Real-Time Financial Audit</span>
             <h1 style="font-family: var(--font-serif); font-size: 2.35rem; margin-top: 0.25rem;">Giving History &amp; Verified Ledger</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 0.5rem; max-width: 65ch;">
-              Synchronized live with our Supabase database and verified by Paystack payment settlements. Zero simulated or mock records.
+              Synchronized live with our Supabase database and verified by Flutterwave payment settlements. Zero simulated or mock records.
             </p>
           </div>
           <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #15803D; font-weight: 600; background: #DCFCE7; padding: 0.4rem 0.85rem; border-radius: 20px;">
@@ -309,7 +309,7 @@
                   <th>Amount</th>
                   <th>Frequency</th>
                   <th>Status</th>
-                  <th>Paystack Reference</th>
+                  <th>Transaction Reference</th>
                 </tr>
               </thead>
               <tbody id="personalHistoryTableBody">
@@ -328,7 +328,7 @@
               <span class="section-kicker">Public Audit</span>
               <h2 style="font-family: var(--font-serif); font-size: 1.75rem; margin-top: 0.25rem;">Verified Donations Ledger</h2>
               <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
-                Every transaction below represents funds received through Paystack and confirmed in our database.
+                Every transaction below represents funds received through Flutterwave and confirmed in our database.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
@@ -363,7 +363,7 @@
                 <th scope="col">Type</th>
                 <th scope="col">Timestamp</th>
                 <th scope="col">Audit Status</th>
-                <th scope="col">Paystack Reference</th>
+                <th scope="col">Transaction Reference</th>
               </tr>
             </thead>
             <tbody id="publicLedgerTableBody">

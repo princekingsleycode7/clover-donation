@@ -41,7 +41,7 @@
       "card_subtitle": "Every dollar directly funds deep drilling and solar hardware.",
       "tab_onetime": "One-Time Contribution",
       "tab_monthly": "Monthly Sustainer",
-      "monthly_notice": "Recurring Monthly Support: Automated via Paystack Subscription. Cancel anytime from your Giving History portal.",
+      "monthly_notice": "Recurring Monthly Support: Automated via Flutterwave Subscription. Cancel anytime from your Giving History portal.",
       "currency_label": "Select Currency",
       "presets_label": "Select Amount",
       "tax_deductible": "Tax-Deductible",
@@ -51,8 +51,8 @@
       "anonymous_label": "Keep my name anonymous (hidden on public ledger)",
       "leaderboard_optin": "Feature on public Supporter Wall & Community Roll",
       "referral_label": "Referral Code / Partner Tag (Optional)",
-      "submit_btn": "Donate with Paystack",
-      "security_note": "256-Bit SSL Encrypted · Direct NGO Disbursement via Paystack",
+      "submit_btn": "Donate with Flutterwave",
+      "security_note": "256-Bit SSL Encrypted · Direct NGO Disbursement via Flutterwave",
       
       // Matching Gift
       "matching_badge": "1:1 Matching Gift Active: Every dollar doubled up to $25,000 by The Kestrel Global Water Fund!",
@@ -99,7 +99,7 @@
       "card_subtitle": "Chaque don finance directement le forage profond et l'énergie solaire.",
       "tab_onetime": "Don Ponctuel",
       "tab_monthly": "Don Mensuel",
-      "monthly_notice": "Soutien mensuel récurrent : géré en toute sécurité par Paystack. Annulable à tout moment.",
+      "monthly_notice": "Soutien mensuel récurrent : géré en toute sécurité par Flutterwave. Annulable à tout moment.",
       "currency_label": "Devise du Don",
       "presets_label": "Choisir le Montant",
       "tax_deductible": "Déductible d'impôt",
@@ -109,8 +109,8 @@
       "anonymous_label": "Garder mon don anonyme sur le grand livre public",
       "leaderboard_optin": "Figurer sur le Mur d'Honneur public des donateurs",
       "referral_label": "Code de Parrainage (Optionnel)",
-      "submit_btn": "Donner avec Paystack",
-      "security_note": "Chiffrement SSL 256 bits · Versement direct ONG via Paystack",
+      "submit_btn": "Donner avec Flutterwave",
+      "security_note": "Chiffrement SSL 256 bits · Versement direct ONG via Flutterwave",
 
       // Matching Gift
       "matching_badge": "Don Jumelé 1:1 Actif : Chaque don est doublé jusqu'à 25 000 $ par Kestrel Global Water Fund !",
@@ -157,7 +157,7 @@
       "card_subtitle": "Elke bijdrage financiert direct diepboringen en zonnepanelen.",
       "tab_onetime": "Eenmalige Gift",
       "tab_monthly": "Maandelijkse Steun",
-      "monthly_notice": "Maandelijkse automatische steun via Paystack. Op elk moment opzegbaar via uw giftenoverzicht.",
+      "monthly_notice": "Maandelijkse automatische steun via Flutterwave. Op elk moment opzegbaar via uw giftenoverzicht.",
       "currency_label": "Selecteer Valuta",
       "presets_label": "Kies Bedrag",
       "tax_deductible": "Fiscaal Aftrekbaar",
@@ -167,8 +167,8 @@
       "anonymous_label": "Maak mijn donatie anoniem op de openbare pagina",
       "leaderboard_optin": "Vermeld mij op de openbare Donateursmuur",
       "referral_label": "Referentiecode (Optioneel)",
-      "submit_btn": "Doneer via Paystack",
-      "security_note": "256-bit SSL-versleuteling · Directe overboeking naar NGO via Paystack",
+      "submit_btn": "Doneer via Flutterwave",
+      "security_note": "256-bit SSL-versleuteling · Directe overboeking naar NGO via Flutterwave",
 
       // Matching Gift
       "matching_badge": "1:1 Verdubbeling Actief: Elke dollar wordt verdubbeld tot $25.000 door Kestrel Global Water Fund!",

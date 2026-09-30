@@ -29,11 +29,11 @@
   }
 
   const CONFIG = {
-    // Paystack Public Key (Client Browser)
-    paystackPublicKey: storedPaystackKey || envConfig.paystackPublicKey || 'pk_test_2193bfe61dcf7971c220bb9b9a0027d4eb0e2ff3',
+    // Flutterwave Public Key (Client Browser)
+    flutterwavePublicKey: (localStorage.getItem('twp_flutterwave_key') || envConfig.flutterwavePublicKey || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X').trim(),
     
-    // Paystack Secret Key (Optional / Backend testing)
-    paystackSecretKey: (localStorage.getItem('twp_paystack_secret') || '').trim(),
+    // Flutterwave Secret Key (Optional / Backend testing)
+    flutterwaveSecretKey: (localStorage.getItem('twp_flutterwave_secret') || '').trim(),
 
     // Supabase URL & Anon Key
     supabaseUrl: (localStorage.getItem('twp_supabase_url') || envConfig.supabaseUrl || 'https://kljnyncmpsewrghkybcd.supabase.co').trim(),
@@ -514,7 +514,7 @@
     const amount = overrideAmount !== undefined ? overrideAmount : state.selectedAmount;
     const freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
     submitBtn.innerHTML = `
-      <span>Donate ${formatCurrency(amount)}${freqSuffix} with Paystack</span>
+      <span>Donate ${formatCurrency(amount)}${freqSuffix}</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
     `;
   }

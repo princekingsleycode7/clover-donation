@@ -521,25 +521,25 @@
           <div class="admin-card-inner">
             <div class="section-header" style="margin-bottom: 1.5rem;">
               <span class="section-kicker">Financial Integrity & Scheduled Ops</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Paystack Settlement Reconciliation</h3>
+              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Flutterwave Settlement Reconciliation</h3>
               <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Automated background checks (pg_cron) cross-verify Paystack's transaction register with Supabase donations to catch dropped webhooks.
+                Automated background checks cross-verify Flutterwave's transaction register with Supabase donations to resolve pending records.
               </p>
             </div>
 
             <div style="background: var(--color-surface-subtle); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline); margin-bottom: 2rem;">
               <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Manual Reconciliation Trigger</h4>
               <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1rem;">
-                Run an immediate synchronization scan against Paystack's live API to resolve any pending states.
+                Run an immediate synchronization scan against Flutterwave's live API to resolve any pending states.
               </p>
               <button type="button" id="triggerReconcileBtn" class="btn-primary-sm">
-                Run Paystack Reconciliation Now
+                Run Flutterwave Reconciliation Now
               </button>
               <div id="reconcileResultNotice" style="margin-top: 1rem; font-size: 0.85rem; display: none;"></div>
             </div>
 
             <div class="phase1-notice">
-              <strong>Multi-Currency Account Notice:</strong> Ensure multi-currency acceptance (USD, NGN, GBP) is enabled under your Paystack Dashboard (Settings &gt; Preferences).
+              <strong>Multi-Currency Acceptance:</strong> Flutterwave processes USD, GBP, EUR, NGN, KES, and other global currencies directly.
             </div>
           </div>
         </section>
@@ -551,22 +551,22 @@
               <span class="section-kicker">Developer &amp; Integration Settings</span>
               <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Payment Gateway &amp; Database API Credentials</h3>
               <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Manage Paystack and Supabase connection keys for live banking settlement, webhook verification, and ledger synchronization.
+                Manage Flutterwave and Supabase connection keys for live banking settlement, webhook verification, and ledger synchronization.
               </p>
             </div>
 
             <div style="max-width: 680px; background: var(--color-surface-subtle); padding: 1.75rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline);">
               <div class="form-field" style="margin-bottom: 1.25rem;">
-                <label for="adminPaystackKeyInput" class="form-label" style="font-weight: 700;">Paystack Public Key (Client Browser)</label>
-                <input type="text" id="adminPaystackKeyInput" class="admin-input" placeholder="pk_test_..." autocomplete="off" style="font-family: var(--font-mono); width: 100%;" />
+                <label for="adminFlutterwaveKeyInput" class="form-label" style="font-weight: 700;">Flutterwave Public Key (Client Browser)</label>
+                <input type="text" id="adminFlutterwaveKeyInput" class="admin-input" placeholder="FLWPUBK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); width: 100%;" />
                 <div id="adminPubKeyWarning" style="display:none; color: var(--color-error); font-size: 0.75rem; margin-top: 0.25rem; font-weight: 600;"></div>
               </div>
 
               <div class="form-field" style="margin-bottom: 1.25rem;">
-                <label for="adminPaystackSecretInput" class="form-label" style="font-weight: 700;">Paystack Secret Key (Server Verification)</label>
-                <input type="password" id="adminPaystackSecretInput" class="admin-input" placeholder="sk_test_..." autocomplete="off" style="font-family: var(--font-mono); width: 100%;" />
+                <label for="adminFlutterwaveSecretInput" class="form-label" style="font-weight: 700;">Flutterwave Secret Key (Server Verification)</label>
+                <input type="password" id="adminFlutterwaveSecretInput" class="admin-input" placeholder="FLWSECK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); width: 100%;" />
                 <div style="font-size: 0.725rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                  Starts with <code>sk_test_</code>. Used server-side to initialize sessions and verify bank webhooks.
+                  Starts with <code>FLWSECK_</code>. Used server-side to charge cards and verify webhook signatures.
                 </div>
               </div>
 
@@ -593,15 +593,15 @@
             <!-- Webhook Integration Card & Testing Box -->
             <div style="max-width: 680px; background: var(--color-surface-subtle); padding: 1.75rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline); margin-top: 1.5rem;">
               <div class="section-header" style="margin-bottom: 1rem; text-align: left;">
-                <span class="section-kicker">Paystack Webhook Configuration</span>
+                <span class="section-kicker">Flutterwave Webhook Configuration</span>
                 <h4 style="font-family: var(--font-serif); font-size: 1.25rem;">Live Webhook Listener URL</h4>
                 <p style="font-size: 0.8125rem; color: var(--color-text-secondary); margin-top: 0.25rem;">
-                  Paystack automatically posts event notifications (<code>charge.success</code>) to this endpoint whenever a donation is authorized.
+                  Flutterwave automatically posts event notifications (<code>charge.completed</code>) to this endpoint whenever a donation is authorized.
                 </p>
               </div>
 
               <div class="form-field" style="margin-bottom: 1rem;">
-                <label for="adminWebhookUrlInput" class="form-label" style="font-weight: 700;">Copy Webhook URL for Paystack Dashboard:</label>
+                <label for="adminWebhookUrlInput" class="form-label" style="font-weight: 700;">Copy Webhook URL for Flutterwave Dashboard:</label>
                 <div style="display: flex; gap: 0.5rem;">
                   <input type="text" id="adminWebhookUrlInput" class="admin-input" readonly style="font-family: var(--font-mono); font-size: 0.8rem; background: #FFF; flex: 1;" value="" />
                   <button type="button" id="copyWebhookUrlBtn" class="btn-secondary-sm" style="white-space: nowrap;">Copy URL</button>
@@ -644,14 +644,14 @@
         </div>
 
         <div class="form-field" style="margin-bottom: 1rem;">
-          <label for="modalPaystackKeyInput" class="form-label">Paystack Public Key (pk_test_...)</label>
-          <input type="text" id="modalPaystackKeyInput" class="form-input" placeholder="pk_test_..." autocomplete="off" style="font-family: var(--font-mono); font-size: 0.8rem;" />
+          <label for="modalFlutterwaveKeyInput" class="form-label">Flutterwave Public Key (FLWPUBK_...)</label>
+          <input type="text" id="modalFlutterwaveKeyInput" class="form-input" placeholder="FLWPUBK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); font-size: 0.8rem;" />
           <div id="modalPubKeyWarning" style="display:none; color: var(--color-error); font-size: 0.7rem; margin-top: 0.25rem; font-weight: 600;"></div>
         </div>
 
         <div class="form-field" style="margin-bottom: 1rem;">
-          <label for="modalPaystackSecretInput" class="form-label">Paystack Secret Key (sk_test_...)</label>
-          <input type="password" id="modalPaystackSecretInput" class="form-input" placeholder="sk_test_..." autocomplete="off" style="font-family: var(--font-mono); font-size: 0.8rem;" />
+          <label for="modalFlutterwaveSecretInput" class="form-label">Flutterwave Secret Key (FLWSECK_...)</label>
+          <input type="password" id="modalFlutterwaveSecretInput" class="form-input" placeholder="FLWSECK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); font-size: 0.8rem;" />
         </div>
 
         <div class="form-field" style="margin-bottom: 1rem;">

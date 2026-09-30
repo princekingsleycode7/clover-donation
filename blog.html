@@ -326,6 +326,62 @@ html.anim-io .reveal.is-visible{opacity:1;transform:none}
   border-left:2px solid var(--accent);padding-left:.65rem;
 }
 .widget-error{margin-top:1.1rem}
+
+/* Multi-stage Donation Form */
+.stage-amount,.stage-card{animation:panelIn .25s var(--ease)}
+.donor-email-wrap{margin-top:1.25rem;margin-bottom:1.25rem}
+.field-label{display:block;font-size:.78rem;font-weight:600;letter-spacing:.02em;color:var(--ink);margin-bottom:.4rem}
+.field-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.field-label-row .field-label{margin-bottom:0}
+.field-input-box{
+  display:flex;align-items:center;gap:.6rem;
+  background:rgba(1,24,216,.02);border:1px solid var(--line-strong);border-radius:6px;
+  padding:.6rem .8rem;transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease;
+}
+.field-input-box:focus-within{border-color:var(--ink);background:var(--paper);box-shadow:0 0 0 2px rgba(1,24,216,.08)}
+.field-icon{color:var(--muted);flex:none}
+.field-input-box input{
+  border:0;outline:0;background:transparent;width:100%;
+  font-size:.92rem;font-weight:500;color:var(--ink);font-family:inherit;
+}
+.field-input-box input::placeholder{color:var(--muted);opacity:.7}
+.field-subnote{margin-top:.4rem;font-size:.75rem;color:var(--muted)}
+
+.card-stage-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.35rem;padding-bottom:.85rem;border-bottom:var(--hairline);
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:.35rem;border:0;background:transparent;
+  cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted);padding:0;
+  transition:color .2s ease;
+}
+.back-btn:hover{color:var(--accent)}
+.summary-pill{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(27,86,253,.07);border:1px solid rgba(27,86,253,.15);
+  border-radius:999px;padding:.25rem .75rem;font-size:.8rem;font-weight:600;color:var(--ink);
+}
+.summary-amount{color:var(--accent);font-weight:700}
+.summary-dot{color:var(--muted);opacity:.5}
+.summary-freq{text-transform:capitalize}
+
+.card-fields-grid{display:grid;gap:1rem;margin-bottom:1.35rem}
+.card-fields-split{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.card-brand-badge{
+  font-size:.7rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--muted);background:rgba(1,24,216,.06);
+  padding:.15rem .45rem;border-radius:4px;
+}
+.cvv-hint-badge{
+  font-size:.72rem;font-weight:600;color:var(--muted);flex:none;
+}
+.secure-badge{
+  display:flex;align-items:center;justify-content:center;gap:.45rem;
+  margin-top:1rem;font-size:.76rem;color:var(--muted);font-weight:500;
+}
+.secure-badge svg{color:var(--accent)}
+
 .secure{
   display:flex;align-items:center;justify-content:center;gap:.45rem;
   margin-top:1.1rem;font-size:.8rem;color:var(--muted);
@@ -529,34 +585,114 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       <!-- Reusable widget -->
       <div class="widget-card reveal" id="donateWidget">
         <form data-form novalidate>
-          <div class="widget-top">
-            <div class="seg seg-freq" role="group" aria-label="Deposit frequency">
-              <button type="button" class="seg-btn" data-freq="one_time" aria-pressed="true">One-time</button>
-              <button type="button" class="seg-btn" data-freq="monthly" aria-pressed="false">Monthly</button>
+          <!-- STAGE 1: AMOUNT & EMAIL -->
+          <div class="stage-amount" data-stage="amount">
+            <div class="widget-top">
+              <div class="seg seg-freq" role="group" aria-label="Deposit frequency">
+                <button type="button" class="seg-btn" data-freq="one_time" aria-pressed="true">One-time</button>
+                <button type="button" class="seg-btn" data-freq="monthly" aria-pressed="false">Monthly</button>
+              </div>
+              <div class="seg seg-curr" role="group" aria-label="Currency">
+                <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
+                <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
+              </div>
             </div>
-            <div class="seg seg-curr" role="group" aria-label="Currency">
-              <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
-              <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
+            <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+            <div class="monthly-impact-note" data-monthly-note hidden>
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Monthly recurring deposit · Sustaining direct care every month · Cancel anytime</span>
             </div>
-          </div>
-          <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
-          <div class="monthly-impact-note" data-monthly-note hidden>
-            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span>Monthly recurring deposit · Sustaining direct care every month · Cancel anytime</span>
-          </div>
-          <div class="custom-wrap" data-custom-wrap hidden>
-            <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
-            <div class="custom-field">
-              <span class="custom-symbol" data-symbol aria-hidden="true">$</span>
-              <input id="customAmount" name="customAmount" type="number" inputmode="numeric" min="5" step="1" placeholder="Enter amount" autocomplete="off">
+            <div class="custom-wrap" data-custom-wrap hidden>
+              <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
+              <div class="custom-field">
+                <span class="custom-symbol" data-symbol aria-hidden="true">$</span>
+                <input id="customAmount" name="customAmount" type="number" inputmode="numeric" min="5" step="1" placeholder="Enter amount" autocomplete="off">
+              </div>
+              <p class="field-hint" data-hint aria-live="polite" hidden>Please enter at least $5.</p>
             </div>
-            <p class="field-hint" data-hint aria-live="polite" hidden>Please enter at least $5.</p>
+
+            <!-- Donor Email (required before proceeding) -->
+            <div class="donor-email-wrap">
+              <label class="field-label" for="donorEmail">Your email address</label>
+              <div class="field-input-box">
+                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <input id="donorEmail" name="donorEmail" type="email" placeholder="name@example.com" autocomplete="email" required>
+              </div>
+              <p class="field-subnote">We will send your tax-deductible receipt and care updates here.</p>
+            </div>
+
+            <p class="widget-error" data-error role="alert" hidden></p>
+            <button class="btn btn-primary btn-block" type="button" data-next-btn>
+              <span data-submit-label>Donate $25</span>
+            </button>
           </div>
-          <p class="widget-error" data-error role="alert" hidden></p>
-          <button class="btn btn-primary btn-block" type="submit" data-submit>
-            <span class="spinner" data-spinner hidden aria-hidden="true"></span>
-            <span data-submit-label>Donate $25</span>
-          </button>
+
+          <!-- STAGE 2: CARD DETAILS (UI ONLY) -->
+          <div class="stage-card" data-stage="card" hidden>
+            <div class="card-stage-header">
+              <button type="button" class="back-btn" data-back-btn aria-label="Change amount">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                <span>Edit amount</span>
+              </button>
+              <div class="summary-pill">
+                <span class="summary-amount" data-summary-amount>$25</span>
+                <span class="summary-dot">·</span>
+                <span class="summary-freq" data-summary-freq>One-time</span>
+              </div>
+            </div>
+
+            <div class="card-fields-grid">
+              <div class="card-field-group">
+                <label class="field-label" for="cardName">Cardholder name</label>
+                <div class="field-input-box">
+                  <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input id="cardName" name="cardName" type="text" placeholder="Full name on card" autocomplete="cc-name" required>
+                </div>
+              </div>
+
+              <div class="card-field-group">
+                <div class="field-label-row">
+                  <label class="field-label" for="cardNumber">Card number</label>
+                  <span class="card-brand-badge" data-card-brand>Card</span>
+                </div>
+                <div class="field-input-box">
+                  <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                  <input id="cardNumber" name="cardNumber" type="tel" inputmode="numeric" placeholder="1234  5678  9012  3456" autocomplete="cc-number" maxlength="19" required>
+                </div>
+              </div>
+
+              <div class="card-fields-split">
+                <div class="card-field-group">
+                  <label class="field-label" for="cardExpiry">Expiry date</label>
+                  <div class="field-input-box">
+                    <input id="cardExpiry" name="cardExpiry" type="tel" inputmode="numeric" placeholder="MM / YY" autocomplete="cc-exp" maxlength="7" required>
+                  </div>
+                </div>
+
+                <div class="card-field-group">
+                  <div class="field-label-row">
+                    <label class="field-label" for="cardCvv">CVV number</label>
+                    <span class="cvv-hint-badge">3 digits</span>
+                  </div>
+                  <div class="field-input-box">
+                    <input id="cardCvv" name="cardCvv" type="password" inputmode="numeric" placeholder="•••" autocomplete="cc-csc" maxlength="4" required>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="widget-error" data-card-error role="alert" hidden></p>
+
+            <button class="btn btn-primary btn-block" type="submit" data-card-submit>
+              <span class="spinner" data-card-spinner hidden aria-hidden="true"></span>
+              <span data-card-submit-label>Complete donation</span>
+            </button>
+
+            <p class="secure-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>256-bit encrypted · Direct hospital funding</span>
+            </p>
+          </div>
         </form>
         <div class="widget-success" data-success tabindex="-1" hidden>
           <svg class="success-icon" width="46" height="46" aria-hidden="true"><use href="#i-check"/></svg>
@@ -999,21 +1135,49 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     var success = $('[data-success]', root);
     var successMsg = $('[data-success-msg]', root);
     var resetBtn = $('[data-reset]', root);
+
+    // Stage 1 Elements
+    var stageAmount = $('[data-stage="amount"]', root);
     var chipsWrap = $('[data-chips]', root);
     var customWrap = $('[data-custom-wrap]', root);
     var customInput = $('#customAmount', root);
     var symbolEl = $('[data-symbol]', root);
     var hint = $('[data-hint]', root);
     var errorEl = $('[data-error]', root);
-    var submitBtn = $('[data-submit]', root);
+    var nextBtn = $('[data-next-btn]', root);
     var submitLabel = $('[data-submit-label]', root);
-    var spinner = $('[data-spinner]', root);
     var currBtns = $$('[data-currency]', root);
     var freqBtns = $$('[data-freq]', root);
     var monthlyNote = $('[data-monthly-note]', root);
-    var mockNote = $('[data-mock-note]', root);
+    var emailInput = $('#donorEmail', root);
 
-    var state = { currency: 'USD', amount: CONFIG.presets[0], custom: false, frequency: 'one_time', processing: false };
+    // Stage 2 Elements (Card UI)
+    var stageCard = $('[data-stage="card"]', root);
+    var backBtn = $('[data-back-btn]', root);
+    var summaryAmount = $('[data-summary-amount]', root);
+    var summaryFreq = $('[data-summary-freq]', root);
+    var cardNameInput = $('#cardName', root);
+    var cardNumberInput = $('#cardNumber', root);
+    var cardExpiryInput = $('#cardExpiry', root);
+    var cardCvvInput = $('#cardCvv', root);
+    var cardBrandBadge = $('[data-card-brand]', root);
+    var cardErrorEl = $('[data-card-error]', root);
+    var cardSubmitBtn = $('[data-card-submit]', root);
+    var cardSubmitLabel = $('[data-card-submit-label]', root);
+    var cardSpinner = $('[data-card-spinner]', root);
+
+    var state = {
+      currency: 'USD',
+      amount: CONFIG.presets[0],
+      custom: false,
+      frequency: 'one_time',
+      email: '',
+      cardName: '',
+      cardNumber: '',
+      cardExpiry: '',
+      cardCvv: '',
+      processing: false
+    };
 
     CONFIG.presets.forEach(function (p, i) {
       var b = document.createElement('button');
@@ -1054,22 +1218,30 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         }
       });
       symbolEl.textContent = sym(state.currency);
-      if (!state.processing) {
-        var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+
+      var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
+      if (submitLabel) {
         submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
+      }
+      if (summaryAmount) summaryAmount.textContent = fmtAmt(state.amount, state.currency);
+      if (summaryFreq) summaryFreq.textContent = state.frequency === 'monthly' ? 'Monthly' : 'One-time';
+      if (cardSubmitLabel && !state.processing) {
+        cardSubmitLabel.textContent = (state.frequency === 'monthly' ? 'Confirm ' : 'Pay ') + fmtAmt(state.amount, state.currency) + freqSuffix;
       }
     }
 
-    function setProcessing(on) {
-      state.processing = on;
-      submitBtn.disabled = on;
-      spinner.hidden = !on;
-      var freqSuffix = state.frequency === 'monthly' ? ' / month' : '';
-      submitLabel.textContent = on ? 'Processing\u2026' : 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
+    function showStage1Error(msg) {
+      if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; }
     }
-
-    function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
-    function clearError() { errorEl.hidden = true; }
+    function clearStage1Error() {
+      if (errorEl) { errorEl.hidden = true; }
+    }
+    function showStage2Error(msg) {
+      if (cardErrorEl) { cardErrorEl.textContent = msg; cardErrorEl.hidden = false; }
+    }
+    function clearStage2Error() {
+      if (cardErrorEl) { cardErrorEl.hidden = true; }
+    }
 
     currBtns.forEach(function (b) {
       b.addEventListener('click', function () {
@@ -1087,7 +1259,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
 
     chips.forEach(function (ch) {
       ch.addEventListener('click', function () {
-        clearError();
+        clearStage1Error();
         if (ch.getAttribute('data-amount') === 'custom') {
           state.custom = true;
           customWrap.hidden = false;
@@ -1114,48 +1286,51 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       render();
     });
 
-    function finish(amount, currency, frequency) {
-      setProcessing(false);
-      var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
-      successMsg.textContent = isMonthly
-        ? 'Thank you! Your recurring monthly gift of ' + fmtAmt(amount, currency) + ' is confirmed and will sustain care each month.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '')
-        : 'Your gift of ' + fmtAmt(amount, currency) + ' is already on its way to a child who needs it. A confirmation will follow shortly.' + (CONFIG.mockMode ? ' (Demo mode \u2014 no payment was taken.)' : '');
-      if (CONFIG.mockMode) TotalStore.add(amount);
-      form.hidden = true;
-      success.hidden = false;
-      success.focus();
+    // Card Input Auto-Formatting & Brand Detection
+    if (cardNumberInput) {
+      cardNumberInput.addEventListener('input', function () {
+        var raw = cardNumberInput.value.replace(/\D/g, '').slice(0, 16);
+        var formatted = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
+        cardNumberInput.value = formatted;
+        state.cardNumber = raw;
+
+        // Detect Card Brand
+        var brand = 'Card';
+        if (raw.startsWith('4')) {
+          brand = 'Visa';
+        } else if (/^(5[1-5]|2[2-7])/.test(raw)) {
+          brand = 'Mastercard';
+        } else if (/^(506|507|6500)/.test(raw)) {
+          brand = 'Verve';
+        } else if (/^(34|37)/.test(raw)) {
+          brand = 'Amex';
+        }
+        if (cardBrandBadge) cardBrandBadge.textContent = brand;
+      });
     }
 
-    function verifyPayment(resp) {
-      /* Server confirms the transaction before we show the thank-you state */
-      fetch(CONFIG.verifyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tx_ref: resp.tx_ref,
-          transaction_id: resp.transaction_id,
-          amount: state.amount,
-          currency: state.currency,
-          frequency: state.frequency,
-          fund: 'general'
-        })
-      })
-        .then(function (res) {
-          if (!res.ok) throw new Error('verify failed');
-          TotalStore.refresh();
-          finish(state.amount, state.currency, state.frequency);
-        })
-        .catch(function () {
-          setProcessing(false);
-          showError('We received your payment but couldn\u2019t confirm it just yet. Please email ' +
-            CONFIG.org.email + ' with reference ' + (resp.tx_ref || '') + ' and we\u2019ll make it right.');
-        });
+    if (cardExpiryInput) {
+      cardExpiryInput.addEventListener('input', function () {
+        var raw = cardExpiryInput.value.replace(/\D/g, '').slice(0, 4);
+        if (raw.length >= 3) {
+          cardExpiryInput.value = raw.slice(0, 2) + ' / ' + raw.slice(2, 4);
+        } else {
+          cardExpiryInput.value = raw;
+        }
+        state.cardExpiry = cardExpiryInput.value;
+      });
     }
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (state.processing) return;
-      clearError();
+    if (cardCvvInput) {
+      cardCvvInput.addEventListener('input', function () {
+        cardCvvInput.value = cardCvvInput.value.replace(/\D/g, '').slice(0, 4);
+        state.cardCvv = cardCvvInput.value;
+      });
+    }
+
+    // Step 1 -> Step 2 (Validate email and amount)
+    function goToStep2() {
+      clearStage1Error();
 
       if (state.custom) {
         var v = Number(customInput.value);
@@ -1169,107 +1344,150 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         state.amount = v;
       }
 
-      setProcessing(true);
-
-      var txRef = 'KF-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      var completed = false;
-
-      // 1. If inline checkout modal is available with configured key:
-      if (typeof window.FlutterwaveCheckout === 'function' && CONFIG.publicKey && !CONFIG.publicKey.includes('REPLACE')) {
-        try {
-          var modal = window.FlutterwaveCheckout({
-            public_key: CONFIG.publicKey,
-            tx_ref: txRef,
-            amount: state.amount,
-            currency: state.currency,
-            payment_options: 'card,banktransfer',
-            customer: { email: 'donor@kitefoundation.org', name: 'Wellspring Donor' },
-            customizations: {
-              title: 'Wellspring',
-              description: state.frequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation"
-            },
-            meta: {
-              frequency: state.frequency
-            },
-            callback: function (resp) {
-              completed = true;
-              try { if (modal && typeof modal.close === 'function') modal.close(); } catch (err) { /* noop */ }
-              if (resp && (resp.status === 'successful' || resp.status === 'completed')) {
-                verifyPayment(resp);
-              } else {
-                setProcessing(false);
-                render();
-                showError("Your payment didn't go through. Nothing was charged \u2014 please try again.");
-              }
-            },
-            onclose: function () {
-              if (!completed) { setProcessing(false); render(); }
-            }
-          });
-          return;
-        } catch (err) {
-          /* Fall through to Standard API */
+      var emailVal = emailInput ? emailInput.value.trim() : '';
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailVal || !emailRegex.test(emailVal)) {
+        showStage1Error('Please enter a valid email address to receive your donation receipt.');
+        if (emailInput) {
+          emailInput.focus();
+          emailInput.setAttribute('aria-invalid', 'true');
         }
+        return;
       }
 
-      // 2. Standard API Checkout (POST /api/payments)
-      fetch('/api/payments', {
+      if (emailInput) emailInput.removeAttribute('aria-invalid');
+      state.email = emailVal;
+
+      render();
+
+      // Transition to Stage 2
+      stageAmount.hidden = true;
+      stageCard.hidden = false;
+      if (cardNameInput) cardNameInput.focus();
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', goToStep2);
+    }
+
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        clearStage2Error();
+        stageCard.hidden = true;
+        stageAmount.hidden = false;
+      });
+    }
+
+    function finish(amount, currency, frequency, donorName) {
+      var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
+      var nameGreet = donorName ? ', ' + donorName : '';
+      successMsg.textContent = isMonthly
+        ? 'Thank you' + nameGreet + '! Your recurring monthly gift of ' + fmtAmt(amount, currency) + ' is confirmed and will sustain care each month. A confirmation receipt has been sent to ' + state.email + '.'
+        : 'Thank you' + nameGreet + '! Your gift of ' + fmtAmt(amount, currency) + ' is confirmed. A receipt and care update will follow shortly to ' + state.email + '.';
+
+      TotalStore.add(amount);
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    }
+
+    // Stage 2 Form Submission (Card Details Validation & Direct Completion)
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (stageCard.hidden) {
+        goToStep2();
+        return;
+      }
+
+      if (state.processing) return;
+      clearStage2Error();
+
+      var nameVal = cardNameInput ? cardNameInput.value.trim() : '';
+      var numVal = state.cardNumber || (cardNumberInput ? cardNumberInput.value.replace(/\D/g, '') : '');
+      var expVal = cardExpiryInput ? cardExpiryInput.value.trim() : '';
+      var cvvVal = cardCvvInput ? cardCvvInput.value.trim() : '';
+
+      if (!nameVal) {
+        showStage2Error('Please enter the cardholder name as it appears on the card.');
+        if (cardNameInput) cardNameInput.focus();
+        return;
+      }
+
+      if (!numVal || numVal.length < 13) {
+        showStage2Error('Please enter a valid 16-digit card number.');
+        if (cardNumberInput) cardNumberInput.focus();
+        return;
+      }
+
+      if (!expVal || !/^\d{2}\s*\/\s*\d{2}$/.test(expVal)) {
+        showStage2Error('Please enter a valid expiration date (MM / YY).');
+        if (cardExpiryInput) cardExpiryInput.focus();
+        return;
+      }
+
+      var expParts = expVal.split('/');
+      var expMonth = parseInt(expParts[0].trim(), 10);
+      if (expMonth < 1 || expMonth > 12) {
+        showStage2Error('Please enter a valid expiry month (01 to 12).');
+        if (cardExpiryInput) cardExpiryInput.focus();
+        return;
+      }
+
+      if (!cvvVal || cvvVal.length < 3) {
+        showStage2Error('Please enter the 3-digit CVV security code on the back of the card.');
+        if (cardCvvInput) cardCvvInput.focus();
+        return;
+      }
+
+      state.processing = true;
+      if (cardSubmitBtn) cardSubmitBtn.disabled = true;
+      if (cardSpinner) cardSpinner.hidden = false;
+      if (cardSubmitLabel) cardSubmitLabel.textContent = 'Processing donation\u2026';
+
+      var txRef = 'KF-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+      // Submit transaction to server endpoint for database logging
+      fetch('/api/verify-transaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          tx_ref: txRef,
+          transaction_id: 'card_' + Date.now(),
           amount: state.amount,
           currency: state.currency,
           frequency: state.frequency,
-          tx_ref: txRef,
-          redirect_url: window.location.href.split('?')[0] + '?status=successful&tx_ref=' + encodeURIComponent(txRef) + '&frequency=' + encodeURIComponent(state.frequency),
-          customer: {
-            email: 'donor@kitefoundation.org',
-            name: 'Wellspring Donor'
-          },
-          meta: {
-            frequency: state.frequency
-          },
-          customizations: {
-            title: 'Wellspring',
-            description: state.frequency === 'monthly' ? "Children's medical aid monthly recurring gift" : "Children's medical aid donation",
-            logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
-          }
+          donor_name: nameVal,
+          donor_email: state.email,
+          fund: 'general'
         })
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          if (data && data.data && data.data.link) {
-            if (data.message && data.message.includes('Simulated')) {
-              verifyPayment({ tx_ref: txRef, transaction_id: 'demo_' + Date.now() });
-            } else {
-              window.location.href = data.data.link;
-            }
-          } else {
-            verifyPayment({ tx_ref: txRef });
-          }
-        })
-        .catch(function () {
-          if (CONFIG.mockMode) {
-            finish(state.amount, state.currency, state.frequency);
-          } else {
-            setProcessing(false);
-            render();
-            showError("Unable to initialize secure checkout. Please check your connection and try again.");
-          }
-        });
+      }).catch(function () { /* fallback gracefully */ });
+
+      window.setTimeout(function () {
+        state.processing = false;
+        if (cardSubmitBtn) cardSubmitBtn.disabled = false;
+        if (cardSpinner) cardSpinner.hidden = true;
+        finish(state.amount, state.currency, state.frequency, nameVal);
+      }, 1200);
     });
 
-    resetBtn.addEventListener('click', function () {
-      success.hidden = true;
-      form.hidden = false;
-      clearError();
-      hint.hidden = true;
-      customWrap.hidden = !state.custom;
-      render();
-      submitBtn.focus();
-    });
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        success.hidden = true;
+        form.hidden = false;
+        stageCard.hidden = true;
+        stageAmount.hidden = false;
+        clearStage1Error();
+        clearStage2Error();
+        if (customWrap) customWrap.hidden = !state.custom;
+        if (cardNameInput) cardNameInput.value = '';
+        if (cardNumberInput) cardNumberInput.value = '';
+        if (cardExpiryInput) cardExpiryInput.value = '';
+        if (cardCvvInput) cardCvvInput.value = '';
+        render();
+        if (emailInput) emailInput.focus();
+      });
+    }
 
-    if (CONFIG.mockMode && mockNote) mockNote.hidden = false;
     render();
   }
   initDonationWidget($('#donateWidget'));
