@@ -679,6 +679,18 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
                   </div>
                 </div>
               </div>
+
+              <!-- Phone field required for Amex cards -->
+              <div class="card-field-group phone-field-wrap" data-phone-wrap style="margin-top:0.75rem;" hidden>
+                <div class="field-label-row">
+                  <label class="field-label" for="cardPhone">Phone number <span class="amex-req-badge" style="color:var(--accent-primary, #0284c7); font-weight:700; font-size:0.75rem;">(Required for Amex)</span></label>
+                </div>
+                <div class="field-input-box">
+                  <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <input id="cardPhone" name="cardPhone" type="tel" inputmode="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
+                </div>
+                <p class="field-subnote" style="font-size:0.75rem; color:var(--muted); margin-top:0.25rem;">American Express card payments require a phone number for 3D Secure verification.</p>
+              </div>
             </div>
 
             <p class="widget-error" data-card-error role="alert" hidden></p>
@@ -1286,6 +1298,57 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       render();
     });
 
+    // Async function to trigger Flutterwave Card BIN verification API (GET https://api.flutterwave.com/v3/card-bins/{bin})
+    async function verifyCardBin(bin) {
+      if (!bin || bin.length < 6) return;
+      if (state.lastCheckedBin === bin) return;
+      state.lastCheckedBin = bin;
+
+      var secretKey = (typeof localStorage !== 'undefined' && localStorage.getItem('twp_flutterwave_secret')) || '';
+
+      try {
+        var apiUrl = '/api/card-bins/' + bin;
+        if (secretKey) {
+          apiUrl += '?secret_key=' + encodeURIComponent(secretKey);
+        }
+        var res = await fetch(apiUrl, {
+          headers: secretKey ? { 'Authorization': 'Bearer ' + secretKey } : {}
+        });
+
+        if (!res.ok && secretKey) {
+          res = await fetch('https://api.flutterwave.com/v3/card-bins/' + bin, {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + secretKey,
+              'Content-Type': 'application/json'
+            }
+          });
+        }
+
+        if (res.ok) {
+          var json = await res.json();
+          var data = json.data || json;
+          if (data) {
+            var rawType = String(data.card_type || '').toUpperCase();
+            var isAmex = rawType.includes('AMEX') || rawType.includes('AMERICAN') || /^3[47]/.test(bin);
+            
+            state.isAmex = isAmex;
+            if (cardBrandBadge) {
+              cardBrandBadge.textContent = isAmex ? 'Amex' : (data.card_type || 'Card');
+            }
+            if (phoneWrap) {
+              phoneWrap.hidden = !isAmex;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('[Card BIN Verification Error]', e);
+        var isAmexPrefix = /^3[47]/.test(bin);
+        state.isAmex = isAmexPrefix;
+        if (phoneWrap) phoneWrap.hidden = !isAmexPrefix;
+      }
+    }
+
     // Card Input Auto-Formatting & Brand Detection
     if (cardNumberInput) {
       cardNumberInput.addEventListener('input', function () {
@@ -1306,6 +1369,19 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
           brand = 'Amex';
         }
         if (cardBrandBadge) cardBrandBadge.textContent = brand;
+
+        if (raw.length >= 6) {
+          verifyCardBin(raw.slice(0, 6));
+        } else {
+          state.isAmex = (brand === 'Amex');
+          if (phoneWrap) phoneWrap.hidden = !state.isAmex;
+        }
+      });
+    }
+
+    if (cardPhoneInput) {
+      cardPhoneInput.addEventListener('input', function () {
+        state.cardPhone = cardPhoneInput.value.trim();
       });
     }
 
@@ -1436,6 +1512,13 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       if (!cvvVal || cvvVal.length < 3) {
         showStage2Error('Please enter the 3-digit CVV security code on the back of the card.');
         if (cardCvvInput) cardCvvInput.focus();
+        return;
+      }
+
+      var phoneVal = cardPhoneInput ? cardPhoneInput.value.trim() : '';
+      if (state.isAmex && !phoneVal) {
+        showStage2Error('Please enter your phone number. American Express cards require a phone number for 3D Secure verification.');
+        if (cardPhoneInput) cardPhoneInput.focus();
         return;
       }
 

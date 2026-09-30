@@ -496,6 +496,77 @@ async function handleFlutterwaveWebhook(req: Request, res: Response) {
 }
 
 // ----------------------------------------------------------------------------
+// API: CARD BIN VERIFICATION (Flutterwave GET /v3/card-bins/{bin})
+// ----------------------------------------------------------------------------
+async function handleCardBinVerification(req: Request, res: Response) {
+  try {
+    const rawBin = req.params.bin || req.query.bin || '';
+    const bin = String(rawBin).replace(/\D/g, '').slice(0, 6);
+    if (bin.length < 6) {
+      return res.status(400).json({ error: 'Valid 6-digit BIN is required' });
+    }
+
+    const authHeader = req.headers.authorization;
+    let providedSecretKey = '';
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      providedSecretKey = authHeader.substring(7).trim();
+    } else if (req.query.secret_key) {
+      providedSecretKey = String(req.query.secret_key).trim();
+    }
+
+    const secretKeyToUse = providedSecretKey || FLUTTERWAVE_SECRET_KEY;
+    const isAmexPrefix = /^3[47]/.test(bin);
+
+    // Call Flutterwave Card BIN API if valid secret key is present
+    if (isValidFlwSecretKey(secretKeyToUse)) {
+      try {
+        const flwRes = await fetch(`https://api.flutterwave.com/v3/card-bins/${bin}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${secretKeyToUse}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const flwJson = await flwRes.json();
+        if (flwRes.ok && flwJson.status === 'success' && flwJson.data) {
+          const cardType = String(flwJson.data.card_type || '').toUpperCase();
+          const isAmex = cardType.includes('AMEX') || cardType.includes('AMERICAN') || isAmexPrefix;
+          return res.json({
+            status: 'success',
+            message: flwJson.message || 'completed',
+            data: {
+              ...flwJson.data,
+              card_type: isAmex ? 'AMERICAN EXPRESS' : flwJson.data.card_type,
+              is_amex: isAmex
+            }
+          });
+        }
+      } catch (flwErr) {
+        console.warn('[card-bin] Flutterwave API call warning:', flwErr);
+      }
+    }
+
+    // Fallback response for Sandbox/Demo keys or when offline
+    return res.json({
+      status: 'success',
+      message: 'completed',
+      data: {
+        issuing_country: 'GLOBAL',
+        bin: bin,
+        card_type: isAmexPrefix ? 'AMERICAN EXPRESS' : (bin.startsWith('4') ? 'VISA' : 'MASTERCARD'),
+        issuer_info: 'CREDIT',
+        is_amex: isAmexPrefix
+      }
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to verify BIN' });
+  }
+}
+
+app.get('/api/card-bins/:bin', handleCardBinVerification);
+app.get('/api/flutterwave/card-bins/:bin', handleCardBinVerification);
+
+// ----------------------------------------------------------------------------
 // API: DONATION TOTAL (Current aggregate for campaign progress)
 // ----------------------------------------------------------------------------
 async function handleDonationTotal(_req: Request, res: Response) {
