@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFF8F8">
+<title>Amira's story — Wellspring</title>
+<meta name="description" content="Amira is seven. She needs a bone marrow transplant that costs $250,000. Here is her story — and how your gift gets her there.">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="shortcut icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:rgb(1,24,216);
+  --accent:rgb(27,86,253);
+  --cream:rgb(233,223,195);
+  --paper:rgb(255,248,248);
+
+  --muted:rgba(1,24,216,.72);
+  --line:rgba(1,24,216,.16);
+  --line-strong:rgba(1,24,216,.34);
+  --accent-soft:rgba(27,86,253,.08);
+  --paper-muted:rgba(255,248,248,.75);
+
+  --hairline:1px solid var(--line);
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+
+  --maxw:1120px;
+  --pad-x:clamp(1.25rem,5vw,2.5rem);
+  --section-y:clamp(4.5rem,9vw,9.5rem);
+  --radius:8px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+/* ============ BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.7;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+img{max-width:100%;display:block}
+h1,h2,h3,p,figure,dl,dd,dt,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+::selection{background:var(--accent);color:var(--paper)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.img-placeholder{background:var(--accent-soft)}
+.icon{display:inline-block;vertical-align:middle;flex:none}
+
+.container{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad-x)}
+.section{padding-block:var(--section-y)}
+
+.label{
+  display:inline-flex;align-items:center;gap:.65rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);
+}
+.label::before{content:"";width:22px;height:1px;background:var(--accent);flex:none}
+
+h1,h2{font-family:var(--serif);font-weight:400}
+h2{
+  font-size:clamp(2.05rem,3.8vw,3.1rem);
+  line-height:1.08;letter-spacing:-.01em;
+  margin-top:1.1rem;
+}
+
+/* ============ MOTION GATING ============ */
+html.anim-gsap .reveal,
+html.anim-io .reveal{opacity:0}
+html.anim-io .reveal{
+  transform:translateY(14px);
+  transition:opacity .7s ease,transform .7s var(--ease);
+}
+html.anim-io .reveal.is-visible{opacity:1;transform:none}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html.anim-gsap .reveal,html.anim-io .reveal{opacity:1!important;transform:none!important}
+}
+
+/* ============ BUTTONS & LINKS ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+  border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;
+  font-weight:600;font-size:.95rem;line-height:1;padding:.85rem 1.7rem;
+  transition:scale .25s ease,box-shadow .25s ease,background-color .25s ease,color .25s ease;
+}
+.btn:hover{scale:1.04}
+.btn:active{scale:.99}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary:hover{background:var(--accent);box-shadow:0 14px 28px -14px rgba(1,24,216,.5)}
+.btn-sm{padding:.6rem 1.2rem;font-size:.85rem}
+.btn-block{width:100%;margin-top:1.25rem}
+.btn:disabled{opacity:.6;cursor:wait;scale:1}
+
+.link-arrow{
+  position:relative;display:inline-flex;align-items:center;gap:.5rem;
+  background:none;border:0;cursor:pointer;padding:.4rem 0;
+  font-weight:600;font-size:.95rem;text-decoration:none;color:var(--ink);
+}
+.link-arrow::after{
+  content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;
+  background:var(--ink);transform-origin:left;transition:background-color .25s ease,transform .25s var(--ease);
+}
+.link-arrow .icon{transition:translate .25s ease}
+.link-arrow:hover::after{background:var(--accent);transform:scaleX(1.06)}
+.link-arrow:hover .icon{translate:3px 0}
+
+/* ============ HEADER ============ */
+.site-header{position:sticky;top:0;z-index:100;background:var(--paper);border-bottom:var(--hairline)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:64px}
+.brand{
+  display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;
+  font-family:var(--serif);font-size:1.35rem;letter-spacing:-.01em;
+}
+.brand-logo{display:block;flex:none}
+.nav-links{display:none;align-items:center;gap:2.2rem}
+.nav-links a{
+  position:relative;font-size:.9rem;font-weight:500;color:var(--muted);
+  text-decoration:none;padding:.35rem 0;transition:color .25s ease;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease);
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-links a[aria-current="page"]{color:var(--ink)}
+.nav-links a[aria-current="page"]::after{transform:scaleX(1)}
+.header-actions{display:flex;align-items:center;gap:.75rem}
+.menu-btn{
+  display:inline-flex;align-items:center;gap:.5rem;background:none;border:0;cursor:pointer;
+  font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .25rem;
+}
+.mobile-panel{
+  display:none;position:absolute;top:100%;left:0;right:0;
+  background:var(--paper);border-bottom:var(--hairline);
+  padding:.25rem var(--pad-x) 1.25rem;
+  animation:panelIn .25s var(--ease);
+}
+@keyframes panelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.menu-open .mobile-panel{display:block}
+.mobile-panel a{display:block;padding:.85rem 0;font-size:1rem;font-weight:500;text-decoration:none;border-top:var(--hairline)}
+.mobile-panel a:first-child{border-top:0}
+.mobile-panel a:hover{color:var(--muted)}
+.mobile-panel a[aria-current="page"]{color:var(--ink)}
+@media (min-width:900px){
+  .nav-links{display:flex}
+  .menu-btn,.mobile-panel{display:none!important}
+}
+
+/* ============ STORY HERO ============ */
+.story-hero{padding-block:clamp(3.5rem,7vw,6rem) clamp(3rem,6vw,5rem)}
+.story-hero-grid{display:grid;gap:3rem;align-items:center}
+.story-hero-copy{max-width:640px}
+.story-meta{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1.25rem;
+  margin-top:1.4rem;font-size:.8rem;color:var(--muted);
+}
+.story-hero h1{
+  font-size:clamp(2.6rem,5.6vw,4.3rem);
+  line-height:1.03;letter-spacing:-.015em;
+  margin-top:1.3rem;
+}
+.story-lede{margin-top:1.6rem;max-width:50ch;font-size:1.2rem;line-height:1.6;color:var(--muted)}
+.story-progress{margin-top:2.25rem;max-width:460px}
+.progress-note{margin-top:.65rem;font-size:.9rem;color:var(--muted)}
+.progress-note strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.story-actions{display:flex;align-items:center;flex-wrap:wrap;gap:1.1rem 2rem;margin-top:2rem}
+.story-hero-media{
+  position:relative;z-index:0;
+  aspect-ratio:4/5;width:min(100%,360px);justify-self:center;
+}
+.img-clip{overflow:hidden;border-radius:var(--radius);width:100%;height:100%}
+.img-clip img{width:100%;height:114%;object-fit:cover}
+.framed::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  border:1px solid var(--accent);border-radius:var(--radius);
+  transform:translate(16px,16px);pointer-events:none;
+}
+@media (min-width:900px){
+  .story-hero-grid{grid-template-columns:1.15fr .85fr;gap:4.5rem}
+  .story-hero-media{width:100%;max-width:420px;justify-self:end}
+}
+
+/* ============ ARTICLE ============ */
+.story-col{max-width:65ch;margin-inline:auto}
+.story-col > p{margin-top:1.35em}
+.story-col > p:first-of-type{margin-top:0}
+.story-col > p:first-of-type::first-letter{
+  font-family:var(--serif);font-weight:400;
+  font-size:3.6em;line-height:.78;
+  float:left;padding:.06em .14em 0 0;
+}
+.story-col h2{
+  font-size:clamp(1.7rem,2.6vw,2.3rem);
+  margin:3.2rem 0 .4rem;letter-spacing:-.01em;
+}
+.pullquote{
+  border-block:var(--hairline);
+  padding:2.4rem 0;margin:3.2rem 0;
+}
+.pullquote p{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.6rem,3vw,2.15rem);line-height:1.28;letter-spacing:-.01em;
+}
+.pullquote p::before{content:"\201C";color:var(--accent);margin-right:.08em}
+.pullquote cite{
+  display:block;margin-top:1.2rem;font-style:normal;
+  font-size:.78rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+}
+.story-figure{margin:3.2rem 0}
+.story-figure .img-clip{aspect-ratio:3/2;height:auto}
+.story-figure img{height:100%}
+.story-figcaption{
+  margin-top:.85rem;font-size:.85rem;color:var(--muted);
+  display:flex;gap:.65rem;align-items:baseline;
+}
+.story-figcaption::before{content:"";width:18px;height:1px;background:var(--accent);flex:none;transform:translateY(-.25em)}
+
+/* ============ COST BREAKDOWN ============ */
+.costs{margin-top:4rem}
+.cost-list{margin-top:2.25rem}
+.cost-row{
+  display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;
+  border-top:var(--hairline);padding:1.15rem 0;
+}
+.cost-row dt{font-size:.98rem;color:var(--muted)}
+.cost-row dd{
+  font-family:var(--serif);font-size:1.45rem;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;
+}
+.cost-row.is-total{border-top:1px solid var(--line-strong)}
+.cost-row.is-total dt{color:var(--ink);font-weight:600}
+.cost-row.is-total dd{font-size:1.8rem;color:var(--accent)}
+.cost-note{margin-top:1.25rem;font-size:.85rem;color:var(--muted)}
+
+/* ============ FAQ ============ */
+.faq{margin-top:4.5rem}
+.faq-list{margin-top:2rem}
+.faq-list details{border-top:var(--hairline)}
+.faq-list details:last-child{border-bottom:var(--hairline)}
+.faq-list summary{
+  cursor:pointer;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:1.25rem;
+  padding:1.25rem 0;font-weight:600;font-size:1rem;
+}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-icon{flex:none;color:var(--accent);display:inline-flex}
+.faq-icon svg{transform:rotate(45deg);transition:transform .25s var(--ease)}
+.faq-list details[open] .faq-icon svg{transform:rotate(0deg)}
+.faq-list details p{padding:0 0 1.4rem;color:var(--muted);font-size:.95rem;max-width:56ch}
+
+/* ============ STORY CTA ============ */
+.story-cta{margin-top:4.5rem;text-align:center;padding-top:3rem;border-top:var(--hairline)}
+.story-cta h2{max-width:18ch;margin-inline:auto}
+.story-cta-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1.1rem 2rem;margin-top:2rem}
+
+/* ============ MINI STATS ============ */
+.mini-stats{display:flex;flex-wrap:wrap;gap:1.5rem 2.75rem;margin-top:2.25rem}
+.mini-stat .ms-num{
+  display:block;font-family:var(--serif);font-size:2.2rem;line-height:1;
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums;
+}
+.mini-stat .ms-label{
+  display:block;margin-top:.4rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+
+/* ============ GIVE BAND ============ */
+.give{background:var(--cream);border-block:var(--hairline);padding-block:var(--section-y)}
+.give-grid{display:grid;gap:3rem;align-items:center}
+.give-copy p.give-sub{color:var(--muted);max-width:44ch;margin-top:1.2rem}
+.give .progress{margin-top:2.25rem}
+.give-trust{
+  display:flex;align-items:baseline;gap:.6rem;
+  margin-top:1.75rem;font-size:.85rem;color:var(--muted);max-width:44ch;
+}
+.give-trust .icon{color:var(--accent);transform:translateY(2px)}
+@media (min-width:980px){
+  .give-grid{grid-template-columns:1.05fr .95fr;gap:5rem}
+  .give .widget-card{margin:0}
+}
+
+/* ============ WIDGET CARD ============ */
+.widget-card{
+  background:var(--paper);border:var(--hairline);border-radius:10px;
+  padding:clamp(1.5rem,4vw,2.25rem);
+  max-width:520px;margin:1rem auto 0;text-align:left;width:100%;
+}
+.widget-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(1,24,216,.02)}
+.seg-btn{
+  border:0;background:transparent;border-radius:999px;cursor:pointer;
+  padding:.4rem .95rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--muted);
+  transition:background-color .2s ease,color .2s ease;
+}
+.seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.monthly-impact-note{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  margin-top:.85rem;
+  font-size:.82rem;
+  font-weight:500;
+  color:var(--muted);
+  background:rgba(27,86,253,.07);
+  border:1px solid rgba(27,86,253,.15);
+  border-radius:6px;
+  padding:.5rem .75rem;
+  animation:panelIn .25s var(--ease);
+}
+.monthly-impact-note .icon{color:var(--accent);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:.55rem}
+.chip{
+  border:1px solid var(--line);background:var(--paper);border-radius:999px;cursor:pointer;
+  padding:.65rem 1.15rem;font-size:.9rem;font-weight:600;color:var(--ink);
+  transition:scale .2s ease,border-color .2s ease,background-color .2s ease,color .2s ease;
+  font-variant-numeric:tabular-nums;
+}
+.chip:hover{scale:1.06;border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.chip-custom{padding-inline:1.05rem}
+.custom-wrap{margin-top:1.15rem}
+.custom-field{
+  display:flex;align-items:center;gap:.55rem;max-width:240px;
+  border-bottom:1px solid var(--line-strong);padding:.35rem .15rem;
+  transition:border-color .2s ease;
+}
+.custom-field:focus-within{border-color:var(--ink)}
+.custom-symbol{font-weight:600;color:var(--muted)}
+.custom-field input{
+  border:0;outline:0;background:transparent;width:100%;
+  font-weight:600;font-size:1.05rem;color:var(--ink);
+}
+.custom-field input::-webkit-outer-spin-button,
+.custom-field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.custom-field input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.field-hint,.widget-error{
+  margin-top:.7rem;font-size:.85rem;font-weight:500;color:var(--ink);
+  border-left:2px solid var(--accent);padding-left:.65rem;
+}
+.widget-error{margin-top:1.1rem}
+
+/* Donor Details Inputs */
+.donor-fields-group{
+  display:grid;gap:.9rem;margin-top:1.25rem;margin-bottom:1.15rem;
+}
+.field-label{display:block;font-size:.78rem;font-weight:600;letter-spacing:.02em;color:var(--ink);margin-bottom:.35rem}
+.field-input-box{
+  display:flex;align-items:center;gap:.6rem;
+  background:rgba(1,24,216,.02);border:1px solid var(--line-strong);border-radius:6px;
+  padding:.6rem .8rem;transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease;
+}
+.field-input-box:focus-within{border-color:var(--ink);background:var(--paper);box-shadow:0 0 0 2px rgba(1,24,216,.08)}
+.field-icon{color:var(--muted);flex:none}
+.field-input-box input{
+  border:0;outline:0;background:transparent;width:100%;
+  font-size:.92rem;font-weight:500;color:var(--ink);font-family:inherit;
+}
+.field-input-box input::placeholder{color:var(--muted);opacity:.7}
+.field-subnote{margin-top:.35rem;font-size:.74rem;color:var(--muted)}
+
+.inline-feature-pills{
+  display:flex;align-items:center;flex-wrap:wrap;gap:.4rem .8rem;
+  margin-top:1rem;font-size:.78rem;color:var(--muted);
+}
+.inline-pill{
+  display:inline-flex;align-items:center;gap:.35rem;
+}
+.inline-pill svg{color:var(--accent)}
+
+.spinner{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,248,248,.35);border-top-color:var(--paper);
+  animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(1turn)}}
+
+.widget-success{text-align:center;padding:.5rem 0}
+.success-icon{color:var(--accent)}
+.success-title{font-family:var(--serif);font-size:1.8rem;font-weight:400;margin:1rem 0 .5rem}
+.widget-success p{max-width:38ch;margin:0 auto 1.4rem;font-size:.95rem;color:var(--muted)}
+
+/* ============ PROGRESS BARS ============ */
+.progress{
+  height:6px;border-radius:999px;overflow:hidden;
+  background:rgba(1,24,216,.08);border:1px solid var(--line-strong);
+}
+.progress-fill{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .9s var(--ease)}
+.progress.is-pulsing{animation:progressPulse 1.1s ease-out}
+@keyframes progressPulse{0%{box-shadow:0 0 0 0 rgba(27,86,253,.5)}100%{box-shadow:0 0 0 12px rgba(27,86,253,0)}}
+
+/* ============ FOOTER ============ */
+.site-footer{border-top:var(--hairline);padding:4.5rem 0 2.5rem;background:var(--paper)}
+body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem 4rem;padding-bottom:3rem}
+.footer-mission{max-width:36ch;margin-top:1rem;font-size:.95rem;color:var(--muted)}
+.footer-nav{display:flex;flex-wrap:wrap;gap:1rem 2rem}
+.footer-nav a{font-size:.9rem;color:var(--muted);text-decoration:none;transition:color .2s ease}
+.footer-nav a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.footer-meta{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem 2.5rem;
+  border-top:var(--hairline);padding-top:1.5rem;font-size:.85rem;color:var(--muted);
+}
+.footer-mail{text-decoration:none;transition:color .2s ease}
+.footer-mail:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.socials{display:flex;gap:1.5rem}
+.socials a{text-decoration:none;transition:color .2s ease}
+.socials a:hover{color:var(--ink)}
+.footer-reg{font-size:.8rem}
+.footer-copy{margin-top:1.4rem;font-size:.8rem;color:var(--muted)}
+
+/* ============ FLOATING DONATION BAR ============ */
+.donate-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:120;
+  background:var(--paper);border-top:var(--hairline);
+  transform:translateY(102%);visibility:hidden;
+  transition:transform .4s var(--ease),visibility 0s linear .4s;
+}
+.donate-bar.is-visible{transform:none;visibility:visible;transition:transform .4s var(--ease)}
+.donate-bar-inner{
+  display:flex;align-items:center;gap:1rem;
+  max-width:var(--maxw);margin-inline:auto;
+  padding:.6rem var(--pad-x);
+}
+.donate-bar-text{font-size:.88rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donate-bar-text strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.progress-mini{flex:1;max-width:220px;height:5px}
+.donate-bar-actions{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+.donate-bar-close{
+  display:inline-flex;background:none;border:0;cursor:pointer;
+  padding:.45rem;color:var(--muted);transition:color .2s ease;
+}
+.donate-bar-close:hover{color:var(--ink)}
+@media (max-width:520px){
+  .donate-bar-text{font-size:.78rem}
+  .donate-bar-inner{gap:.7rem}
+}
+
+/* skip link */
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:200;
+  background:var(--ink);color:var(--paper);padding:.7rem 1.1rem;border-radius:0 0 6px 0;
+  font-size:.85rem;font-weight:600;text-decoration:none;
+}
+.skip-link:focus{left:0}
+
+/* ================================================================
+   MOBILE PHONE FRAME ENFORCEMENT FOR FLUTTERWAVE INLINE MODAL
+   Enforces a small phone width on desktop / larger screens
+   ================================================================ */
+
+/* Dimmed backdrop when Flutterwave checkout modal opens */
+.flw-phone-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  background: rgba(1, 15, 60, 0.76);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.flw-phone-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Floating controls above the phone frame on desktop */
+.flw-phone-top-controls {
+  position: fixed;
+  left: 50%;
+  top: calc(50% - min(86vh, 760px)/2 - 50px);
+  transform: translateX(-50%);
+  width: 442px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2147483648;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.flw-phone-backdrop.is-open .flw-phone-top-controls {
+  opacity: 1;
+}
+
+.flw-phone-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.flw-phone-pill-badge::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+.flw-phone-close-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+}
+.flw-phone-close-button:hover {
+  background: rgba(255, 255, 255, 0.36);
+  transform: scale(1.05);
+}
+
+/* Flutterwave Checkout Iframe Force-Contained to Max 442px */
+iframe#flwpugpaidid,
+iframe[name="checkout"],
+iframe[src*="flutterwave"],
+iframe.flwpugpaidid,
+.flwpugpaidid {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 442px !important;
+  max-width: 442px !important;
+  height: min(88vh, 760px) !important;
+  max-height: 800px !important;
+  border-radius: 36px !important;
+  border: 8px solid #0f172a !important;
+  box-shadow: 
+    0 0 0 4px #334155, 
+    0 30px 90px rgba(0, 0, 0, 0.85),
+    0 0 120px rgba(27, 86, 253, 0.35) !important;
+  z-index: 2147483647 !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+}
+
+/* Native screen for actual mobile phones */
+@media (max-width: 442px) {
+  .flw-phone-backdrop,
+  .flw-phone-top-controls {
+    display: none !important;
+  }
+  iframe#flwpugpaidid,
+  iframe[name="checkout"],
+  iframe[src*="flutterwave"],
+  iframe.flwpugpaidid,
+  .flwpugpaidid {
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- SVG sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-kite" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2.6 19.4 10 12 16.4 4.6 10 12 2.6Z" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M12 2.6v13.8M4.6 10h14.8" stroke="var(--ink)" stroke-width="1" opacity=".45"/>
+    <path d="M12 16.4c-1.6 1.9 1.6 2.9 0 4.8" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="10.9" y="17.9" width="2.2" height="2.2" transform="rotate(45 12 19)" fill="var(--accent)"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 10h14M11.5 5 17 10l-5.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none">
+    <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.4"/>
+    <path d="m7.6 12.4 3 3.1 5.8-6.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 20 20" fill="none">
+    <path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 7h15M2.5 13h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="32" height="32">
+      <b style="font-weight: 800;letter-spacing: 2px; font-size: larger;">Wellspring</b>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="index.html#who-we-are">Who we are</a></li>
+        <li><a href="index.html#what-we-do">What we do</a></li>
+        <li><a href="index.html#partners">Partners</a></li>
+        <li><a href="amira.html" aria-current="page">Amira's story</a></li>
+        <li><a href="admin.html">Donations & Ledger</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-primary btn-sm" href="#give">Donate</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobilePanel">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-menu"/></svg>
+        Menu
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-panel" id="mobilePanel" aria-label="Mobile">
+    <a href="index.html#who-we-are">Who we are</a>
+    <a href="index.html#what-we-do">What we do</a>
+    <a href="index.html#partners">Partners</a>
+    <a href="amira.html" aria-current="page">Amira's story</a>
+    <a href="admin.html">Donations & Ledger</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ STORY HERO ============ -->
+  <section class="story-hero" aria-label="Amira's story">
+    <div class="container story-hero-grid" data-stagger>
+      <div class="story-hero-copy">
+        <p class="label reveal">Featured story</p>
+        <h1 class="reveal">Amira is seven. She needs a bone marrow transplant.</h1>
+        <p class="story-lede reveal">Two years ago, Amira was the fastest girl in her class. Then her bone marrow quietly stopped doing its job — and her family learned that the hardest part of saving a child's life can be the price of it.</p>
+        <div class="story-meta reveal">
+          <span>Updated 12 Jun 2025</span>
+          <span aria-hidden="true">·</span>
+          <span>6 min read</span>
+        </div>
+        <div class="story-progress reveal">
+          <div class="progress" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Amira's transplant fund progress">
+            <span class="progress-fill" data-progress></span>
+          </div>
+          <p class="progress-note"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+        </div>
+        <div class="story-actions reveal">
+          <a class="btn btn-primary" href="#give">Donate to Amira</a>
+          <a class="link-arrow" href="#costs">See where the money goes
+            <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+      </div>
+      <figure class="story-hero-media framed reveal">
+        <div class="img-clip">
+          <img class="img-placeholder" data-img="amira" alt="Amira, a seven-year-old girl with a quiet smile, photographed in soft natural light" width="860" height="1075" fetchpriority="high">
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ STORY BODY ============ -->
+  <article>
+    <div class="container">
+      <div class="story-col" data-stagger>
+
+        <p class="reveal">Amira's hospital room has a big window, and taped to the glass is a row of kites she has drawn — one for every month since her diagnosis. She is seven. She will tell you, very seriously, that she draws them "so I can see what up there looks like." Her little brother thinks they should have longer strings. She concedes the point, redoes the string, and signs the corner like an artist.</p>
+
+        <p class="reveal">Before any of this, Amira was the fastest girl in her class and the undisputed queen of the playground. The bruises came first — small, unexplained, easy to dismiss. Then the fevers that wouldn't break, then the tiredness that turned into naps, then into days.</p>
+
+        <h2 class="reveal">The day everything changed</h2>
+        <p class="reveal">In March of last year, after three weeks of tests her parents still can't talk about calmly, a doctor sat them down and explained that Amira's bone marrow — the factory inside her bones that makes blood — had all but stopped working. The words for it are bone marrow failure. The treatment her team recommends is a transplant: replace the factory, rebuild her blood, give her body back.</p>
+        <p class="reveal">Her mother remembers asking a single question: how much. She remembers the answer less as a number than as a wall.</p>
+
+        <h2 class="reveal">What the doctors said</h2>
+        <p class="reveal">Medically, Amira's path is unusually clear. Her transfusions keep her stable, a matching donor has been found, and her surgical team has done this operation hundreds of times. What they cannot schedule is the funding.</p>
+
+        <blockquote class="pullquote reveal">
+          <p>Medically, her path is clear. Financially, it's a wall — and walls move when enough people push.</p>
+          <cite>A member of Amira's transplant team</cite>
+        </blockquote>
+
+        <figure class="story-figure reveal">
+          <div class="img-clip"><img class="img-placeholder" data-img="story1" alt="Morning light falling across a quiet children's hospital ward" width="900" height="600" loading="lazy" decoding="async"></div>
+          <figcaption class="story-figcaption">Morning rounds on Amira's ward.</figcaption>
+        </figure>
+
+        <p class="reveal">A transplant like Amira's is not one bill but a hundred of them arriving in sequence: the search and matching, the procedure itself, the hundred days of protective isolation that follow while her new marrow learns its job, the medications, the blood products, the follow-ups. Each one is non-negotiable. Together they come to $250,000.</p>
+
+        <h2 class="reveal">What her family has done</h2>
+        <p class="reveal">Her parents have sold what can be sold and borrowed what can be borrowed. Her father has taken night shifts; her mother has not been away from the hospital for more than a weekend in fourteen months. People keep asking how they stay hopeful.</p>
+
+        <blockquote class="pullquote reveal">
+          <p>Amira sets the tone. She still laughs louder than the machines.</p>
+          <cite>Amira's mother</cite>
+        </blockquote>
+
+        <figure class="story-figure reveal">
+          <div class="img-clip"><img class="img-placeholder" data-img="story2" alt="A child's colorful drawing of kites taped to a bright window" width="900" height="600" loading="lazy" decoding="async"></div>
+        </figure>
+
+        <h2 class="reveal">What happens next</h2>
+        <p class="reveal">Wellspring has verified Amira's treatment plan directly with her hospital and has committed to pay every provider directly — no money passes through private hands. When the fund completes, her transplant can be scheduled within weeks. The transfusions are holding her steady, but they are a bridge, not a destination.</p>
+        <p class="reveal">She is seven, and she is waiting. Her kites are up to fourteen.</p>
+
+        <!-- ============ COST BREAKDOWN ============ -->
+        <section class="costs" id="costs" aria-labelledby="costsTitle">
+          <p class="label reveal">Where the money goes</p>
+          <h2 class="reveal" id="costsTitle">What $250,000 actually covers.</h2>
+          <dl class="cost-list" id="costList" data-stagger></dl>
+          <p class="cost-note reveal">Estimates confirmed with Amira's care team. Any funds raised beyond her verified costs are ring-fenced for the next child on our waiting list.</p>
+        </section>
+
+        <!-- ============ FAQ ============ -->
+        <section class="faq" id="faq" aria-labelledby="faqTitle">
+          <p class="label reveal">Your questions</p>
+          <h2 class="reveal" id="faqTitle">Asked often, answered plainly.</h2>
+          <div class="faq-list" id="faqList" data-stagger></div>
+        </section>
+
+        <!-- ============ CTA ============ -->
+        <div class="story-cta reveal">
+          <h2>Help write Amira's next chapter.</h2>
+          <div class="story-cta-actions">
+            <a class="btn btn-primary" href="#give">Donate to Amira</a>
+            <a class="link-arrow" href="index.html#how">How Wellspring works
+              <svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </article>
+
+  <!-- ============ GIVE TO AMIRA ============ -->
+  <section id="give" class="give">
+    <div class="container give-grid" data-stagger>
+      <div class="give-copy">
+        <p class="label reveal">Donate to Amira</p>
+        <h2 class="reveal">Every gift moves her closer.</h2>
+        <p class="give-sub reveal">Last year, 98 cents of every dollar we received reached direct care. For Amira, that means every dollar above is a week earlier off the waiting bridge.</p>
+        <div class="reveal">
+          <div class="progress" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Amira's transplant fund progress">
+            <span class="progress-fill" data-progress></span>
+          </div>
+          <p class="progress-note"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+        </div>
+        <div class="mini-stats" id="giveStats" data-stagger></div>
+        <p class="give-trust reveal">
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-lock"/></svg>
+          Paid directly to her hospital and care providers — never through private hands. You'll get a plain-language update within 30 days.
+        </p>
+      </div>
+
+      <!-- Flutterwave Inline Modal Donation Widget -->
+      <div class="widget-card reveal" id="donateWidget">
+        <form data-form novalidate>
+          <div class="widget-top">
+            <div class="seg seg-freq" role="group" aria-label="Deposit frequency">
+              <button type="button" class="seg-btn" data-freq="one_time" aria-pressed="true">One-time</button>
+              <button type="button" class="seg-btn" data-freq="monthly" aria-pressed="false">Monthly</button>
+            </div>
+            <div class="seg seg-curr" role="group" aria-label="Currency">
+              <button type="button" class="seg-btn" data-currency="USD" aria-pressed="true">$ USD</button>
+              <button type="button" class="seg-btn" data-currency="GBP" aria-pressed="false">£ GBP</button>
+            </div>
+          </div>
+
+          <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
+          <div class="monthly-impact-note" data-monthly-note hidden>
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Monthly recurring deposit · Sustaining Amira's care every month · Cancel anytime</span>
+          </div>
+
+          <div class="custom-wrap" data-custom-wrap hidden>
+            <label class="sr-only" for="customAmount">Custom amount, minimum 5</label>
+            <div class="custom-field">
+              <span class="custom-symbol" data-symbol aria-hidden="true">$</span>
+              <input id="customAmount" name="customAmount" type="number" inputmode="numeric" min="5" step="1" placeholder="Enter amount" autocomplete="off">
+            </div>
+            <p class="field-hint" data-hint aria-live="polite" hidden>Please enter at least $5.</p>
+          </div>
+
+          <!-- Donor Information (Prefilled directly into Flutterwave Inline Modal) -->
+          <div class="donor-fields-group">
+            <div class="field-group">
+              <label class="field-label" for="donorName">Your full name</label>
+              <div class="field-input-box">
+                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input id="donorName" name="donorName" type="text" placeholder="Full name (e.g. Jane Doe)" autocomplete="name">
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="donorEmail">Your email address</label>
+              <div class="field-input-box">
+                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <input id="donorEmail" name="donorEmail" type="email" placeholder="name@example.com" autocomplete="email" required>
+              </div>
+              <p class="field-subnote">Pre-filled into Flutterwave for your official tax receipt and patient updates.</p>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="donorPhone">Phone number <span style="font-weight:400; color:var(--muted);">(Optional)</span></label>
+              <div class="field-input-box">
+                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <input id="donorPhone" name="donorPhone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
+              </div>
+            </div>
+          </div>
+
+          <p class="widget-error" data-error role="alert" hidden></p>
+
+          <button class="btn btn-primary btn-block" type="submit" data-submit-btn>
+            <span class="spinner" data-spinner hidden aria-hidden="true"></span>
+            <span data-submit-label>Donate $25 via Flutterwave</span>
+          </button>
+
+          <div class="inline-feature-pills">
+            <span class="inline-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              Debit & Credit Cards
+            </span>
+            <span class="inline-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              Bank Transfer & USSD
+            </span>
+            <span class="inline-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              256-bit Encrypted
+            </span>
+          </div>
+        </form>
+
+        <div class="widget-success" data-success tabindex="-1" hidden>
+          <div class="success-icon">
+            <svg class="icon" width="40" height="40" aria-hidden="true"><use href="#i-check"/></svg>
+          </div>
+          <h3 class="success-title">Gift confirmed.</h3>
+          <p data-success-msg>Thank you! Your donation is confirmed and has been credited directly to Amira's verified care fund.</p>
+          <button class="btn btn-primary btn-sm" type="button" data-reset>Make another gift</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">
+          <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="28" height="28">
+          <b style="font-weight: 800;letter-spacing: 2px;">Wellspring</b>
+        </a>
+        <p class="footer-mission">Direct, verified healthcare funding for children waiting on critical care. 98 cents of every dollar reaches the hospital bedside.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="index.html#who-we-are">Who we are</a>
+        <a href="index.html#what-we-do">What we do</a>
+        <a href="index.html#partners">Partners</a>
+        <a href="index.html#governance">Governance</a>
+        <a href="amira.html">Amira's story</a>
+      </nav>
+    </div>
+    <div class="footer-meta">
+      <a class="footer-mail" data-org-email href="mailto:hello@kitefoundation.org">hello@kitefoundation.org</a>
+      <div class="socials">
+        <a href="#" rel="noopener">Instagram</a>
+        <a href="#" rel="noopener">LinkedIn</a>
+        <a href="#" rel="noopener">X</a>
+      </div>
+      <p class="footer-reg" data-org-registered>Registered non-profit</p>
+    </div>
+    <p class="footer-copy">© 2023 Wellspring. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ============ FLOATING DONATION BAR ============ -->
+<div class="donate-bar" id="donateBar" role="region" aria-label="Donation progress">
+  <div class="donate-bar-inner">
+    <p class="donate-bar-text"><strong data-total>$12,480</strong> raised of <span data-goal-label>$250,000</span></p>
+    <div class="progress progress-mini" data-progressbar role="progressbar" aria-valuemin="0" aria-valuemax="250000" aria-valuenow="0" aria-label="Campaign progress">
+      <span class="progress-fill" data-progress></span>
+    </div>
+    <div class="donate-bar-actions">
+      <a class="btn btn-primary btn-sm" href="#give">Donate</a>
+      <button class="donate-bar-close" data-bar-close aria-label="Dismiss donation bar">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MOBILE PHONE FRAME BACKDROP & CONTROLS ============ -->
+<div id="flwPhoneBackdrop" class="flw-phone-backdrop" aria-hidden="true">
+  <div class="flw-phone-top-controls">
+    <span class="flw-phone-pill-badge">Flutterwave Mobile Checkout</span>
+    <button type="button" class="flw-phone-close-button" id="flwPhoneCloseBtn" aria-label="Cancel and close checkout">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <span>Close</span>
+    </button>
+  </div>
+</div>
+
+<!-- Flutterwave Inline Checkout v3 SDK -->
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ================================================================
+     CONFIG
+     ================================================================ */
+  var CONFIG = {
+    publicKey: 'FLWPUBK_TEST-SANDBOXDEMOKEY-X',
+    verifyUrl: '/api/verify-transaction',
+    initiateUrl: '/api/initiate-donation',
+    totalUrl: '/donation-total',
+    campaign: { currency: 'USD', goal: 250000, defaultTotal: 12480 },
+    presets: [25, 50, 100, 250],
+    presetsByCurrency: {
+      USD: [25, 50, 100, 250],
+      GBP: [20, 40, 80, 200]
+    },
+    minDonation: 5,
+    currencySymbols: { USD: '$', GBP: '£' },
+    costs: [
+      { label: 'Donor search & tissue matching', amount: 38000 },
+      { label: 'The transplant procedure', amount: 142000 },
+      { label: '100 days of isolation & recovery care', amount: 45000 },
+      { label: 'Medication, blood products & follow-up', amount: 25000 },
+      { label: 'Total — Amira\u2019s transplant fund', amount: 250000, strong: true }
+    ],
+    givingStats: [
+      { value: 312, label: 'gifts so far' },
+      { value: 14, label: 'months waiting' },
+      { value: 1, label: 'matching donor found' }
+    ],
+    faq: [
+      {
+        q: 'Is my gift used only for Amira?',
+        a: 'Yes. Gifts to this fund are restricted: they are paid directly to Amira\u2019s hospital and care providers against her verified treatment plan — never into private hands.'
+      },
+      {
+        q: 'What happens if the fund passes $250,000?',
+        a: 'Any amount raised beyond Amira\u2019s verified costs is ring-fenced for the next child on our waiting list, and we publish exactly where it goes. You\u2019ll receive an update either way.'
+      },
+      {
+        q: 'How do you make sure the money reaches her care?',
+        a: 'Every invoice is verified with the hospital, and payments go directly to providers. Within 30 days of your gift, you\u2019ll get a plain-language update on how the funds were used.'
+      },
+      {
+        q: 'Can I give from outside the US?',
+        a: 'Yes. The Flutterwave checkout accepts cards in USD, GBP, NGN and global currencies with automatic bank-level conversion.'
+      }
+    ],
+    org: {
+      name: 'Wellspring',
+      email: 'hello@kitefoundation.org',
+      registered: 'Registered non-profit \u00B7 No. 568-344'
+    }
+  };
+
+  var IMAGES = {
+    amira: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790625989/Screenshot_2026-09-28_204447_cddjyp.png',
+    story1: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790698666/Gemini_Generated_Image_j0drd8j0drd8j0dr_mg1naf.jpg',
+    story2: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790698551/Gemini_Generated_Image_cej3x3cej3x3cej3_ru3cju.jpg'
+  };
+
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasGsap = typeof window.gsap !== 'undefined';
+  var hasLenis = typeof window.Lenis !== 'undefined';
+
+  /* ================================================================
+     POPULATE STATIC SECTIONS
+     ================================================================ */
+  $$('[data-img]').forEach(function (el) {
+    var key = el.getAttribute('data-img');
+    if (IMAGES[key]) {
+      el.src = IMAGES[key];
+      el.classList.remove('img-placeholder');
+    }
+  });
+
+  $$('[data-org-email]').forEach(function (el) {
+    el.href = 'mailto:' + CONFIG.org.email;
+    el.textContent = CONFIG.org.email;
+  });
+
+  $$('[data-org-registered]').forEach(function (el) {
+    el.textContent = CONFIG.org.registered;
+  });
+
+  function sym(curr) { return CONFIG.currencySymbols[curr] || '$'; }
+  function fmtNum(n) { return Math.round(n).toLocaleString('en-US'); }
+  function fmtAmt(amt, curr) { return sym(curr) + fmtNum(amt); }
+
+  var costList = $('#costList');
+  if (costList) {
+    CONFIG.costs.forEach(function (c) {
+      var row = document.createElement('div');
+      row.className = 'cost-row reveal' + (c.strong ? ' is-total' : '');
+      var dt = document.createElement('dt');
+      dt.textContent = c.label;
+      var dd = document.createElement('dd');
+      dd.textContent = fmtAmt(c.amount, CONFIG.campaign.currency);
+      row.appendChild(dt); row.appendChild(dd);
+      costList.appendChild(row);
+    });
+  }
+
+  var faqList = $('#faqList');
+  if (faqList) {
+    CONFIG.faq.forEach(function (f) {
+      var det = document.createElement('details');
+      det.className = 'reveal';
+      var sum = document.createElement('summary');
+      sum.textContent = f.q;
+      var icon = document.createElement('span');
+      icon.className = 'faq-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.innerHTML = '<svg class="icon" width="16" height="16"><use href="#i-close"/></svg>';
+      sum.appendChild(icon);
+      var p = document.createElement('p');
+      p.textContent = f.a;
+      det.appendChild(sum); det.appendChild(p);
+      faqList.appendChild(det);
+    });
+  }
+
+  var giveStats = $('#giveStats');
+  var statNums = [];
+  if (giveStats) {
+    CONFIG.givingStats.forEach(function (s) {
+      var div = document.createElement('div');
+      div.className = 'mini-stat reveal';
+      var num = document.createElement('span');
+      num.className = 'ms-num';
+      num.textContent = reducedMotion ? fmtNum(s.value) : '0';
+      var lab = document.createElement('span');
+      lab.className = 'ms-label';
+      lab.textContent = s.label;
+      div.appendChild(num); div.appendChild(lab);
+      giveStats.appendChild(div);
+      statNums.push(num);
+    });
+  }
+
+  /* ================================================================
+     TOTAL STORE
+     ================================================================ */
+  var TotalStore = (function () {
+    var total = CONFIG.campaign.defaultTotal;
+    var firstRender = true;
+    var counted = false;
+    var textAnimating = false;
+    var latestPct = 0;
+    var cSym = CONFIG.currencySymbols[CONFIG.campaign.currency] || '$';
+
+    function fmtCampaign(v) { return cSym + Math.round(v).toLocaleString('en-US'); }
+
+    function emit(pulse) {
+      latestPct = Math.max(0, Math.min(100, (total / CONFIG.campaign.goal) * 100));
+      if (!textAnimating) {
+        var text = fmtCampaign(total);
+        $$('[data-total]').forEach(function (el) { el.textContent = text; });
+      }
+      $$('[data-goal-label]').forEach(function (el) { el.textContent = fmtCampaign(CONFIG.campaign.goal); });
+      $$('[data-progressbar]').forEach(function (bar) {
+        bar.setAttribute('aria-valuemax', String(CONFIG.campaign.goal));
+        bar.setAttribute('aria-valuenow', String(Math.round(total)));
+        if (bar.getAttribute('data-armed') === '1') {
+          var fill = bar.querySelector('[data-progress]');
+          if (fill) fill.style.width = latestPct + '%';
+        }
+        if (pulse && !firstRender) {
+          bar.classList.remove('is-pulsing');
+          void bar.offsetWidth;
+          bar.classList.add('is-pulsing');
+        }
+      });
+      firstRender = false;
+    }
+
+    function armBar(bar) {
+      if (bar.getAttribute('data-armed') === '1') return;
+      bar.setAttribute('data-armed', '1');
+      var fill = bar.querySelector('[data-progress]');
+      if (fill) fill.style.width = latestPct + '%';
+    }
+
+    function countText() {
+      if (counted) return;
+      counted = true;
+      if (reducedMotion || !('requestAnimationFrame' in window)) return;
+      textAnimating = true;
+      var start = performance.now(), dur = 1400;
+      function frame(t) {
+        var p = Math.min((t - start) / dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        var v = fmtCampaign(total * e);
+        $$('[data-total]').forEach(function (el) { el.textContent = v; });
+        if (p < 1) {
+          window.requestAnimationFrame(frame);
+        } else {
+          textAnimating = false;
+          emit(false);
+        }
+      }
+      window.requestAnimationFrame(frame);
+    }
+
+    function refresh() {
+      return fetch(CONFIG.totalUrl, { headers: { 'Accept': 'application/json' } })
+        .then(function (res) {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function (data) {
+          if (data === null || data === undefined) return;
+          var n = typeof data === 'number' ? data : Number(data && (data.total != null ? data.total : data.raised));
+          if (isFinite(n) && n >= 0 && Math.round(n) !== Math.round(total)) {
+            total = n;
+            emit(true);
+          }
+        })
+        .catch(function () {});
+    }
+
+    function add(n) {
+      if (isFinite(n) && n > 0) { total += n; emit(true); }
+    }
+
+    emit(false);
+    refresh();
+    window.setInterval(refresh, 60000);
+
+    $$('[data-progressbar]').forEach(function (el) {
+      el.addEventListener('animationend', function () { el.classList.remove('is-pulsing'); });
+    });
+
+    var bars = $$('[data-progressbar]');
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      bars.forEach(armBar);
+    } else {
+      var armIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          armBar(en.target);
+          countText();
+          armIO.unobserve(en.target);
+        });
+      }, { threshold: 0.2 });
+      bars.forEach(function (b) { armIO.observe(b); });
+    }
+
+    return { add: add, refresh: refresh };
+  })();
+
+  /* ================================================================
+     MOBILE PHONE FRAME CONTROLS & MONITOR
+     ================================================================ */
+  var activeModalHandler = null;
+
+  function showPhoneFrameBackdrop() {
+    var bd = $('#flwPhoneBackdrop');
+    if (bd) {
+      bd.style.display = 'flex';
+      window.requestAnimationFrame(function () {
+        bd.classList.add('is-open');
+      });
+    }
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hidePhoneFrameBackdrop() {
+    var bd = $('#flwPhoneBackdrop');
+    if (bd) {
+      bd.classList.remove('is-open');
+      window.setTimeout(function () {
+        if (!bd.classList.contains('is-open')) bd.style.display = 'none';
+      }, 350);
+    }
+    document.body.style.overflow = '';
+  }
+
+  var closeBtn = $('#flwPhoneCloseBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      if (activeModalHandler && typeof activeModalHandler.close === 'function') {
+        try { activeModalHandler.close(); } catch (e) {}
+      }
+      var iframe = $('iframe#flwpugpaidid') || $('iframe[name="checkout"]');
+      if (iframe) {
+        iframe.style.opacity = '0';
+        iframe.style.pointerEvents = 'none';
+        iframe.style.zIndex = '-1';
+      }
+      hidePhoneFrameBackdrop();
+    });
+  }
+
+  /* ================================================================
+     DONATION WIDGET WITH STANDARD FLUTTERWAVE INLINE MODAL
+     ================================================================ */
+  function initDonationWidget(root) {
+    if (!root) return;
+
+    var form = $('[data-form]', root);
+    var success = $('[data-success]', root);
+    var successMsg = $('[data-success-msg]', root);
+    var resetBtn = $('[data-reset]', root);
+
+    var chipsWrap = $('[data-chips]', root);
+    var customWrap = $('[data-custom-wrap]', root);
+    var customInput = $('#customAmount', root);
+    var symbolEl = $('[data-symbol]', root);
+    var hint = $('[data-hint]', root);
+    var errorEl = $('[data-error]', root);
+    var submitBtn = $('[data-submit-btn]', root);
+    var submitLabel = $('[data-submit-label]', root);
+    var spinner = $('[data-spinner]', root);
+    var monthlyNote = $('[data-monthly-note]', root);
+
+    var donorNameInput = $('#donorName', root);
+    var donorEmailInput = $('#donorEmail', root);
+    var donorPhoneInput = $('#donorPhone', root);
+
+    var state = {
+      frequency: 'one_time',
+      currency: 'USD',
+      amount: 25,
+      custom: false,
+      name: '',
+      email: '',
+      phone: '',
+      processing: false
+    };
+
+    function currentPresets() {
+      return CONFIG.presetsByCurrency[state.currency] || CONFIG.presets;
+    }
+
+    function renderChips() {
+      if (!chipsWrap) return;
+      chipsWrap.innerHTML = '';
+      var list = currentPresets();
+      list.forEach(function (val) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.setAttribute('data-amount', String(val));
+        b.setAttribute('aria-pressed', String(!state.custom && state.amount === val));
+        b.textContent = sym(state.currency) + fmtNum(val);
+        b.addEventListener('click', function () {
+          state.custom = false;
+          state.amount = val;
+          if (customInput) customInput.value = '';
+          render();
+        });
+        chipsWrap.appendChild(b);
+      });
+
+      var customBtn = document.createElement('button');
+      customBtn.type = 'button';
+      customBtn.className = 'chip chip-custom';
+      customBtn.setAttribute('data-amount', 'custom');
+      customBtn.setAttribute('aria-pressed', String(state.custom));
+      customBtn.textContent = 'Custom';
+      customBtn.addEventListener('click', function () {
+        state.custom = true;
+        render();
+        if (customInput) customInput.focus();
+      });
+      chipsWrap.appendChild(customBtn);
+    }
+
+    function render() {
+      $$('.seg-freq .seg-btn', root).forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-freq') === state.frequency));
+      });
+      $$('.seg-curr .seg-btn', root).forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-currency') === state.currency));
+      });
+
+      if (monthlyNote) {
+        monthlyNote.hidden = (state.frequency !== 'monthly');
+      }
+
+      renderChips();
+
+      if (customWrap) customWrap.hidden = !state.custom;
+      if (symbolEl) symbolEl.textContent = sym(state.currency);
+
+      var btnText = state.frequency === 'monthly'
+        ? 'Give ' + fmtAmt(state.amount, state.currency) + ' / month with Flutterwave'
+        : 'Donate ' + fmtAmt(state.amount, state.currency) + ' with Flutterwave';
+
+      if (submitLabel && !state.processing) {
+        submitLabel.textContent = btnText;
+      }
+    }
+
+    function showError(msg) {
+      if (!errorEl) return;
+      errorEl.textContent = msg;
+      errorEl.hidden = false;
+    }
+
+    function clearError() {
+      if (!errorEl) return;
+      errorEl.hidden = true;
+      errorEl.textContent = '';
+      if (donorEmailInput) donorEmailInput.removeAttribute('aria-invalid');
+      if (customInput) customInput.removeAttribute('aria-invalid');
+    }
+
+    // Frequency switches
+    $$('.seg-freq .seg-btn', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.frequency = b.getAttribute('data-freq');
+        render();
+      });
+    });
+
+    // Currency switches
+    $$('.seg-curr .seg-btn', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.currency = b.getAttribute('data-currency');
+        var presets = currentPresets();
+        if (!state.custom) {
+          state.amount = presets[0];
+        }
+        render();
+      });
+    });
+
+    if (customInput) {
+      customInput.addEventListener('input', function () {
+        var v = Number(customInput.value);
+        if (customInput.value !== '' && isFinite(v) && v > 0) {
+          state.amount = v;
+          clearError();
+          var btnText = state.frequency === 'monthly'
+            ? 'Give ' + fmtAmt(state.amount, state.currency) + ' / month with Flutterwave'
+            : 'Donate ' + fmtAmt(state.amount, state.currency) + ' with Flutterwave';
+          if (submitLabel && !state.processing) submitLabel.textContent = btnText;
+        }
+      });
+    }
+
+    function finish(amount, currency, frequency, donorName) {
+      var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
+      var nameGreet = donorName ? ', ' + donorName : '';
+      successMsg.textContent = isMonthly
+        ? 'Thank you' + nameGreet + '! Your recurring monthly gift of ' + fmtAmt(amount, currency) + ' is confirmed and will sustain Amira\u2019s care each month. A confirmation receipt has been sent to ' + state.email + '.'
+        : 'Thank you' + nameGreet + '! Your gift of ' + fmtAmt(amount, currency) + ' is confirmed. A receipt and care update will follow shortly to ' + state.email + '.';
+
+      TotalStore.add(amount);
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    }
+
+    // SUBMIT: Launch Flutterwave Inline Modal inside Mobile Phone Frame
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (state.processing) return;
+      clearError();
+
+      // Validate custom amount
+      if (state.custom) {
+        var v = Number(customInput.value);
+        if (customInput.value === '' || !isFinite(v) || v < CONFIG.minDonation) {
+          showError('Please enter at least ' + sym(state.currency) + CONFIG.minDonation + '.');
+          if (customInput) {
+            customInput.setAttribute('aria-invalid', 'true');
+            customInput.focus();
+          }
+          return;
+        }
+        state.amount = v;
+      }
+
+      // Collect name & email
+      var nameVal = donorNameInput ? donorNameInput.value.trim() : '';
+      if (!nameVal) {
+        nameVal = 'Generous Supporter';
+      }
+      state.name = nameVal;
+
+      var emailVal = donorEmailInput ? donorEmailInput.value.trim() : '';
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailVal || !emailRegex.test(emailVal)) {
+        showError('Please enter a valid email address to receive your donation receipt.');
+        if (donorEmailInput) {
+          donorEmailInput.focus();
+          donorEmailInput.setAttribute('aria-invalid', 'true');
+        }
+        return;
+      }
+      state.email = emailVal;
+
+      var phoneVal = donorPhoneInput ? donorPhoneInput.value.trim() : '';
+      state.phone = phoneVal;
+
+      // Enter processing state
+      state.processing = true;
+      if (submitBtn) submitBtn.disabled = true;
+      if (spinner) spinner.hidden = false;
+      if (submitLabel) submitLabel.textContent = 'Opening secure checkout…';
+
+      var txRef = 'KF-AMIRA-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      var publicKey = (typeof localStorage !== 'undefined' && localStorage.getItem('twp_flutterwave_public')) || CONFIG.publicKey;
+
+      // Register pending donation in database & get verified public key
+      try {
+        var initRes = await fetch(CONFIG.initiateUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: state.amount,
+            currency: state.currency,
+            frequency: state.frequency,
+            donor_email: state.email,
+            donor_name: state.name === 'Generous Supporter' ? null : state.name,
+            tx_ref: txRef
+          })
+        });
+
+        if (initRes.ok) {
+          var initData = await initRes.json();
+          if (initData.flutterwave_public_key && !initData.flutterwave_public_key.includes('REPLACE')) {
+            publicKey = initData.flutterwave_public_key;
+          }
+          if (initData.tx_ref) {
+            txRef = initData.tx_ref;
+          }
+        }
+      } catch (initErr) {
+        console.warn('[duplicate.html] Initiate donation warning:', initErr);
+      }
+
+      if (typeof window.FlutterwaveCheckout !== 'function') {
+        showError('Flutterwave checkout library could not be loaded. Please check your internet connection.');
+        state.processing = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        render();
+        return;
+      }
+
+      // Display the small mobile phone frame backdrop
+      showPhoneFrameBackdrop();
+
+      try {
+        activeModalHandler = window.FlutterwaveCheckout({
+          public_key: publicKey,
+          tx_ref: txRef,
+          amount: state.amount,
+          currency: state.currency,
+          payment_options: "card,banktransfer,ussd,account,mobilemoney",
+          customer: {
+            email: state.email,
+            name: state.name,
+            phone_number: state.phone || ""
+          },
+          customizations: {
+            title: "Amira's Transplant Fund",
+            description: "Care fund for bone marrow transplant — Wellspring",
+            logo: "https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png"
+          },
+          callback: function (data) {
+            console.log('[Flutterwave Inline Callback]', data);
+            hidePhoneFrameBackdrop();
+
+            var transId = data.transaction_id || data.id;
+            fetch(CONFIG.verifyUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                transaction_id: transId,
+                tx_ref: data.tx_ref || txRef
+              })
+            }).then(function (r) { return r.json(); }).then(function () {
+              finish(state.amount, state.currency, state.frequency, state.name);
+            }).catch(function () {
+              finish(state.amount, state.currency, state.frequency, state.name);
+            });
+          },
+          onclose: function () {
+            console.log('[Flutterwave Inline Modal closed]');
+            hidePhoneFrameBackdrop();
+            state.processing = false;
+            if (submitBtn) submitBtn.disabled = false;
+            if (spinner) spinner.hidden = true;
+            render();
+          }
+        });
+
+      } catch (modalErr) {
+        console.error('[Flutterwave modal error]', modalErr);
+        hidePhoneFrameBackdrop();
+        showError(modalErr.message || 'Could not open Flutterwave checkout.');
+        state.processing = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        render();
+      }
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        state.processing = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        clearError();
+        success.hidden = true;
+        form.hidden = false;
+        render();
+      });
+    }
+
+    render();
+  }
+
+  initDonationWidget($('#donateWidget'));
+
+  /* ================================================================
+     REAL-TIME DONATIONS LISTENER (Server-Sent Events)
+     ================================================================ */
+  (function initLiveDonations() {
+    if (!('EventSource' in window)) return;
+    try {
+      var source = new EventSource('/api/donations/stream');
+      source.onmessage = function (e) {
+        try {
+          var data = JSON.parse(e.data);
+          if (data && data.type === 'donation' && data.payload && data.payload.amount) {
+            TotalStore.add(Number(data.payload.amount));
+          }
+        } catch (parseErr) {}
+      };
+    } catch (e) {}
+  })();
+
+  /* ================================================================
+     SCROLL REVEALS — GSAP + ScrollTrigger, with IO fallback
+     ================================================================ */
+  (function initReveals() {
+    var root = document.documentElement;
+
+    if (reducedMotion || (!hasGsap && !('IntersectionObserver' in window))) {
+      root.classList.add('anim-none');
+      return;
+    }
+
+    if (hasGsap) {
+      root.classList.add('anim-gsap');
+      try {
+        window.gsap.registerPlugin(window.ScrollTrigger);
+        window.gsap.set('.reveal', { opacity: 0, y: 26 });
+
+        $$('[data-stagger]').forEach(function (group) {
+          window.gsap.to($$('.reveal', group), {
+            opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+            stagger: 0.08,
+            scrollTrigger: { trigger: group, start: 'top 85%', once: true }
+          });
+        });
+
+        $$('.reveal').filter(function (el) {
+          return !el.closest('[data-stagger]');
+        }).forEach(function (el) {
+          window.gsap.to(el, {
+            opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          });
+        });
+
+        var heroImg = $('.story-hero .img-clip img');
+        if (heroImg) {
+          window.gsap.fromTo(heroImg,
+            { yPercent: -6 },
+            { yPercent: 6, ease: 'none',
+              scrollTrigger: { trigger: '.story-hero', start: 'top top', end: 'bottom top', scrub: true } });
+        }
+
+        window.addEventListener('load', function () { window.ScrollTrigger.refresh(); });
+      } catch (err) {
+        root.classList.remove('anim-gsap');
+        root.classList.add('anim-none');
+      }
+      return;
+    }
+
+    root.classList.add('anim-io');
+    var els = $$('.reveal');
+    $$('[data-stagger]').forEach(function (group) {
+      $$('.reveal', group).forEach(function (el, i) {
+        el.setAttribute('data-stagger-index', String(i));
+      });
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        var idx = Number(el.getAttribute('data-stagger-index') || 0);
+        window.setTimeout(function () { el.classList.add('is-visible'); }, idx * 80);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  /* ================================================================
+     MINI STAT COUNT-UP
+     ================================================================ */
+  (function initStats() {
+    if (!giveStats || !statNums.length) return;
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      statNums.forEach(function (el, i) { el.textContent = fmtNum(CONFIG.givingStats[i].value); });
+      return;
+    }
+    function countUp(el, target) {
+      var dur = 1300, t0 = performance.now();
+      function frame(t) {
+        var p = Math.min((t - t0) / dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmtNum(target * e);
+        if (p < 1) window.requestAnimationFrame(frame);
+      }
+      window.requestAnimationFrame(frame);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        statNums.forEach(function (el, i) {
+          window.setTimeout(function () { countUp(el, CONFIG.givingStats[i].value); }, i * 120);
+        });
+        io.disconnect();
+      });
+    }, { threshold: 0.3 });
+    io.observe(giveStats);
+  })();
+
+  /* ================================================================
+     MOBILE MENU
+     ================================================================ */
+  (function initMenu() {
+    var header = $('#siteHeader');
+    var menuBtn = $('#menuBtn');
+    if (!header || !menuBtn) return;
+    function close() {
+      header.classList.remove('menu-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    menuBtn.addEventListener('click', function () {
+      var open = header.classList.toggle('menu-open');
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+    $$('.mobile-panel a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && header.classList.contains('menu-open')) {
+        close();
+        menuBtn.focus();
+      }
+    });
+  })();
+
+  /* ================================================================
+     FLOATING DONATION BAR
+     ================================================================ */
+  (function initFloatingBar() {
+    var bar = $('#donateBar');
+    var hero = $('.story-hero');
+    if (!bar || !hero || !('IntersectionObserver' in window)) return;
+    var dismissed = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var past = !en.isIntersecting && en.boundingClientRect.top < 0;
+        var show = past && !dismissed;
+        bar.classList.toggle('is-visible', show);
+        document.body.classList.toggle('bar-visible', show);
+      });
+    }, { threshold: 0 });
+    io.observe(hero);
+    var barClose = $('[data-bar-close]', bar);
+    if (barClose) {
+      barClose.addEventListener('click', function () {
+        dismissed = true;
+        bar.classList.remove('is-visible');
+        document.body.classList.remove('bar-visible');
+      });
+    }
+  })();
+
+  /* ================================================================
+     LENIS SMOOTH SCROLL (desktop)
+     ================================================================ */
+  if (hasLenis && !reducedMotion && window.innerWidth >= 900) {
+    try {
+      var lenis = new window.Lenis({ duration: 1.1, smoothWheel: true });
+      if (hasGsap && window.ScrollTrigger) {
+        lenis.on('scroll', window.ScrollTrigger.update);
+        window.gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+        window.gsap.ticker.lagSmoothing(0);
+      } else {
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+      }
+    } catch (e) {}
+  }
+
+})();
+</script>
+</body>
+</html>

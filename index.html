@@ -669,6 +669,146 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
   font-size:.85rem;font-weight:600;text-decoration:none;
 }
 .skip-link:focus{left:0}
+
+/* ================================================================
+   FLUTTERWAVE PAYMENT MODAL IFRAME CONSTRAINT (MAX-WIDTH: 442px)
+   Enforces a clean mobile frame (<= 442px) on desktop & large screens
+   ================================================================ */
+
+/* Dimmed backdrop when Flutterwave checkout modal opens */
+.flw-phone-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  background: rgba(1, 15, 60, 0.76);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.flw-phone-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Floating controls above the phone frame on desktop */
+.flw-phone-top-controls {
+  position: fixed;
+  left: 50%;
+  top: calc(50% - min(86vh, 760px)/2 - 50px);
+  transform: translateX(-50%);
+  width: 442px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2147483648;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.flw-phone-backdrop.is-open .flw-phone-top-controls {
+  opacity: 1;
+}
+
+.flw-phone-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.flw-phone-pill-badge::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+.flw-phone-close-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+}
+.flw-phone-close-button:hover {
+  background: rgba(255, 255, 255, 0.36);
+  transform: scale(1.05);
+}
+
+/* Flutterwave Checkout Iframe Force-Contained to Max 442px */
+iframe#flwpugpaidid,
+iframe[name="checkout"],
+iframe[src*="flutterwave"],
+iframe.flwpugpaidid,
+.flwpugpaidid {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 442px !important;
+  max-width: 442px !important;
+  height: min(88vh, 760px) !important;
+  max-height: 800px !important;
+  border-radius: 36px !important;
+  border: 8px solid #0f172a !important;
+  box-shadow: 
+    0 0 0 4px #334155, 
+    0 30px 90px rgba(0, 0, 0, 0.85),
+    0 0 120px rgba(27, 86, 253, 0.35) !important;
+  z-index: 2147483647 !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+}
+
+/* Native screen for actual mobile phones */
+@media (max-width: 442px) {
+  .flw-phone-backdrop,
+  .flw-phone-top-controls {
+    display: none !important;
+  }
+  iframe#flwpugpaidid,
+  iframe[name="checkout"],
+  iframe[src*="flutterwave"],
+  iframe.flwpugpaidid,
+  .flwpugpaidid {
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -715,6 +855,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
         <li><a href="#what-we-do">What we do</a></li>
         <li><a href="#partners">Partners</a></li>
         <li><a href="/amira">Amira's story</a></li>
+        <li><a href="/admin.html">Donations & Ledger</a></li>
       </ul>
     </nav>
     <div class="header-actions">
@@ -730,6 +871,7 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     <a href="#what-we-do">What we do</a>
     <a href="#partners">Partners</a>
     <a href="/amira">Amira's story</a>
+    <a href="/admin.html">Donations & Ledger</a>
   </nav>
 </header>
 
@@ -992,98 +1134,33 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
               <p class="field-hint" data-hint aria-live="polite" hidden>Please enter at least $5.</p>
             </div>
 
-            <!-- Donor Email (required before proceeding) -->
-            <div class="donor-email-wrap">
-              <label class="field-label" for="donorEmail">Your email address</label>
-              <div class="field-input-box">
-                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <input id="donorEmail" name="donorEmail" type="email" placeholder="name@example.com" autocomplete="email" required>
-              </div>
-              <p class="field-subnote">We will send your tax-deductible receipt and care updates here.</p>
-            </div>
-
-            <p class="widget-error" data-error role="alert" hidden></p>
-            <button class="btn btn-primary btn-block" type="button" data-next-btn>
-              <span data-submit-label>Donate $25</span>
-            </button>
-          </div>
-
-          <!-- STAGE 2: CARD DETAILS (UI ONLY) -->
-          <div class="stage-card" data-stage="card" hidden>
-            <div class="card-stage-header">
-              <button type="button" class="back-btn" data-back-btn aria-label="Change amount">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-                <span>Edit amount</span>
-              </button>
-              <div class="summary-pill">
-                <span class="summary-amount" data-summary-amount>$25</span>
-                <span class="summary-dot">·</span>
-                <span class="summary-freq" data-summary-freq>One-time</span>
-              </div>
-            </div>
-
-            <div class="card-fields-grid">
-              <div class="card-field-group">
-                <label class="field-label" for="cardName">Cardholder name</label>
+            <!-- Donor Details (Name & Email) -->
+            <div class="donor-details-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-top:1.25rem;">
+              <div class="donor-field-wrap">
+                <label class="field-label" for="donorName">Your full name</label>
                 <div class="field-input-box">
                   <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  <input id="cardName" name="cardName" type="text" placeholder="Full name on card" autocomplete="cc-name" required>
+                  <input id="donorName" name="donorName" type="text" placeholder="Full name (optional)" autocomplete="name">
                 </div>
               </div>
-
-              <div class="card-field-group">
-                <div class="field-label-row">
-                  <label class="field-label" for="cardNumber">Card number</label>
-                  <span class="card-brand-badge" data-card-brand>Card</span>
-                </div>
+              <div class="donor-field-wrap">
+                <label class="field-label" for="donorEmail">Your email address</label>
                 <div class="field-input-box">
-                  <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                  <input id="cardNumber" name="cardNumber" type="tel" inputmode="numeric" placeholder="1234  5678  9012  3456" autocomplete="cc-number" maxlength="19" required>
+                  <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  <input id="donorEmail" name="donorEmail" type="email" placeholder="name@example.com" autocomplete="email" required>
                 </div>
-              </div>
-
-              <div class="card-fields-split">
-                <div class="card-field-group">
-                  <label class="field-label" for="cardExpiry">Expiry date</label>
-                  <div class="field-input-box">
-                    <input id="cardExpiry" name="cardExpiry" type="tel" inputmode="numeric" placeholder="MM / YY" autocomplete="cc-exp" maxlength="7" required>
-                  </div>
-                </div>
-
-                <div class="card-field-group">
-                  <div class="field-label-row">
-                    <label class="field-label" for="cardCvv">CVV number</label>
-                    <span class="cvv-hint-badge">3 digits</span>
-                  </div>
-                  <div class="field-input-box">
-                    <input id="cardCvv" name="cardCvv" type="password" inputmode="numeric" placeholder="•••" autocomplete="cc-csc" maxlength="4" required>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Phone field required for Amex cards -->
-              <div class="card-field-group phone-field-wrap" data-phone-wrap style="margin-top:0.75rem;" hidden>
-                <div class="field-label-row">
-                  <label class="field-label" for="cardPhone">Phone number <span class="amex-req-badge" style="color:var(--accent-primary, #0284c7); font-weight:700; font-size:0.75rem;">(Required for Amex)</span></label>
-                </div>
-                <div class="field-input-box">
-                  <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                  <input id="cardPhone" name="cardPhone" type="tel" inputmode="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
-                </div>
-                <p class="field-subnote" style="font-size:0.75rem; color:var(--muted); margin-top:0.25rem;">American Express card payments require a phone number for 3D Secure verification.</p>
               </div>
             </div>
+            <p class="field-subnote" style="margin-top:0.4rem;">We will send your tax-deductible receipt and care updates here.</p>
 
-            <p class="widget-error" data-card-error role="alert" hidden></p>
-
-            <button class="btn btn-primary btn-block" type="submit" data-card-submit>
-              <span class="spinner" data-card-spinner hidden aria-hidden="true"></span>
-              <span data-card-submit-label>Complete donation</span>
+            <p class="widget-error" data-error role="alert" hidden></p>
+            <button class="btn btn-primary btn-block" type="submit" data-submit-btn>
+              <span class="spinner" data-spinner hidden aria-hidden="true"></span>
+              <span data-submit-label>Donate $25</span>
             </button>
-
-            <p class="secure-badge">
+            <p class="secure-badge" style="margin-top:0.85rem; text-align:center; font-size:0.76rem; color:var(--muted); display:flex; align-items:center; justify-content:center; gap:0.4rem;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span>256-bit encrypted · Direct hospital funding</span>
+              <span>256-bit encrypted · Direct hospital funding · Verified Flutterwave checkout</span>
             </p>
           </div>
         </form>
@@ -1184,6 +1261,17 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
   </div>
 </div>
 
+<!-- ============ MOBILE PHONE FRAME BACKDROP & CONTROLS ============ -->
+<div id="flwPhoneBackdrop" class="flw-phone-backdrop" aria-hidden="true">
+  <div class="flw-phone-top-controls">
+    <span class="flw-phone-pill-badge">Flutterwave Mobile Checkout</span>
+    <button type="button" class="flw-phone-close-button" id="flwPhoneCloseBtn" aria-label="Cancel and close checkout">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <span>Close</span>
+    </button>
+  </div>
+</div>
+
 <script src="https://checkout.flutterwave.com/v3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -1196,13 +1284,19 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
      CONFIG — all editable content lives here
      ================================================================ */
   var CONFIG = {
-    mockMode: true, // true = skip Flutterwave, simulate success, bump total locally
-    publicKey: 'FLWPUBK_TEST-REPLACE-WITH-YOUR-PUBLIC-KEY',
-    verifyUrl: '/verify-transaction',   // POST { tx_ref, transaction_id } — must return 2xx
-    totalUrl: '/donation-total',        // GET — { total: 12345 }, { raised: 12345 } or a plain number
+    mockMode: false,
+    publicKey: 'FLWPUBK_TEST-SANDBOXDEMOKEY-X',
+    verifyUrl: '/api/verify-transaction',
+    initiateUrl: '/api/initiate-donation',
+    totalUrl: '/donation-total',
+    brandTitle: "Wellspring Children's Medical Fund",
     newsletterUrl: null,                // e.g. '/newsletter-signup'; null = demo mode (nothing sent)
     campaign: { currency: 'USD', goal: 250000, defaultTotal: 12480 },
     presets: [25, 50, 100, 250],
+    presetsByCurrency: {
+      USD: [25, 50, 100, 250],
+      GBP: [20, 40, 80, 200]
+    },
     minDonation: 5,
     currencySymbols: { USD: '$', GBP: '£' },
     stats: [
@@ -1476,6 +1570,49 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
   })();
 
   /* ================================================================
+     MOBILE PHONE FRAME CONTROLS & MONITOR (MAX-WIDTH 442PX)
+     ================================================================ */
+  var activeModalHandler = null;
+
+  function showPhoneFrameBackdrop() {
+    var bd = $('#flwPhoneBackdrop');
+    if (bd) {
+      bd.style.display = 'flex';
+      window.requestAnimationFrame(function () {
+        bd.classList.add('is-open');
+      });
+    }
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hidePhoneFrameBackdrop() {
+    var bd = $('#flwPhoneBackdrop');
+    if (bd) {
+      bd.classList.remove('is-open');
+      window.setTimeout(function () {
+        if (!bd.classList.contains('is-open')) bd.style.display = 'none';
+      }, 350);
+    }
+    document.body.style.overflow = '';
+  }
+
+  var closeBtn = $('#flwPhoneCloseBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      if (activeModalHandler && typeof activeModalHandler.close === 'function') {
+        try { activeModalHandler.close(); } catch (e) {}
+      }
+      var iframe = $('iframe#flwpugpaidid') || $('iframe[name="checkout"]') || $('iframe[src*="flutterwave"]');
+      if (iframe) {
+        iframe.style.opacity = '0';
+        iframe.style.pointerEvents = 'none';
+        iframe.style.zIndex = '-1';
+      }
+      hidePhoneFrameBackdrop();
+    });
+  }
+
+  /* ================================================================
      DONATION WIDGET — reusable: initDonationWidget(rootElement)
      ================================================================ */
   function initDonationWidget(root) {
@@ -1486,50 +1623,29 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     var successMsg = $('[data-success-msg]', root);
     var resetBtn = $('[data-reset]', root);
 
-    // Stage 1 Elements
-    var stageAmount = $('[data-stage="amount"]', root);
     var chipsWrap = $('[data-chips]', root);
     var customWrap = $('[data-custom-wrap]', root);
     var customInput = $('#customAmount', root);
     var symbolEl = $('[data-symbol]', root);
     var hint = $('[data-hint]', root);
     var errorEl = $('[data-error]', root);
-    var nextBtn = $('[data-next-btn]', root);
+    var submitBtn = $('[data-submit-btn]', root);
     var submitLabel = $('[data-submit-label]', root);
+    var spinner = $('[data-spinner]', root);
     var currBtns = $$('[data-currency]', root);
     var freqBtns = $$('[data-freq]', root);
     var monthlyNote = $('[data-monthly-note]', root);
-    var emailInput = $('#donorEmail', root);
 
-    // Stage 2 Elements (Card UI)
-    var stageCard = $('[data-stage="card"]', root);
-    var backBtn = $('[data-back-btn]', root);
-    var summaryAmount = $('[data-summary-amount]', root);
-    var summaryFreq = $('[data-summary-freq]', root);
-    var cardNameInput = $('#cardName', root);
-    var cardNumberInput = $('#cardNumber', root);
-    var cardExpiryInput = $('#cardExpiry', root);
-    var cardCvvInput = $('#cardCvv', root);
-    var cardBrandBadge = $('[data-card-brand]', root);
-    var phoneWrap = $('[data-phone-wrap]', root);
-    var cardPhoneInput = $('#cardPhone', root);
-    var cardErrorEl = $('[data-card-error]', root);
-    var cardSubmitBtn = $('[data-card-submit]', root);
-    var cardSubmitLabel = $('[data-card-submit-label]', root);
-    var cardSpinner = $('[data-card-spinner]', root);
+    var donorNameInput = $('#donorName', root);
+    var donorEmailInput = $('#donorEmail', root);
 
     var state = {
       currency: 'USD',
       amount: CONFIG.presets[0],
       custom: false,
       frequency: 'one_time',
+      name: '',
       email: '',
-      cardName: '',
-      cardNumber: '',
-      cardExpiry: '',
-      cardCvv: '',
-      cardPhone: '',
-      isAmex: false,
       processing: false
     };
 
@@ -1577,11 +1693,6 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       if (submitLabel) {
         submitLabel.textContent = 'Donate ' + fmtAmt(state.amount, state.currency) + freqSuffix;
       }
-      if (summaryAmount) summaryAmount.textContent = fmtAmt(state.amount, state.currency);
-      if (summaryFreq) summaryFreq.textContent = state.frequency === 'monthly' ? 'Monthly' : 'One-time';
-      if (cardSubmitLabel && !state.processing) {
-        cardSubmitLabel.textContent = (state.frequency === 'monthly' ? 'Confirm ' : 'Pay ') + fmtAmt(state.amount, state.currency) + freqSuffix;
-      }
     }
 
     function showStage1Error(msg) {
@@ -1589,12 +1700,6 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
     }
     function clearStage1Error() {
       if (errorEl) { errorEl.hidden = true; }
-    }
-    function showStage2Error(msg) {
-      if (cardErrorEl) { cardErrorEl.textContent = msg; cardErrorEl.hidden = false; }
-    }
-    function clearStage2Error() {
-      if (cardErrorEl) { cardErrorEl.hidden = true; }
     }
 
     currBtns.forEach(function (b) {
@@ -1640,162 +1745,6 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       render();
     });
 
-    // Async function to trigger Flutterwave Card BIN verification API (GET https://api.flutterwave.com/v3/card-bins/{bin})
-    async function verifyCardBin(bin) {
-      if (!bin || bin.length < 6) return;
-      if (state.lastCheckedBin === bin) return;
-      state.lastCheckedBin = bin;
-
-      var secretKey = (typeof localStorage !== 'undefined' && localStorage.getItem('twp_flutterwave_secret')) || '';
-
-      try {
-        var apiUrl = '/api/card-bins/' + bin;
-        if (secretKey) {
-          apiUrl += '?secret_key=' + encodeURIComponent(secretKey);
-        }
-        var res = await fetch(apiUrl, {
-          headers: secretKey ? { 'Authorization': 'Bearer ' + secretKey } : {}
-        });
-
-        if (!res.ok && secretKey) {
-          res = await fetch('https://api.flutterwave.com/v3/card-bins/' + bin, {
-            method: 'GET',
-            headers: {
-              'Authorization': 'Bearer ' + secretKey,
-              'Content-Type': 'application/json'
-            }
-          });
-        }
-
-        if (res.ok) {
-          var json = await res.json();
-          var data = json.data || json;
-          if (data) {
-            var rawType = String(data.card_type || '').toUpperCase();
-            var isAmex = rawType.includes('AMEX') || rawType.includes('AMERICAN') || /^3[47]/.test(bin);
-            
-            state.isAmex = isAmex;
-            if (cardBrandBadge) {
-              cardBrandBadge.textContent = isAmex ? 'Amex' : (data.card_type || 'Card');
-            }
-            if (phoneWrap) {
-              phoneWrap.hidden = !isAmex;
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('[Card BIN Verification Error]', e);
-        var isAmexPrefix = /^3[47]/.test(bin);
-        state.isAmex = isAmexPrefix;
-        if (phoneWrap) phoneWrap.hidden = !isAmexPrefix;
-      }
-    }
-
-    // Card Input Auto-Formatting & Brand Detection
-    if (cardNumberInput) {
-      cardNumberInput.addEventListener('input', function () {
-        var raw = cardNumberInput.value.replace(/\D/g, '').slice(0, 16);
-        var formatted = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
-        cardNumberInput.value = formatted;
-        state.cardNumber = raw;
-
-        // Detect Card Brand
-        var brand = 'Card';
-        if (raw.startsWith('4')) {
-          brand = 'Visa';
-        } else if (/^(5[1-5]|2[2-7])/.test(raw)) {
-          brand = 'Mastercard';
-        } else if (/^(506|507|6500)/.test(raw)) {
-          brand = 'Verve';
-        } else if (/^(34|37)/.test(raw)) {
-          brand = 'Amex';
-        }
-        if (cardBrandBadge) cardBrandBadge.textContent = brand;
-
-        if (raw.length >= 6) {
-          verifyCardBin(raw.slice(0, 6));
-        } else {
-          state.isAmex = (brand === 'Amex');
-          if (phoneWrap) phoneWrap.hidden = !state.isAmex;
-        }
-      });
-    }
-
-    if (cardPhoneInput) {
-      cardPhoneInput.addEventListener('input', function () {
-        state.cardPhone = cardPhoneInput.value.trim();
-      });
-    }
-
-    if (cardExpiryInput) {
-      cardExpiryInput.addEventListener('input', function () {
-        var raw = cardExpiryInput.value.replace(/\D/g, '').slice(0, 4);
-        if (raw.length >= 3) {
-          cardExpiryInput.value = raw.slice(0, 2) + ' / ' + raw.slice(2, 4);
-        } else {
-          cardExpiryInput.value = raw;
-        }
-        state.cardExpiry = cardExpiryInput.value;
-      });
-    }
-
-    if (cardCvvInput) {
-      cardCvvInput.addEventListener('input', function () {
-        cardCvvInput.value = cardCvvInput.value.replace(/\D/g, '').slice(0, 4);
-        state.cardCvv = cardCvvInput.value;
-      });
-    }
-
-    // Step 1 -> Step 2 (Validate email and amount)
-    function goToStep2() {
-      clearStage1Error();
-
-      if (state.custom) {
-        var v = Number(customInput.value);
-        if (customInput.value === '' || !isFinite(v) || v < CONFIG.minDonation) {
-          hint.textContent = 'Please enter at least ' + sym(state.currency) + CONFIG.minDonation + '.';
-          hint.hidden = false;
-          customInput.setAttribute('aria-invalid', 'true');
-          customInput.focus();
-          return;
-        }
-        state.amount = v;
-      }
-
-      var emailVal = emailInput ? emailInput.value.trim() : '';
-      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailVal || !emailRegex.test(emailVal)) {
-        showStage1Error('Please enter a valid email address to receive your donation receipt.');
-        if (emailInput) {
-          emailInput.focus();
-          emailInput.setAttribute('aria-invalid', 'true');
-        }
-        return;
-      }
-
-      if (emailInput) emailInput.removeAttribute('aria-invalid');
-      state.email = emailVal;
-
-      render();
-
-      // Transition to Stage 2
-      stageAmount.hidden = true;
-      stageCard.hidden = false;
-      if (cardNameInput) cardNameInput.focus();
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', goToStep2);
-    }
-
-    if (backBtn) {
-      backBtn.addEventListener('click', function () {
-        clearStage2Error();
-        stageCard.hidden = true;
-        stageAmount.hidden = false;
-      });
-    }
-
     function finish(amount, currency, frequency, donorName) {
       var isMonthly = (frequency === 'monthly' || state.frequency === 'monthly');
       var nameGreet = donorName ? ', ' + donorName : '';
@@ -1809,107 +1758,164 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
       success.focus();
     }
 
-    // Stage 2 Form Submission (Card Details Validation & Direct Completion)
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      if (stageCard.hidden) {
-        goToStep2();
-        return;
-      }
-
       if (state.processing) return;
-      clearStage2Error();
+      clearStage1Error();
 
-      var nameVal = cardNameInput ? cardNameInput.value.trim() : '';
-      var numVal = state.cardNumber || (cardNumberInput ? cardNumberInput.value.replace(/\D/g, '') : '');
-      var expVal = cardExpiryInput ? cardExpiryInput.value.trim() : '';
-      var cvvVal = cardCvvInput ? cardCvvInput.value.trim() : '';
-
-      if (!nameVal) {
-        showStage2Error('Please enter the cardholder name as it appears on the card.');
-        if (cardNameInput) cardNameInput.focus();
-        return;
+      // Validate custom amount
+      if (state.custom) {
+        var v = Number(customInput.value);
+        if (customInput.value === '' || !isFinite(v) || v < CONFIG.minDonation) {
+          showStage1Error('Please enter at least ' + sym(state.currency) + CONFIG.minDonation + '.');
+          if (customInput) {
+            customInput.setAttribute('aria-invalid', 'true');
+            customInput.focus();
+          }
+          return;
+        }
+        state.amount = v;
       }
 
-      if (!numVal || numVal.length < 13) {
-        showStage2Error('Please enter a valid 16-digit card number.');
-        if (cardNumberInput) cardNumberInput.focus();
+      // Collect name & email
+      var nameVal = donorNameInput ? donorNameInput.value.trim() : '';
+      state.name = nameVal || 'Generous Supporter';
+
+      var emailVal = donorEmailInput ? donorEmailInput.value.trim() : '';
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailVal || !emailRegex.test(emailVal)) {
+        showStage1Error('Please enter a valid email address to receive your donation receipt.');
+        if (donorEmailInput) {
+          donorEmailInput.focus();
+          donorEmailInput.setAttribute('aria-invalid', 'true');
+        }
         return;
       }
+      state.email = emailVal;
 
-      if (!expVal || !/^\d{2}\s*\/\s*\d{2}$/.test(expVal)) {
-        showStage2Error('Please enter a valid expiration date (MM / YY).');
-        if (cardExpiryInput) cardExpiryInput.focus();
-        return;
-      }
-
-      var expParts = expVal.split('/');
-      var expMonth = parseInt(expParts[0].trim(), 10);
-      if (expMonth < 1 || expMonth > 12) {
-        showStage2Error('Please enter a valid expiry month (01 to 12).');
-        if (cardExpiryInput) cardExpiryInput.focus();
-        return;
-      }
-
-      if (!cvvVal || cvvVal.length < 3) {
-        showStage2Error('Please enter the 3-digit CVV security code on the back of the card.');
-        if (cardCvvInput) cardCvvInput.focus();
-        return;
-      }
-
-      var phoneVal = cardPhoneInput ? cardPhoneInput.value.trim() : '';
-      if (state.isAmex && !phoneVal) {
-        showStage2Error('Please enter your phone number. American Express cards require a phone number for 3D Secure verification.');
-        if (cardPhoneInput) cardPhoneInput.focus();
-        return;
-      }
-
+      // Enter processing state
       state.processing = true;
-      if (cardSubmitBtn) cardSubmitBtn.disabled = true;
-      if (cardSpinner) cardSpinner.hidden = false;
-      if (cardSubmitLabel) cardSubmitLabel.textContent = 'Processing donation\u2026';
+      if (submitBtn) submitBtn.disabled = true;
+      if (spinner) spinner.hidden = false;
+      if (submitLabel) submitLabel.textContent = 'Opening secure checkout\u2026';
 
-      var txRef = 'KF-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      var txRef = 'KF-WELLSPRING-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      var publicKey = (typeof localStorage !== 'undefined' && localStorage.getItem('twp_flutterwave_public')) || CONFIG.publicKey || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
 
-      // Submit transaction to server endpoint for database logging
-      fetch('/api/verify-transaction', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      // 1. Register pending donation in database & get verified public key
+      try {
+        var initRes = await fetch(CONFIG.initiateUrl || '/api/initiate-donation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: state.amount,
+            currency: state.currency,
+            frequency: state.frequency,
+            donor_email: state.email,
+            donor_name: state.name === 'Generous Supporter' ? null : state.name,
+            tx_ref: txRef
+          })
+        });
+
+        if (initRes.ok) {
+          var initData = await initRes.json();
+          if (initData.flutterwave_public_key && !initData.flutterwave_public_key.includes('REPLACE')) {
+            publicKey = initData.flutterwave_public_key;
+          }
+          if (initData.tx_ref) {
+            txRef = initData.tx_ref;
+          }
+        }
+      } catch (initErr) {
+        console.warn('[index.html] Initiate donation warning:', initErr);
+      }
+
+      // 2. Ensure Flutterwave checkout library is loaded
+      if (typeof window.FlutterwaveCheckout !== 'function') {
+        showStage1Error('Flutterwave checkout library could not be loaded. Please check your internet connection.');
+        state.processing = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        render();
+        return;
+      }
+
+      // Display the small mobile phone frame backdrop (constrained <= 442px)
+      showPhoneFrameBackdrop();
+
+      // 3. Open Flutterwave Standard Inline Modal Popup
+      try {
+        activeModalHandler = window.FlutterwaveCheckout({
+          public_key: publicKey,
           tx_ref: txRef,
-          transaction_id: 'card_' + Date.now(),
           amount: state.amount,
           currency: state.currency,
-          frequency: state.frequency,
-          donor_name: nameVal,
-          donor_email: state.email,
-          fund: 'general'
-        })
-      }).catch(function () { /* fallback gracefully */ });
+          payment_options: "card,banktransfer,ussd,account,mobilemoney",
+          customer: {
+            email: state.email,
+            name: state.name,
+            phone_number: ""
+          },
+          customizations: {
+            title: CONFIG.brandTitle || "Wellspring Children's Medical Fund",
+            description: "Direct medical treatment and care fund — Wellspring",
+            logo: "https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png"
+          },
+          callback: function (data) {
+            console.log('[Flutterwave Inline Callback]', data);
+            hidePhoneFrameBackdrop();
+            var transId = data.transaction_id || data.id;
 
-      window.setTimeout(function () {
+            // 4. Verify transaction with backend
+            fetch(CONFIG.verifyUrl || '/api/verify-transaction', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                transaction_id: transId,
+                tx_ref: data.tx_ref || txRef
+              })
+            }).then(function (r) { return r.json(); }).then(function (res) {
+              console.log('[Payment Verified]', res);
+              finish(state.amount, state.currency, state.frequency, state.name);
+            }).catch(function (verErr) {
+              console.warn('[Payment Verify Fallback]', verErr);
+              finish(state.amount, state.currency, state.frequency, state.name);
+            });
+          },
+          onclose: function () {
+            console.log('[Flutterwave Inline Modal closed]');
+            hidePhoneFrameBackdrop();
+            state.processing = false;
+            if (submitBtn) submitBtn.disabled = false;
+            if (spinner) spinner.hidden = true;
+            render();
+          }
+        });
+
+      } catch (modalErr) {
+        console.error('[Flutterwave modal error]', modalErr);
+        hidePhoneFrameBackdrop();
+        showStage1Error(modalErr.message || 'Could not open Flutterwave checkout.');
         state.processing = false;
-        if (cardSubmitBtn) cardSubmitBtn.disabled = false;
-        if (cardSpinner) cardSpinner.hidden = true;
-        finish(state.amount, state.currency, state.frequency, nameVal);
-      }, 1200);
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        render();
+      }
     });
 
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
+        state.amount = CONFIG.presets[0];
+        state.custom = false;
+        state.processing = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        if (customInput) customInput.value = '';
+        if (customWrap) customWrap.hidden = true;
+        clearStage1Error();
         success.hidden = true;
         form.hidden = false;
-        stageCard.hidden = true;
-        stageAmount.hidden = false;
-        clearStage1Error();
-        clearStage2Error();
-        if (customWrap) customWrap.hidden = !state.custom;
-        if (cardNameInput) cardNameInput.value = '';
-        if (cardNumberInput) cardNumberInput.value = '';
-        if (cardExpiryInput) cardExpiryInput.value = '';
-        if (cardCvvInput) cardCvvInput.value = '';
         render();
-        if (emailInput) emailInput.focus();
       });
     }
 
@@ -2259,5 +2265,32 @@ body.bar-visible .site-footer{padding-bottom:calc(2.5rem + 88px)}
 
 })();
 </script>
+  <!-- ============ FLUTTERWAVE 3D SECURE / OTP VALIDATION MODAL ============ -->
+  <div id="flwAuthModal" class="flw-auth-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:1rem;">
+    <div class="flw-auth-card" style="background:#fff; border-radius:1rem; max-width:440px; width:100%; padding:1.75rem; box-shadow:0 20px 40px rgba(0,0,0,0.25); text-align:center; font-family:var(--font-sans, system-ui);">
+      <div style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; background:#e0f2fe; color:#0284c7; border-radius:50%; margin-bottom:1rem;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h3 id="flwAuthTitle" style="font-size:1.25rem; font-weight:700; color:#1e293b; margin-bottom:0.5rem;">Card Authorization Required</h3>
+      <p id="flwAuthMsg" style="font-size:0.875rem; color:#64748b; margin-bottom:1.25rem; line-height:1.5;">Please enter the One-Time Password (OTP) sent to your phone or bank app to complete this donation.</p>
+
+      <div id="flwOtpInputWrap" style="margin-bottom:1.25rem;">
+        <input type="text" id="flwOtpInput" inputmode="numeric" placeholder="Enter OTP code" maxlength="10" style="width:100%; padding:0.75rem 1rem; border:1px solid #cbd5e1; border-radius:0.5rem; font-size:1.125rem; text-align:center; letter-spacing:0.2em; font-weight:600; outline:none;" />
+      </div>
+
+      <div id="flwPinInputWrap" style="display:none; margin-bottom:1.25rem;">
+        <input type="password" id="flwPinInput" inputmode="numeric" placeholder="••••" maxlength="4" style="width:100%; padding:0.75rem 1rem; border:1px solid #cbd5e1; border-radius:0.5rem; font-size:1.5rem; text-align:center; letter-spacing:0.4em; font-weight:700; outline:none;" />
+        <p style="font-size:0.75rem; color:#64748b; margin-top:0.4rem;">4-digit card PIN required by your bank for debit card verification</p>
+      </div>
+
+      <p id="flwAuthError" style="color:#ef4444; font-size:0.8125rem; margin-bottom:0.75rem; display:none;"></p>
+
+      <div style="display:flex; gap:0.75rem;">
+        <button type="button" id="flwAuthCancelBtn" style="flex:1; padding:0.75rem; border:1px solid #cbd5e1; background:#f8fafc; border-radius:0.5rem; font-weight:600; color:#475569; cursor:pointer;">Cancel</button>
+        <button type="button" id="flwAuthSubmitBtn" style="flex:1; padding:0.75rem; border:none; background:#0284c7; border-radius:0.5rem; font-weight:600; color:#fff; cursor:pointer;">Submit OTP</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

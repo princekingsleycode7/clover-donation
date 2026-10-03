@@ -1,682 +1,754 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Turkana Wellspring Initiative — Admin & Finance Operations</title>
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" />
-    <link rel="shortcut icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" />
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" />
-    
-    <!-- Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFF8F8">
+<title>Donations Ledger & Operations — Wellspring</title>
+<meta name="description" content="Verified donation ledger, financial transparency, and administrative operations for Wellspring and Amira's transplant care fund.">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="shortcut icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png">
 
-    <!-- Core Stylesheets -->
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/admin.css" />
+<!-- Instrument Fonts matching index.html -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-    <!-- Supabase JS Client v2 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  </head>
-  <body class="admin-body">
+<style>
+/* ============ DESIGN TOKENS (Exact Match with index.html) ============ */
+:root {
+  --ink: rgb(1, 24, 216);
+  --accent: rgb(27, 86, 253);
+  --cream: rgb(233, 223, 195);
+  --paper: rgb(255, 248, 248);
 
-    <!-- Top Admin Bar -->
-    <header class="topbar">
-      <div class="container topbar-inner">
-        <a href="/" class="brand-wordmark">
-          Turkana <span>Wellspring</span> <span style="font-size: 0.8rem; font-family: var(--font-sans); color: var(--color-text-muted); font-weight: 500; margin-left: 0.5rem;">/ Operations Portal</span>
-        </a>
+  --muted: rgba(1, 24, 216, 0.72);
+  --line: rgba(1, 24, 216, 0.16);
+  --line-strong: rgba(1, 24, 216, 0.34);
+  --accent-soft: rgba(27, 86, 253, 0.08);
+  --paper-muted: rgba(255, 248, 248, 0.75);
 
-        <div class="topbar-action" id="authActionZone" style="gap: 0.5rem; display: flex; align-items: center;">
-          <button type="button" id="adminDevKeysToggle" class="btn-demo" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 600;" aria-label="Configure connection keys">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            <span>Dev Keys</span>
+  --hairline: 1px solid var(--line);
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+
+  --maxw: 1180px;
+  --pad-x: clamp(1.25rem, 5vw, 2.5rem);
+  --section-y: clamp(3.5rem, 7vw, 6.5rem);
+  --radius: 8px;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* ============ BASE RESET ============ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img { max-width: 100%; display: block; }
+h1, h2, h3, h4, p, figure, dl, dd, dt, ul, ol { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--accent); color: var(--paper); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+
+.container { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
+.section { padding-block: var(--section-y); }
+
+.label {
+  display: inline-flex; align-items: center; gap: .65rem;
+  font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted);
+}
+.label::before { content: ""; width: 22px; height: 1px; background: var(--accent); flex: none; }
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; }
+h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.05; letter-spacing: -.015em; }
+h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: -.01em; }
+
+/* ============ BUTTONS & BADGES ============ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  border: 1px solid transparent; border-radius: 999px; cursor: pointer; text-decoration: none;
+  font-weight: 600; font-size: .92rem; line-height: 1; padding: .8rem 1.6rem;
+  transition: scale .25s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease;
+}
+.btn:hover { scale: 1.04; }
+.btn:active { scale: .99; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--accent); box-shadow: 0 12px 24px -10px rgba(1, 24, 216, .5); }
+.btn-secondary { background: rgba(1, 24, 216, .05); color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { background: rgba(1, 24, 216, .1); border-color: var(--line-strong); }
+.btn-sm { padding: .55rem 1.15rem; font-size: .82rem; }
+.btn-block { width: 100%; }
+.btn:disabled { opacity: .6; cursor: wait; scale: 1; }
+
+.badge-tag {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .2rem .65rem; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .03em;
+  background: rgba(1, 24, 216, .06); color: var(--ink);
+}
+.badge-tag.badge-verified { background: rgba(34, 197, 94, .12); color: #15803d; }
+.badge-tag.badge-amira { background: rgba(27, 86, 253, .12); color: var(--accent); }
+.badge-tag.badge-past { background: rgba(100, 116, 139, .15); color: #475569; }
+
+/* ============ SITE HEADER ============ */
+.site-header { position: sticky; top: 0; z-index: 100; background: var(--paper); border-bottom: var(--hairline); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 64px; }
+.brand {
+  display: inline-flex; align-items: center; gap: .6rem; text-decoration: none;
+  font-family: var(--serif); font-size: 1.35rem; letter-spacing: -.01em;
+}
+.brand-logo { display: block; flex: none; }
+.nav-links { display: none; align-items: center; gap: 2rem; }
+.nav-links a {
+  position: relative; font-size: .9rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; padding: .35rem 0; transition: color .25s ease;
+}
+.nav-links a::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease);
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-links a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+.nav-links a[aria-current="page"]::after { transform: scaleX(1); }
+
+.header-actions { display: flex; align-items: center; gap: .75rem; }
+.menu-btn {
+  display: inline-flex; align-items: center; gap: .5rem; background: none; border: 0; cursor: pointer;
+  font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: .5rem .25rem;
+}
+.mobile-panel {
+  display: none; position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--paper); border-bottom: var(--hairline);
+  padding: .25rem var(--pad-x) 1.25rem;
+  animation: panelIn .25s var(--ease);
+}
+@keyframes panelIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.menu-open .mobile-panel { display: block; }
+.mobile-panel a { display: block; padding: .85rem 0; font-size: 1rem; font-weight: 500; text-decoration: none; border-top: var(--hairline); }
+.mobile-panel a:first-child { border-top: 0; }
+.mobile-panel a:hover { color: var(--muted); }
+.mobile-panel a[aria-current="page"] { color: var(--ink); }
+@media (min-width: 900px) {
+  .nav-links { display: flex; }
+  .menu-btn, .mobile-panel { display: none !important; }
+}
+
+/* ============ PAGE HEADER & NAVIGATION TABS ============ */
+.ledger-hero {
+  padding-block: clamp(3rem, 6vw, 4.5rem) clamp(2rem, 4vw, 3rem);
+  border-bottom: var(--hairline);
+  background: linear-gradient(to bottom, var(--paper), rgba(233, 223, 195, 0.25));
+}
+.ledger-hero-inner {
+  display: flex; flex-direction: column; gap: 1rem; max-width: 780px;
+}
+.portal-mode-toggle {
+  display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line);
+  border-radius: 999px; background: rgba(1, 24, 216, .03); margin-top: 1rem; width: fit-content;
+}
+.portal-mode-btn {
+  border: 0; background: transparent; border-radius: 999px; cursor: pointer;
+  padding: .45rem 1.15rem; font-size: .82rem; font-weight: 600; color: var(--muted);
+  transition: all .2s ease;
+}
+.portal-mode-btn.active {
+  background: var(--ink); color: var(--paper); box-shadow: 0 4px 12px -2px rgba(1, 24, 216, 0.3);
+}
+
+/* ============ METRIC STAT CARDS ============ */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;
+  margin-block: 2rem;
+}
+.metric-card {
+  background: var(--paper); border: var(--hairline); border-radius: var(--radius);
+  padding: 1.4rem; position: relative; overflow: hidden;
+}
+.metric-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent);
+}
+.metric-label { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.metric-value {
+  font-family: var(--serif); font-size: 2.2rem; font-weight: 400; line-height: 1.1; margin-top: .4rem;
+  color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.metric-note { font-size: .78rem; color: var(--muted); margin-top: .4rem; }
+
+/* ============ PAYWALL CARD ============ */
+.paywall-wrapper {
+  max-width: 620px; margin: 3rem auto; text-align: center;
+}
+.paywall-card {
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 12px;
+  padding: clamp(2rem, 5vw, 3rem); box-shadow: 0 16px 40px -15px rgba(1, 24, 216, .12);
+  text-align: left;
+}
+.paywall-icon-box {
+  width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft);
+  color: var(--accent); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.25rem;
+}
+.paywall-options-grid {
+  display: grid; gap: 1.25rem; margin-top: 1.75rem;
+}
+.paywall-option-box {
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem;
+  background: rgba(1, 24, 216, 0.015); transition: border-color .2s ease;
+}
+.paywall-option-box:hover { border-color: var(--accent); }
+.paywall-option-title { font-size: .95rem; font-weight: 700; color: var(--ink); margin-bottom: .25rem; }
+.paywall-option-desc { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
+
+.input-field-box {
+  display: flex; align-items: center; gap: .5rem;
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 6px;
+  padding: .6rem .8rem; margin-bottom: .75rem;
+}
+.input-field-box:focus-within { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(1, 24, 216, .08); }
+.input-field-box input {
+  border: 0; outline: none; background: transparent; width: 100%;
+  font-family: inherit; font-size: .92rem; color: var(--ink);
+}
+
+/* ============ LEDGER TABLE ============ */
+.ledger-filter-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.filter-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.filter-chip {
+  border: 1px solid var(--line); background: var(--paper); border-radius: 999px;
+  padding: .4rem .95rem; font-size: .8rem; font-weight: 600; cursor: pointer;
+  color: var(--muted); transition: all .2s ease;
+}
+.filter-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.search-box {
+  display: flex; align-items: center; gap: .5rem; background: var(--paper);
+  border: 1px solid var(--line); border-radius: 999px; padding: .4rem .9rem; min-width: 260px;
+}
+.search-box:focus-within { border-color: var(--ink); }
+.search-box input {
+  border: 0; outline: none; background: transparent; font-size: .85rem; width: 100%; color: var(--ink);
+}
+
+.table-responsive {
+  border: var(--hairline); border-radius: var(--radius); overflow-x: auto; background: var(--paper);
+}
+.ledger-table {
+  width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem;
+}
+.ledger-table th {
+  padding: 1rem 1.25rem; font-size: .74rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted); border-bottom: var(--hairline);
+  background: rgba(1, 24, 216, .02);
+}
+.ledger-table td {
+  padding: 1.05rem 1.25rem; border-bottom: var(--hairline); vertical-align: middle;
+}
+.ledger-table tr:last-child td { border-bottom: 0; }
+.ledger-table tr:hover td { background: rgba(1, 24, 216, .015); }
+.donor-name-cell { font-weight: 600; color: var(--ink); }
+.donor-anon { color: var(--muted); font-style: italic; }
+.amount-cell {
+  font-family: var(--serif); font-size: 1.25rem; color: var(--ink); font-variant-numeric: tabular-nums;
+}
+
+/* ============ ADMIN AUTH & DASHBOARD ============ */
+.admin-card {
+  max-width: 520px; margin: 3rem auto; background: var(--paper);
+  border: 1px solid var(--line-strong); border-radius: 12px; padding: clamp(2rem, 5vw, 2.75rem);
+  box-shadow: 0 16px 40px -15px rgba(1, 24, 216, .12);
+}
+.admin-subnav-tabs {
+  display: flex; gap: .5rem; border-bottom: var(--hairline); margin-bottom: 1.5rem; overflow-x: auto;
+}
+.admin-subnav-btn {
+  border: 0; background: transparent; padding: .65rem .85rem; font-size: .85rem; font-weight: 600;
+  color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+}
+.admin-subnav-btn.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+.form-group { margin-bottom: 1.15rem; }
+.form-label { display: block; font-size: .78rem; font-weight: 600; letter-spacing: .02em; color: var(--ink); margin-bottom: .4rem; }
+.form-input {
+  width: 100%; padding: .65rem .85rem; font-family: inherit; font-size: .92rem;
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 6px; color: var(--ink);
+}
+.form-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 2px rgba(1, 24, 216, .08); }
+
+.feedback-msg {
+  padding: .75rem 1rem; border-radius: 6px; font-size: .85rem; margin-bottom: 1rem; display: none;
+}
+.feedback-msg.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.feedback-msg.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+.live-pulse {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: #22c55e; box-shadow: 0 0 8px #22c55e; margin-right: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SITE HEADER ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="32" height="32">
+      <b style="font-weight: 800; letter-spacing: 2px; font-size: larger;">Wellspring</b>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="index.html#who-we-are">Who we are</a></li>
+        <li><a href="index.html#what-we-do">What we do</a></li>
+        <li><a href="index.html#partners">Partners</a></li>
+        <li><a href="amira.html">Amira's story</a></li>
+        <li><a href="admin.html" aria-current="page">Donations & Ledger</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-primary btn-sm" href="amira.html#give">Donate to Amira</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobilePanel">
+        Menu
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-panel" id="mobilePanel" aria-label="Mobile">
+    <a href="index.html#who-we-are">Who we are</a>
+    <a href="index.html#what-we-do">What we do</a>
+    <a href="index.html#partners">Partners</a>
+    <a href="amira.html">Amira's story</a>
+    <a href="admin.html" aria-current="page">Donations & Ledger</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO & VIEW TOGGLE ============ -->
+  <section class="ledger-hero">
+    <div class="container">
+      <div class="ledger-hero-inner">
+        <p class="label">Financial Transparency & Governance</p>
+        <h1>Donations Ledger & Operations</h1>
+        <p style="color: var(--muted); font-size: 1.15rem; max-width: 60ch;">
+          Open accounting for Amira’s bone marrow transplant fund and historical community initiatives. Every single contribution reaches verified medical providers.
+        </p>
+
+        <!-- Mode switcher: Public Ledger vs Admin Operations -->
+        <div class="portal-mode-toggle" role="tablist">
+          <button type="button" class="portal-mode-btn active" id="modeLedgerBtn">
+            <span class="live-pulse"></span>
+            Verified Donor Ledger
           </button>
-          <div id="userInfoBadge" style="display: none; align-items: center; gap: 0.75rem;">
-            <span id="userRoleBadge" class="badge-role">Viewer</span>
-            <span id="userEmailLabel" style="font-size: 0.85rem; font-weight: 500; color: var(--color-text-secondary);">admin@example.org</span>
-            <button type="button" id="signOutBtn" class="btn-logout">Sign Out</button>
-          </div>
-          <a href="/" class="btn-back-site">← Public Campaign</a>
+          <button type="button" class="portal-mode-btn" id="modeAdminBtn">
+            Operations Portal & Admin
+          </button>
         </div>
       </div>
-    </header>
+    </div>
+  </section>
 
-    <main class="container admin-container">
-      
-      <!-- AUTHENTICATION CARD (Displayed when not logged in) -->
-      <section id="authSection" class="admin-auth-card">
-        <div class="auth-header">
-          <span class="hero-kicker">Restricted Staff Access</span>
-          <h2 style="font-family: var(--font-serif); font-size: 1.85rem; margin-top: 0.25rem;">Staff & Financial Sign-In</h2>
-          <p style="color: var(--color-text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
-            Gated access for authorized Foundation administrators and financial audit viewers. All transactions and edits are logged to the immutable audit ledger.
+  <!-- ================================================================
+       SECTION 1: THE DONOR TRANSPARENCY LEDGER (GATED BY PAYWALL)
+       ================================================================ -->
+  <section id="ledgerSection" class="section">
+    <div class="container">
+
+      <!-- PAYWALL GATE (Visible when visitor has NOT unlocked access yet) -->
+      <div id="paywallContainer" class="paywall-wrapper">
+        <div class="paywall-card">
+          <div class="paywall-icon-box">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <span class="label" style="margin-bottom: .65rem;">Gated Supporter Ledger</span>
+          <h2 style="margin-bottom: .75rem;">Verified Donor Transparency Access</h2>
+          <p style="color: var(--muted); font-size: .95rem; line-height: 1.6;">
+            To safeguard donor names and contact confidentiality against automated web crawlers while remaining fully transparent, the transaction ledger is accessible to verified donors and supporters.
+          </p>
+
+          <div class="paywall-options-grid">
+            <!-- Option A: Existing Donor Email / Ref Unlock -->
+            <div class="paywall-option-box">
+              <p class="paywall-option-title">Option 1: Unlock with Your Existing Donation</p>
+              <p class="paywall-option-desc">If you have already contributed to Amira or Wellspring, enter your donor email or receipt reference to access the ledger instantly.</p>
+              
+              <div class="input-field-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted); flex:none;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <input type="text" id="paywallDonorInput" placeholder="donor@example.com or KF-AMIRA-..." autocomplete="off">
+              </div>
+              <p id="paywallErrorMsg" class="feedback-msg error"></p>
+              
+              <button type="button" class="btn btn-primary btn-block btn-sm" id="paywallUnlockBtn">
+                Verify & Unlock Ledger
+              </button>
+            </div>
+
+            <!-- Option B: $5 Supporter Contribution -->
+            <div class="paywall-option-box">
+              <p class="paywall-option-title">Option 2: Unlock via $5 Transparency Supporter Pass</p>
+              <p class="paywall-option-desc">Support Amira’s patient fund with a small $5 pass to gain permanent ledger transparency access.</p>
+              <button type="button" class="btn btn-secondary btn-block btn-sm" id="paywallSupporterPassBtn">
+                Get $5 Supporter Pass
+              </button>
+            </div>
+          </div>
+
+          <p style="margin-top: 1.5rem; text-align: center; font-size: .82rem; color: var(--muted);">
+            Are you an authorized foundation administrator? 
+            <a href="#admin" id="linkToAdminLogin" style="color: var(--ink); font-weight: 600; text-decoration: underline;">Sign In to Admin Operations</a>
           </p>
         </div>
+      </div>
 
-        <form id="loginForm" class="auth-form">
-          <div class="form-field">
-            <label for="adminEmailInput" class="form-label">Registered Admin Email</label>
-            <input type="email" id="adminEmailInput" class="form-input" placeholder="auditor@turkanawellspring.org" required />
-          </div>
-
-          <div class="form-field">
-            <label for="adminPasswordInput" class="form-label">Password</label>
-            <input type="password" id="adminPasswordInput" class="form-input" placeholder="••••••••••••" required />
-          </div>
-
-          <div id="loginErrorMsg" class="field-error-msg">Invalid credentials or user not authorized.</div>
-
-          <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
-            <button type="submit" id="loginSubmitBtn" class="btn-primary-sm" style="flex: 1; padding: 0.75rem;">
-              Sign In to Operations Portal
-            </button>
-            <button type="button" id="demoAdminBtn" class="btn-demo" title="Instant preview login for testing">
-              Preview Mode (Test Session)
-            </button>
-          </div>
-
-          <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 1rem; text-align: center;">
-            Role verification is checked against the <code>public.admins</code> table on every request.
-          </p>
-        </form>
-      </section>
-
-      <!-- MAIN DASHBOARD CONTENT (Displayed after authentication) -->
-      <div id="dashboardContent" style="display: none;">
+      <!-- UNLOCKED LEDGER CONTENT (Revealed once unlocked or admin is logged in) -->
+      <div id="unlockedLedgerContainer" style="display: none;">
         
-        <!-- Dashboard Navigation Tabs -->
-        <nav class="admin-tabs" role="tablist">
-          <button type="button" class="admin-tab active" data-tab="donationsTab">Donations Ledger</button>
-          <button type="button" class="admin-tab" data-tab="manualEntryTab" id="manualEntryTabBtn">Record Offline Donation</button>
-          <button type="button" class="admin-tab" data-tab="cmsTab" id="cmsTabBtn">Field Updates (CMS)</button>
-          <button type="button" class="admin-tab" data-tab="referralsTab">Referrals & Affiliates</button>
-          <button type="button" class="admin-tab" data-tab="utmTab">UTM Campaign Generator</button>
-          <button type="button" class="admin-tab" data-tab="volunteersTab">Volunteers</button>
-          <button type="button" class="admin-tab" data-tab="subscribersTab">Newsletter</button>
-          <button type="button" class="admin-tab" data-tab="sponsorsTab">Matching Sponsor</button>
-          <button type="button" class="admin-tab" data-tab="auditTab">Audit Log</button>
-          <button type="button" class="admin-tab" data-tab="reconcileTab">Reconciliation Ops</button>
-          <button type="button" class="admin-tab" data-tab="devKeysTab">API &amp; Dev Keys</button>
+        <!-- Summary Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Raised for Amira</span>
+            <div class="metric-value" id="ledgerAmiraTotal">$12,480</div>
+            <p class="metric-note">Target: $250,000 for bone marrow transplant</p>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Past Healthcare Grants</span>
+            <div class="metric-value">$28,650</div>
+            <p class="metric-note">Community clinics, vaccines & ICU pediatric beds</p>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Total Verified Donors</span>
+            <div class="metric-value" id="ledgerTotalDonors">320+</div>
+            <p class="metric-note">Global supporters in USD & GBP</p>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Audited Allocation</span>
+            <div class="metric-value" style="color:#15803d;">98%</div>
+            <p class="metric-note">Direct to hospital & medicine accounts</p>
+          </div>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="ledger-filter-bar">
+          <div class="filter-chips">
+            <button type="button" class="filter-chip active" data-filter="all">All Donations</button>
+            <button type="button" class="filter-chip" data-filter="amira">Amira's Transplant Fund</button>
+            <button type="button" class="filter-chip" data-filter="past">Past Initiatives</button>
+          </div>
+
+          <div style="display: flex; gap: .75rem; align-items: center;">
+            <div class="search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="ledgerSearchInput" placeholder="Search donor name or ref...">
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="ledgerRefreshBtn">Refresh</button>
+          </div>
+        </div>
+
+        <!-- Ledger Table -->
+        <div class="table-responsive">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Donor Details</th>
+                <th>Campaign</th>
+                <th>Amount</th>
+                <th>Frequency</th>
+                <th>Verification Status</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <p style="font-size: .82rem; color: var(--muted); margin-top: 1.25rem;">
+          <span class="live-pulse"></span>
+          Live ledger stream connected. Transactions update automatically in real-time.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECTION 2: ADMIN OPERATIONS PORTAL (SINGLE-ADMIN REGISTRATION)
+       ================================================================ -->
+  <section id="adminSection" class="section" style="display: none; background: rgba(233, 223, 195, 0.15); border-top: var(--hairline);">
+    <div class="container">
+
+      <!-- AUTHENTICATION CARD (Visible when admin is NOT logged in) -->
+      <div id="adminAuthCard" class="admin-card">
+        
+        <!-- Registration vs Sign In Toggle Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; border-bottom: var(--hairline); padding-bottom: 1rem;">
+          <div>
+            <span class="label">Staff & Financial Governance</span>
+            <h3 id="authTitle" style="font-size: 1.6rem; margin-top: .3rem;">Admin Sign-In</h3>
+          </div>
+
+          <!-- IMPORTANT: THIS REGISTER BUTTON ONLY APPEARS IF NO ADMIN HAS REGISTERED YET. ONCE AN ADMIN REGISTERS, IT DISAPPEARS PERMANENTLY -->
+          <div id="adminRegisterActionZone" style="display: none;">
+            <button type="button" class="btn btn-secondary btn-sm" id="toggleRegisterBtn">
+              Register Admin
+            </button>
+          </div>
+        </div>
+
+        <p id="authNoticeText" style="font-size: .88rem; color: var(--muted); margin-bottom: 1.25rem;">
+          Secure access for authorized foundation administrators. All database adjustments and offline donations are recorded in the audit trail.
+        </p>
+
+        <!-- A: LOGIN FORM -->
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Administrator Email</label>
+            <input type="email" id="loginEmail" class="form-input" placeholder="admin@wellspring.org" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••••••" required>
+          </div>
+
+          <p id="loginFeedback" class="feedback-msg error"></p>
+
+          <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">
+            Sign In to Operations
+          </button>
+        </form>
+
+        <!-- B: SINGLE-ADMIN REGISTRATION FORM (Only shown when 0 admins exist) -->
+        <form id="adminRegisterForm" style="display: none;">
+          <div style="background: rgba(27, 86, 253, .06); border: 1px solid rgba(27, 86, 253, .2); border-radius: 6px; padding: .85rem; margin-bottom: 1.25rem; font-size: .82rem; color: var(--ink);">
+            <strong>Initial Setup Mode:</strong> No administrator is registered yet. Create the primary administrator account below. Once registered, public registration will be locked permanently.
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="regName">Full Name / Title</label>
+            <input type="text" id="regName" class="form-input" placeholder="e.g. Dr. Eleanor Vance" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Administrator Email</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="admin@wellspring.org" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="regPassword">Password (Minimum 6 characters)</label>
+            <input type="password" id="regPassword" class="form-input" minlength="6" placeholder="••••••••••••" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="regConfirmPassword">Confirm Password</label>
+            <input type="password" id="regConfirmPassword" class="form-input" minlength="6" placeholder="••••••••••••" required>
+          </div>
+
+          <p id="registerFeedback" class="feedback-msg error"></p>
+
+          <button type="submit" class="btn btn-primary btn-block" id="registerSubmitBtn">
+            Register Primary Administrator
+          </button>
+        </form>
+      </div>
+
+      <!-- LOGGED-IN ADMIN DASHBOARD -->
+      <div id="adminDashboardView" style="display: none;">
+        
+        <!-- Admin Top Navigation Bar -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; background: var(--paper); border: var(--hairline); border-radius: var(--radius); padding: 1rem 1.4rem;">
+          <div style="display: flex; align-items: center; gap: .75rem;">
+            <span class="badge-tag badge-verified">Primary Administrator</span>
+            <span id="activeAdminEmailDisplay" style="font-weight: 600; font-size: .9rem;">admin@wellspring.org</span>
+          </div>
+
+          <div style="display: flex; gap: .75rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="exportCsvAdminBtn">Export CSV</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="adminSignOutBtn">Sign Out</button>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Navigation Tabs -->
+        <nav class="admin-subnav-tabs" role="tablist">
+          <button type="button" class="admin-subnav-btn active" data-tab="tabDonations">Master Ledger</button>
+          <button type="button" class="admin-subnav-btn" data-tab="tabOffline">Record Offline Donation</button>
+          <button type="button" class="admin-subnav-btn" data-tab="tabDevKeys">Flutterwave API Keys</button>
+          <button type="button" class="admin-subnav-btn" data-tab="tabReconcile">Reconciliation</button>
         </nav>
 
-        <!-- TAB 1: DONATIONS LEDGER & CSV EXPORT -->
-        <section id="donationsTab" class="tab-pane active">
-          
-          <!-- Filters & Action Bar -->
-          <div class="admin-filter-bar">
-            <div class="filter-group">
-              <label for="filterStatus">Status:</label>
-              <select id="filterStatus" class="admin-select">
-                <option value="all">All Statuses</option>
-                <option value="success" selected>Verified (Success)</option>
-                <option value="pending">Pending</option>
-                <option value="failed">Failed</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="filterCurrency">Currency:</label>
-              <select id="filterCurrency" class="admin-select">
-                <option value="all">All Currencies</option>
-                <option value="USD">USD ($)</option>
-                <option value="NGN">NGN (₦)</option>
-                <option value="GBP">GBP (£)</option>
-              </select>
-            </div>
-
-            <div class="filter-group" style="flex: 1;">
-              <label for="filterSearch">Search:</label>
-              <input type="search" id="filterSearch" class="admin-input" placeholder="Search by name, email, or reference..." />
-            </div>
-
-            <div style="display: flex; gap: 0.5rem;">
-              <button type="button" id="refreshDonationsBtn" class="btn-secondary-sm">Refresh</button>
-              <button type="button" id="exportCsvBtn" class="btn-primary-sm">Export CSV</button>
-            </div>
-          </div>
-
-          <!-- Donations Table -->
-          <div class="feed-table-container">
-            <table class="feed-table" id="adminDonationsTable">
+        <!-- TAB A: MASTER DONATIONS LEDGER WITH STATUS CONTROLS -->
+        <div id="tabDonations" class="admin-tab-pane">
+          <div class="table-responsive">
+            <table class="ledger-table">
               <thead>
                 <tr>
-                  <th>Date & Time</th>
+                  <th>Date</th>
                   <th>Donor Details</th>
+                  <th>Email</th>
                   <th>Amount</th>
-                  <th>Frequency</th>
-                  <th>Source / Channel</th>
+                  <th>Campaign</th>
                   <th>Status</th>
                   <th>Reference</th>
                 </tr>
               </thead>
-              <tbody id="adminDonationsTableBody">
+              <tbody id="adminMasterTableBody">
                 <!-- Dynamically populated -->
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div class="table-pagination-bar">
-            <span id="donationsCountLabel" style="font-size: 0.8125rem; color: var(--color-text-secondary);">Showing 0 entries</span>
-            <div style="display: flex; gap: 0.5rem;">
-              <button type="button" id="prevPageBtn" class="btn-secondary-sm" disabled>Previous</button>
-              <button type="button" id="nextPageBtn" class="btn-secondary-sm" disabled>Next</button>
-            </div>
-          </div>
-        </section>
+        <!-- TAB B: RECORD OFFLINE DONATION -->
+        <div id="tabOffline" class="admin-tab-pane" style="display: none;">
+          <div style="max-width: 620px; background: var(--paper); border: var(--hairline); border-radius: var(--radius); padding: 2rem;">
+            <h3 style="margin-bottom: .5rem;">Record Audited Offline Donation</h3>
+            <p style="font-size: .88rem; color: var(--muted); margin-bottom: 1.5rem;">
+              Manually add hospital wire transfers, grants, or bank deposits to the verified ledger and live donation progress.
+            </p>
 
-        <!-- TAB 2: MANUAL OFFLINE DONATION ENTRY (Admin Only) -->
-        <section id="manualEntryTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Audited Financial Intake</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Record Offline Donation (Cash / Direct Bank Transfer)</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Direct offline contributions are tagged with their specific source and audited into the verified campaign total.
-              </p>
-            </div>
-
-            <div id="viewerRestrictedNoticeManual" class="phase1-notice" style="display: none; margin-bottom: 1.5rem;">
-              <strong>Read-Only Notice:</strong> You are signed in with the <code>Viewer</code> role. Only administrators can record offline entries.
-            </div>
-
-            <form id="manualDonationForm">
-              <div class="grid-2-col">
-                <div class="form-field">
-                  <label for="manualDonorName" class="form-label">Donor or Institution Name</label>
-                  <input type="text" id="manualDonorName" class="form-input" placeholder="e.g. Rotary Club of Lodwar" required />
-                </div>
-
-                <div class="form-field">
-                  <label for="manualDonorEmail" class="form-label">Contact Email</label>
-                  <input type="email" id="manualDonorEmail" class="form-input" placeholder="contact@rotarylodwar.org" required />
-                </div>
+            <form id="offlineDonationForm">
+              <div class="form-group">
+                <label class="form-label" for="offDonorName">Donor or Organization Name</label>
+                <input type="text" id="offDonorName" class="form-input" placeholder="e.g. Pediatric Care Trust" required>
               </div>
 
-              <div class="grid-3-col">
-                <div class="form-field">
-                  <label for="manualAmount" class="form-label">Amount</label>
-                  <input type="number" id="manualAmount" class="form-input" placeholder="2500" min="1" step="any" required />
-                </div>
+              <div class="form-group">
+                <label class="form-label" for="offDonorEmail">Donor Email (For audit and tax receipt)</label>
+                <input type="email" id="offDonorEmail" class="form-input" placeholder="donor@trust.org" required>
+              </div>
 
-                <div class="form-field">
-                  <label for="manualCurrency" class="form-label">Currency</label>
-                  <select id="manualCurrency" class="form-input">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="offAmount">Amount</label>
+                  <input type="number" id="offAmount" class="form-input" min="1" step="any" placeholder="1000" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="offCurrency">Currency</label>
+                  <select id="offCurrency" class="form-input">
                     <option value="USD">USD ($)</option>
-                    <option value="NGN">NGN (₦)</option>
                     <option value="GBP">GBP (£)</option>
                   </select>
                 </div>
-
-                <div class="form-field">
-                  <label for="manualSource" class="form-label">Funding Source</label>
-                  <select id="manualSource" class="form-input">
-                    <option value="manual_bank">Direct Wire / Bank Deposit</option>
-                    <option value="manual_cash">Cash in Field Office</option>
-                  </select>
-                </div>
               </div>
 
-              <div class="form-field">
-                <label for="manualNotes" class="form-label">Auditor Reference / Bank Deposit Slip Number / Notes</label>
-                <textarea id="manualNotes" class="form-input" rows="3" placeholder="Wire receipt #REF-98127 verified via KCB Bank Lodwar Branch." required></textarea>
-              </div>
-
-              <label class="form-checkbox-wrapper">
-                <input type="checkbox" id="manualAnonymous" class="form-checkbox" />
-                <span class="checkbox-label">Mark as anonymous on public leaderboard</span>
-              </label>
-
-              <button type="submit" id="saveManualDonationBtn" class="btn-primary-sm" style="padding: 0.75rem 1.5rem;">
-                Audit & Record Verified Donation
-              </button>
-            </form>
-          </div>
-        </section>
-
-        <!-- TAB 3: CMS CAMPAIGN UPDATES (Admin Only) -->
-        <section id="cmsTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Community & Donor Communications</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Field Updates & Blog Posts</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Publish engineering progress, water quality test reports, and community dispatches to the public campaign page.
-              </p>
-            </div>
-
-            <!-- Create Post Form -->
-            <form id="cmsPostForm" style="margin-bottom: 2.5rem; background: var(--color-surface-subtle); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline);">
-              <h4 style="margin-bottom: 1rem; font-size: 1rem; font-weight: 700;">Publish New Field Dispatch</h4>
-              
-              <div class="grid-2-col">
-                <div class="form-field">
-                  <label for="cmsTitle" class="form-label">Article Title</label>
-                  <input type="text" id="cmsTitle" class="form-input" placeholder="e.g. Drilling Rig Arrives at Borehole Site #3" required />
-                </div>
-                <div class="form-field">
-                  <label for="cmsAuthor" class="form-label">Author / Field Engineer</label>
-                  <input type="text" id="cmsAuthor" class="form-input" placeholder="Eng. Brian Njoroge" required />
-                </div>
-              </div>
-
-              <div class="form-field">
-                <label for="cmsBody" class="form-label">Article Body</label>
-                <textarea id="cmsBody" class="form-input" rows="4" placeholder="Detailed update on water yields, community meetings, and technical milestones..." required></textarea>
-              </div>
-
-              <button type="submit" id="publishCmsBtn" class="btn-primary-sm">Publish Field Update</button>
-            </form>
-
-            <!-- Published Updates List -->
-            <h4 style="margin-bottom: 1rem; font-size: 1.05rem;">Published Dispatches</h4>
-            <div class="feed-table-container">
-              <table class="feed-table">
-                <thead>
-                  <tr>
-                    <th>Published At</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="cmsPostsTableBody">
-                  <!-- Populated via admin.js -->
-                </tbody>
-              </table>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- TAB 4: REFERRAL CODE BREAKDOWN -->
-        <section id="referralsTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Fundraiser & Partner Attribution</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Referral Code Statistics</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Track volume and funds raised through individual partner campaigns and donor referral codes (<code>?ref=CODE</code>).
-              </p>
-            </div>
-
-            <div class="feed-table-container">
-              <table class="feed-table">
-                <thead>
-                  <tr>
-                    <th>Referral Code</th>
-                    <th>Total Initiated</th>
-                    <th>Successful Donations</th>
-                    <th>Total Funds Raised</th>
-                    <th>Currency</th>
-                  </tr>
-                </thead>
-                <tbody id="referralsTableBody">
-                  <!-- Populated via admin.js -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB: UTM CAMPAIGN GENERATOR -->
-        <section id="utmTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Growth & Acquisition Tracking</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">UTM Campaign Link Generator & Attribution</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Create tagged marketing URLs for email dispatches, social ads, and influencer campaigns. Incoming UTM tags are permanently recorded on donation rows.
-              </p>
-            </div>
-
-            <!-- Generator Form -->
-            <div style="background: var(--color-surface-subtle); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline); margin-bottom: 2rem;">
-              <h4 style="margin-bottom: 1rem; font-size: 1rem;">Build Tagged Campaign URL</h4>
-              <div class="grid-2-col">
-                <div class="form-field">
-                  <label for="utmSourceInput" class="form-label">UTM Source (e.g. newsletter, twitter, linkedin, partner)</label>
-                  <input type="text" id="utmSourceInput" class="form-input" placeholder="newsletter" value="newsletter" />
-                </div>
-                <div class="form-field">
-                  <label for="utmMediumInput" class="form-label">UTM Medium (e.g. email, cpc, post, social)</label>
-                  <input type="text" id="utmMediumInput" class="form-input" placeholder="email" value="email" />
-                </div>
-              </div>
-              <div class="grid-2-col">
-                <div class="form-field">
-                  <label for="utmCampaignInput" class="form-label">UTM Campaign (e.g. spring_clean_water, boreholes_phase1)</label>
-                  <input type="text" id="utmCampaignInput" class="form-input" placeholder="spring_clean_water" value="spring_clean_water" />
-                </div>
-                <div class="form-field">
-                  <label for="utmContentInput" class="form-label">UTM Content (Optional, e.g. hero_cta, footer_link)</label>
-                  <input type="text" id="utmContentInput" class="form-input" placeholder="hero_cta" value="hero_cta" />
-                </div>
-              </div>
-
-              <div class="form-field" style="margin-top: 0.75rem;">
-                <label for="generatedUtmUrl" class="form-label">Generated Campaign Link</label>
-                <div style="display: flex; gap: 0.5rem;">
-                  <input type="text" id="generatedUtmUrl" class="form-input" readonly style="font-family: var(--font-mono); font-size: 0.8rem; background: var(--color-canvas-pure);" />
-                  <button type="button" id="copyUtmLinkBtn" class="btn-primary-sm" style="white-space: nowrap;">Copy Link</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- UTM Performance Table -->
-            <h4 style="margin-bottom: 1rem; font-size: 1.05rem;">UTM Campaign Attribution Ledger</h4>
-            <div class="feed-table-container">
-              <table class="feed-table">
-                <thead>
-                  <tr>
-                    <th>Source</th>
-                    <th>Campaign</th>
-                    <th>Initiated Donations</th>
-                    <th>Verified Conversions</th>
-                    <th>Total Funds Raised</th>
-                  </tr>
-                </thead>
-                <tbody id="utmStatsTableBody">
-                  <!-- Populated via admin.js -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB: VOLUNTEERS LEAD CAPTURE -->
-        <section id="volunteersTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Human Capital & Field Team</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Volunteer Registrations</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Review applications submitted through the volunteer lead capture form. Update application review statuses.
-              </p>
-            </div>
-
-            <div class="admin-filter-bar">
-              <div class="filter-group">
-                <label for="filterVolunteerStatus">Filter Status:</label>
-                <select id="filterVolunteerStatus" class="admin-select">
-                  <option value="all">All Applications</option>
-                  <option value="pending_review" selected>Pending Review</option>
-                  <option value="interviewed">Interviewed</option>
-                  <option value="accepted">Accepted / Deployed</option>
-                  <option value="archived">Archived</option>
+              <div class="form-group">
+                <label class="form-label" for="offCampaign">Campaign</label>
+                <select id="offCampaign" class="form-input">
+                  <option value="Amira's Bone Marrow Transplant Fund">Amira's Bone Marrow Transplant Fund</option>
+                  <option value="Past Initiative: Turkana Pediatric Ward Equipment">Past Initiative: Turkana Pediatric Ward Equipment</option>
+                  <option value="Past Initiative: Solar Cold-Chain Vaccine Clinic">Past Initiative: Solar Cold-Chain Vaccine Clinic</option>
                 </select>
               </div>
-              <button type="button" id="refreshVolunteersBtn" class="btn-secondary-sm">Refresh List</button>
-            </div>
 
-            <div class="feed-table-container">
-              <table class="feed-table">
-                <thead>
-                  <tr>
-                    <th>Registered</th>
-                    <th>Volunteer Name</th>
-                    <th>Email &amp; Phone</th>
-                    <th>Availability</th>
-                    <th>Skills &amp; Notes</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="volunteersTableBody">
-                  <!-- Populated via admin.js -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
+              <p id="offlineFeedback" class="feedback-msg"></p>
 
-        <!-- TAB: NEWSLETTER SUBSCRIBERS -->
-        <section id="subscribersTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Audience &amp; Direct Mail</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Field Dispatch Subscribers</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Subscribers opted-in strictly for monthly technical field dispatches. Kept separate from donor financial records.
-              </p>
-            </div>
-
-            <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 1.5rem;">
-              <div style="background: var(--color-surface-subtle); padding: 1rem 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline);">
-                <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-text-muted);">Active Subscribers</div>
-                <div id="subscribersCountBadge" style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--color-accent-primary);">0</div>
-              </div>
-              <button type="button" id="refreshSubscribersBtn" class="btn-secondary-sm">Refresh Subscribers</button>
-            </div>
-
-            <div class="feed-table-container">
-              <table class="feed-table">
-                <thead>
-                  <tr>
-                    <th>Subscribed Date</th>
-                    <th>Subscriber Email</th>
-                    <th>Acquisition Source</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="subscribersTableBody">
-                  <!-- Populated via admin.js -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB: MATCHING GIFT SPONSORS -->
-        <section id="sponsorsTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Philanthropic Matching Grants</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Matching Gift Sponsor Controls</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Manage active challenge grants that multiply public donations. When enabled, incoming verified contributions increment the matched allocation up to the configured cap.
-              </p>
-            </div>
-
-            <div id="matchingSponsorConfigCard" style="background: var(--color-surface-subtle); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline); margin-bottom: 2rem;">
-              <!-- Populated via admin.js -->
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 5: AUDIT LOG VIEWER -->
-        <section id="auditTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Compliance & Security Ledger</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Immutable Administrative Audit Log</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Every manual offline record, CSV export, and CMS modification is logged with operator identity and UTC timestamp.
-              </p>
-            </div>
-
-            <div class="feed-table-container">
-              <table class="feed-table">
-                <thead>
-                  <tr>
-                    <th>Timestamp (UTC)</th>
-                    <th>Operator</th>
-                    <th>Action</th>
-                    <th>Target ID</th>
-                    <th>Metadata Details</th>
-                  </tr>
-                </thead>
-                <tbody id="auditTableBody">
-                  <!-- Populated via admin.js -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 6: RECONCILIATION OPS -->
-        <section id="reconcileTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Financial Integrity & Scheduled Ops</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Flutterwave Settlement Reconciliation</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Automated background checks cross-verify Flutterwave's transaction register with Supabase donations to resolve pending records.
-              </p>
-            </div>
-
-            <div style="background: var(--color-surface-subtle); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline); margin-bottom: 2rem;">
-              <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Manual Reconciliation Trigger</h4>
-              <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1rem;">
-                Run an immediate synchronization scan against Flutterwave's live API to resolve any pending states.
-              </p>
-              <button type="button" id="triggerReconcileBtn" class="btn-primary-sm">
-                Run Flutterwave Reconciliation Now
+              <button type="submit" class="btn btn-primary" id="saveOfflineBtn">
+                Record & Broadcast Donation
               </button>
-              <div id="reconcileResultNotice" style="margin-top: 1rem; font-size: 0.85rem; display: none;"></div>
-            </div>
-
-            <div class="phase1-notice">
-              <strong>Multi-Currency Acceptance:</strong> Flutterwave processes USD, GBP, EUR, NGN, KES, and other global currencies directly.
-            </div>
+            </form>
           </div>
-        </section>
+        </div>
 
-        <!-- TAB 7: API & DEV KEYS (Payment Gateway & Supabase) -->
-        <section id="devKeysTab" class="tab-pane">
-          <div class="admin-card-inner">
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-              <span class="section-kicker">Developer &amp; Integration Settings</span>
-              <h3 style="font-family: var(--font-serif); font-size: 1.5rem;">Payment Gateway &amp; Database API Credentials</h3>
-              <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                Manage Flutterwave and Supabase connection keys for live banking settlement, webhook verification, and ledger synchronization.
-              </p>
+        <!-- TAB C: FLUTTERWAVE DEV KEYS -->
+        <div id="tabDevKeys" class="admin-tab-pane" style="display: none;">
+          <div style="max-width: 620px; background: var(--paper); border: var(--hairline); border-radius: var(--radius); padding: 2rem;">
+            <h3 style="margin-bottom: .5rem;">Flutterwave API Configuration</h3>
+            <p style="font-size: .88rem; color: var(--muted); margin-bottom: 1.5rem;">
+              Manage your Public Key, Secret Key, and 24-character 3DES Encryption Key.
+            </p>
+
+            <div class="form-group">
+              <label class="form-label" for="cfgPublicKey">Flutterwave Public Key</label>
+              <input type="text" id="cfgPublicKey" class="form-input" placeholder="FLWPUBK_TEST-...">
             </div>
 
-            <div style="max-width: 680px; background: var(--color-surface-subtle); padding: 1.75rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline);">
-              <div class="form-field" style="margin-bottom: 1.25rem;">
-                <label for="adminFlutterwaveKeyInput" class="form-label" style="font-weight: 700;">Flutterwave Public Key (Client Browser)</label>
-                <input type="text" id="adminFlutterwaveKeyInput" class="admin-input" placeholder="FLWPUBK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); width: 100%;" />
-                <div id="adminPubKeyWarning" style="display:none; color: var(--color-error); font-size: 0.75rem; margin-top: 0.25rem; font-weight: 600;"></div>
-              </div>
-
-              <div class="form-field" style="margin-bottom: 1.25rem;">
-                <label for="adminFlutterwaveSecretInput" class="form-label" style="font-weight: 700;">Flutterwave Secret Key (Server Verification)</label>
-                <input type="password" id="adminFlutterwaveSecretInput" class="admin-input" placeholder="FLWSECK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); width: 100%;" />
-                <div style="font-size: 0.725rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                  Starts with <code>FLWSECK_</code>. Used server-side to charge cards and verify webhook signatures.
-                </div>
-              </div>
-
-              <div class="form-field" style="margin-bottom: 1.25rem;">
-                <label for="adminSupabaseUrlInput" class="form-label" style="font-weight: 700;">Supabase Project URL</label>
-                <input type="text" id="adminSupabaseUrlInput" class="admin-input" placeholder="https://xyz.supabase.co" style="font-family: var(--font-mono); width: 100%;" />
-              </div>
-
-              <div class="form-field" style="margin-bottom: 1.25rem;">
-                <label for="adminSupabaseKeyInput" class="form-label" style="font-weight: 700;">Supabase Anon Key</label>
-                <input type="password" id="adminSupabaseKeyInput" class="admin-input" placeholder="eyJ..." style="font-family: var(--font-mono); width: 100%;" />
-              </div>
-
-              <div id="adminKeySuccessMsg" style="display:none; color: #15803d; font-size: 0.8rem; margin-bottom: 1rem; padding: 0.5rem; background: #dcfce7; border-radius: 4px; font-weight: 600;"></div>
-
-              <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
-                <button type="button" id="adminSaveKeysBtn" class="btn-primary-sm" style="padding: 0.65rem 1.25rem;">Save &amp; Apply Credentials</button>
-                <button type="button" id="adminDiagnoseBtn" class="btn-secondary-sm" style="padding: 0.65rem 1rem;">Test Connection</button>
-              </div>
-
-              <div id="adminDiagnosticResults" style="display:none; margin-top: 1rem; padding: 0.75rem; background: var(--color-canvas-pure); border: 1px solid var(--color-border-hairline); border-radius: 4px; font-size: 0.8rem; line-height: 1.5;"></div>
+            <div class="form-group">
+              <label class="form-label" for="cfgSecretKey">Flutterwave Secret Key (Server Verification)</label>
+              <input type="password" id="cfgSecretKey" class="form-input" placeholder="FLWSECK_TEST-...">
             </div>
 
-            <!-- Webhook Integration Card & Testing Box -->
-            <div style="max-width: 680px; background: var(--color-surface-subtle); padding: 1.75rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-hairline); margin-top: 1.5rem;">
-              <div class="section-header" style="margin-bottom: 1rem; text-align: left;">
-                <span class="section-kicker">Flutterwave Webhook Configuration</span>
-                <h4 style="font-family: var(--font-serif); font-size: 1.25rem;">Live Webhook Listener URL</h4>
-                <p style="font-size: 0.8125rem; color: var(--color-text-secondary); margin-top: 0.25rem;">
-                  Flutterwave automatically posts event notifications (<code>charge.completed</code>) to this endpoint whenever a donation is authorized.
-                </p>
-              </div>
-
-              <div class="form-field" style="margin-bottom: 1rem;">
-                <label for="adminWebhookUrlInput" class="form-label" style="font-weight: 700;">Copy Webhook URL for Flutterwave Dashboard:</label>
-                <div style="display: flex; gap: 0.5rem;">
-                  <input type="text" id="adminWebhookUrlInput" class="admin-input" readonly style="font-family: var(--font-mono); font-size: 0.8rem; background: #FFF; flex: 1;" value="" />
-                  <button type="button" id="copyWebhookUrlBtn" class="btn-secondary-sm" style="white-space: nowrap;">Copy URL</button>
-                </div>
-              </div>
-
-              <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
-                <button type="button" id="adminTestWebhookBtn" class="btn-primary-sm" style="background-color: var(--color-accent-primary); padding: 0.55rem 1rem;">
-                  Send Simulated Test Webhook
-                </button>
-                <button type="button" id="adminRefreshWebhookLogsBtn" class="btn-secondary-sm" style="padding: 0.55rem 0.85rem;">
-                  Refresh Webhook Logs
-                </button>
-              </div>
-
-              <div id="adminWebhookTestStatus" style="display: none; margin-top: 0.75rem; font-size: 0.8rem; padding: 0.5rem; border-radius: 4px;"></div>
-
-              <div id="adminWebhookLogsContainer" style="margin-top: 1.25rem; display: none;">
-                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">Recent Inbound Webhook Receipts:</div>
-                <div id="adminWebhookLogsList" style="max-height: 200px; overflow-y: auto; background: var(--color-canvas-pure); border: 1px solid var(--color-border-hairline); border-radius: 4px; padding: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem;"></div>
-              </div>
+            <div class="form-group">
+              <label class="form-label" for="cfgEncryptionKey">Flutterwave Encryption Key (24-byte 3DES Key)</label>
+              <input type="password" id="cfgEncryptionKey" class="form-input" placeholder="24-character encryption key">
             </div>
+
+            <p id="keysFeedback" class="feedback-msg"></p>
+
+            <button type="button" class="btn btn-primary btn-sm" id="saveDevKeysBtn">
+              Save Keys to Local Session
+            </button>
           </div>
-        </section>
+        </div>
+
+        <!-- TAB D: RECONCILIATION -->
+        <div id="tabReconcile" class="admin-tab-pane" style="display: none;">
+          <div style="max-width: 620px; background: var(--paper); border: var(--hairline); border-radius: var(--radius); padding: 2rem;">
+            <h3 style="margin-bottom: .5rem;">Automated Reconciliation Engine</h3>
+            <p style="font-size: .88rem; color: var(--muted); margin-bottom: 1.5rem;">
+              Polls Flutterwave’s verified transaction ledger to detect any successful card charges or bank transfers that did not trigger webhooks.
+            </p>
+
+            <p id="reconcileFeedback" class="feedback-msg"></p>
+
+            <button type="button" class="btn btn-primary" id="runReconcileBtn">
+              Trigger Live Reconciliation Now
+            </button>
+          </div>
+        </div>
 
       </div>
 
-    </main>
-
-    <!-- DEV KEYS MODAL (Accessible from topbar anywhere in Admin) -->
-    <div id="adminDevKeysModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="devKeysModalTitle">
-      <div class="modal-dialog" style="max-width: 600px;">
-        <button type="button" class="modal-close-btn close-modal-trigger" id="closeDevKeysModalBtn" aria-label="Close dialog">&times;</button>
-        <div class="section-header" style="text-align: left; margin-bottom: 1.25rem;">
-          <span class="section-kicker">Developer Keys &amp; Integrations</span>
-          <h3 id="devKeysModalTitle" class="modal-title" style="margin-top: 0.25rem;">API &amp; Environment Credentials</h3>
-          <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 0.25rem;">
-            Configure payment credentials and database parameters for this instance.
-          </p>
-        </div>
-
-        <div class="form-field" style="margin-bottom: 1rem;">
-          <label for="modalFlutterwaveKeyInput" class="form-label">Flutterwave Public Key (FLWPUBK_...)</label>
-          <input type="text" id="modalFlutterwaveKeyInput" class="form-input" placeholder="FLWPUBK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); font-size: 0.8rem;" />
-          <div id="modalPubKeyWarning" style="display:none; color: var(--color-error); font-size: 0.7rem; margin-top: 0.25rem; font-weight: 600;"></div>
-        </div>
-
-        <div class="form-field" style="margin-bottom: 1rem;">
-          <label for="modalFlutterwaveSecretInput" class="form-label">Flutterwave Secret Key (FLWSECK_...)</label>
-          <input type="password" id="modalFlutterwaveSecretInput" class="form-input" placeholder="FLWSECK_TEST-..." autocomplete="off" style="font-family: var(--font-mono); font-size: 0.8rem;" />
-        </div>
-
-        <div class="form-field" style="margin-bottom: 1rem;">
-          <label for="modalSupabaseUrlInput" class="form-label">Supabase URL</label>
-          <input type="text" id="modalSupabaseUrlInput" class="form-input" placeholder="https://xyz.supabase.co" style="font-family: var(--font-mono); font-size: 0.8rem;" />
-        </div>
-
-        <div class="form-field" style="margin-bottom: 1rem;">
-          <label for="modalSupabaseKeyInput" class="form-label">Supabase Anon Key</label>
-          <input type="password" id="modalSupabaseKeyInput" class="form-input" placeholder="eyJ..." style="font-family: var(--font-mono); font-size: 0.8rem;" />
-        </div>
-
-        <div id="modalKeySuccessMsg" style="display:none; color: #15803d; font-size: 0.75rem; margin-bottom: 0.75rem; padding: 0.4rem; background: #dcfce7; border-radius: 4px; font-weight: 600;"></div>
-
-        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-          <button type="button" id="modalSaveKeysBtn" class="btn-primary-sm" style="flex: 1; padding: 0.6rem;">Save &amp; Apply</button>
-          <button type="button" id="modalDiagnoseBtn" class="btn-secondary-sm" style="padding: 0.6rem 0.85rem;">Test Connection</button>
-        </div>
-
-        <div id="modalDiagnosticResults" style="display:none; margin-top: 0.75rem; padding: 0.5rem; background: var(--color-surface-subtle); border: 1px solid var(--color-border-hairline); border-radius: 4px; font-size: 0.75rem; line-height: 1.4;"></div>
-      </div>
     </div>
+  </section>
 
-    <!-- Real-time Notifications & Admin JavaScript Logic -->
-    <script src="/js/realtime_notifications.js"></script>
-    <script src="/js/admin.js"></script>
-  </body>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer" style="border-top: var(--hairline); padding: 4.5rem 0 2.5rem; background: var(--paper);">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem 4rem; padding-bottom: 2rem;">
+      <div>
+        <a class="brand" href="index.html">
+          <img class="brand-logo" src="https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png" alt="" width="28" height="28">
+          <b style="font-weight: 800; letter-spacing: 2px;">Wellspring</b>
+        </a>
+        <p style="max-width: 36ch; margin-top: .8rem; font-size: .92rem; color: var(--muted);">Direct, verified healthcare funding for children waiting on critical care.</p>
+      </div>
+      <nav style="display: flex; flex-wrap: wrap; gap: 1rem 2rem;">
+        <a href="index.html#who-we-are" style="text-decoration:none; font-size:.9rem; color:var(--muted);">Who we are</a>
+        <a href="index.html#what-we-do" style="text-decoration:none; font-size:.9rem; color:var(--muted);">What we do</a>
+        <a href="amira.html" style="text-decoration:none; font-size:.9rem; color:var(--muted);">Amira's story</a>
+        <a href="admin.html" style="text-decoration:none; font-size:.9rem; color:var(--ink); font-weight:600;">Donations Ledger</a>
+      </nav>
+    </div>
+    <div style="border-top: var(--hairline); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: .85rem; color: var(--muted);">
+      <p>hello@kitefoundation.org · Registered non-profit</p>
+      <p>© 2023 Wellspring. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Flutterwave Checkout script (for the $5 supporter pass) -->
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+
+<!-- Admin & Ledger Controller -->
+<script src="/js/admin.js"></script>
+</body>
 </html>

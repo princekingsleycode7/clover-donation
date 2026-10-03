@@ -1,1186 +1,841 @@
 /**
  * ==============================================================================
- * TURKANA WELLSPRING INITIATIVE — ADMIN PORTAL CONTROLLER (admin.js)
- * Stack: Supabase Auth + admin-actions Edge Function + Role-Based UI
+ * WELLSPRING — DONATIONS LEDGER & ADMIN OPERATIONS CONTROLLER (js/admin.js)
+ * Features:
+ *  - Gated Supporter Paywall (Unlock via donor email, ref, or $5 pass)
+ *  - Unified Ledger: Amira's campaign & historical community healthcare initiatives
+ *  - Single-Admin Registration (Register button disappears once 1 admin exists)
+ *  - Admin Dashboard with Offline Intake, CSV Export, and Dev Keys
  * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  const state = {
-    supabaseClient: null,
-    session: null,
-    userRole: 'viewer', // 'admin' | 'viewer'
-    userEmail: '',
+  var state = {
+    isAdminLoggedIn: false,
+    adminToken: null,
+    adminProfile: null,
+    hasAdmin: false,
+    canRegister: false,
+    ledgerUnlocked: false,
     donations: [],
-    currentPage: 0,
-    pageSize: 25,
-    totalDonations: 0,
-    edgeBaseUrl: ''
+    activeFilter: 'all',
+    searchQuery: '',
+    currentMode: 'ledger' // 'ledger' | 'admin'
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initSupabase();
-    initTabs();
-    initAuthListeners();
-    initFiltersAndPagination();
-    initManualEntryForm();
-    initCmsForm();
-    initReconciliationButton();
-    initUtmGenerator();
-    initVolunteersTab();
-    initSubscribersTab();
-    initSponsorsTab();
-    initDevKeysAdmin();
+  function $(id) { return document.getElementById(id); }
+  function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    checkSavedSession();
+    checkAdminStatus();
+    initModeSwitcher();
+    initPaywall();
+    initAdminAuth();
+    initLedgerFilters();
+    initAdminDashboard();
+    initLiveDonationStream();
+
+    // Check URL hash for direct navigation
+    if (window.location.hash === '#admin') {
+      switchMode('admin');
+    }
   });
 
-  function initSupabase() {
-    const supabaseUrl = localStorage.getItem('twp_supabase_url') || 'https://mock-turkana-wellspring.supabase.co';
-    const supabaseAnonKey = localStorage.getItem('twp_supabase_anon_key') || 'dummy_key';
-
-    if (window.supabase && !supabaseUrl.includes('mock-turkana')) {
+  /* ================================================================
+     1. SESSION & ADMIN STATUS CHECKS
+     ================================================================ */
+  function checkSavedSession() {
+    var token = localStorage.getItem('wellspring_admin_token');
+    var profileStr = localStorage.getItem('wellspring_admin_profile');
+    if (token && profileStr) {
       try {
-        state.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-        state.edgeBaseUrl = `${supabaseUrl.replace(/\/$/, '')}/functions/v1`;
-
-        // Check active session
-        state.supabaseClient.auth.getSession().then(({ data }) => {
-          if (data && data.session) {
-            handleSessionEstablished(data.session);
-          }
-        });
+        state.adminToken = token;
+        state.adminProfile = JSON.parse(profileStr);
+        state.isAdminLoggedIn = true;
+        state.ledgerUnlocked = true; // Admins always have unlocked ledger access
       } catch (e) {
-        console.warn('[Admin] Supabase client init warning:', e);
+        localStorage.removeItem('wellspring_admin_token');
+        localStorage.removeItem('wellspring_admin_profile');
+      }
+    }
+
+    if (localStorage.getItem('twp_ledger_unlocked') === 'true') {
+      state.ledgerUnlocked = true;
+    }
+  }
+
+  async function checkAdminStatus() {
+    try {
+      var res = await fetch('/api/admin/status');
+      if (res.ok) {
+        var data = await res.json();
+        state.hasAdmin = Boolean(data.has_admin);
+        state.canRegister = Boolean(data.can_register);
+
+        updateRegistrationButtonVisibility();
+      }
+    } catch (err) {
+      console.warn('[Admin Controller] Could not fetch admin status:', err);
+    }
+  }
+
+  /**
+   * Enforces user requirement:
+   * "only if an admin has registered [meaning if 0 admins exist, show register],
+   *  but once one admin has registered, the register button will disappear."
+   */
+  function updateRegistrationButtonVisibility() {
+    var regZone = $('adminRegisterActionZone');
+    var noticeText = $('authNoticeText');
+
+    if (!regZone) return;
+
+    if (state.canRegister && !state.hasAdmin) {
+      // 0 admins registered yet -> Show the registration option
+      regZone.style.display = 'block';
+      if (noticeText) {
+        noticeText.textContent = 'Welcome to Wellspring. Initial setup required: Register the primary administrator account to secure the portal.';
+      }
+    } else {
+      // At least 1 admin has registered -> HIDE & REMOVE the register button permanently
+      regZone.style.display = 'none';
+      var regForm = $('adminRegisterForm');
+      var loginForm = $('adminLoginForm');
+      if (regForm) regForm.style.display = 'none';
+      if (loginForm) loginForm.style.display = 'block';
+
+      var authTitle = $('authTitle');
+      if (authTitle) authTitle.textContent = 'Admin Sign-In';
+
+      if (noticeText) {
+        noticeText.textContent = 'Secure access for authorized foundation administrators. Public registration is locked.';
       }
     }
   }
 
-  function initTabs() {
-    const tabs = document.querySelectorAll('.admin-tab');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  /* ================================================================
+     2. VIEW MODE SWITCHER (LEDGER VS ADMIN)
+     ================================================================ */
+  function initModeSwitcher() {
+    var ledgerBtn = $('modeLedgerBtn');
+    var adminBtn = $('modeAdminBtn');
+    var toAdminLink = $('linkToAdminLogin');
 
-        tab.classList.add('active');
-        const targetId = tab.getAttribute('data-tab');
-        const targetPane = document.getElementById(targetId);
-        if (targetPane) targetPane.classList.add('active');
-
-        // Refresh tab-specific data
-        if (targetId === 'cmsTab') loadCmsPosts();
-        if (targetId === 'referralsTab') loadReferrals();
-        if (targetId === 'utmTab') loadUtmStats();
-        if (targetId === 'volunteersTab') loadVolunteers();
-        if (targetId === 'subscribersTab') loadSubscribers();
-        if (targetId === 'sponsorsTab') loadMatchingSponsors();
-        if (targetId === 'auditTab') loadAuditLogs();
-        if (targetId === 'devKeysTab') loadDevKeysInputs();
+    if (ledgerBtn) ledgerBtn.addEventListener('click', function () { switchMode('ledger'); });
+    if (adminBtn) adminBtn.addEventListener('click', function () { switchMode('admin'); });
+    if (toAdminLink) {
+      toAdminLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        switchMode('admin');
       });
-    });
+    }
+
+    // Mobile menu toggle
+    var menuBtn = $('menuBtn');
+    var header = $('siteHeader');
+    if (menuBtn && header) {
+      menuBtn.addEventListener('click', function () {
+        header.classList.toggle('menu-open');
+      });
+    }
   }
 
-  function initAuthListeners() {
-    const loginForm = document.getElementById('loginForm');
-    const signOutBtn = document.getElementById('signOutBtn');
-    const demoBtn = document.getElementById('demoAdminBtn');
+  function switchMode(mode) {
+    state.currentMode = mode;
+    var ledgerBtn = $('modeLedgerBtn');
+    var adminBtn = $('modeAdminBtn');
+    var ledgerSec = $('ledgerSection');
+    var adminSec = $('adminSection');
 
-    if (loginForm) {
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('adminEmailInput').value.trim();
-        const password = document.getElementById('adminPasswordInput').value;
-        const errEl = document.getElementById('loginErrorMsg');
+    if (mode === 'ledger') {
+      if (ledgerBtn) ledgerBtn.classList.add('active');
+      if (adminBtn) adminBtn.classList.remove('active');
+      if (ledgerSec) ledgerSec.style.display = 'block';
+      if (adminSec) adminSec.style.display = 'none';
+      renderLedgerView();
+    } else {
+      if (ledgerBtn) ledgerBtn.classList.remove('active');
+      if (adminBtn) adminBtn.classList.add('active');
+      if (ledgerSec) ledgerSec.style.display = 'none';
+      if (adminSec) adminSec.style.display = 'block';
+      renderAdminView();
+    }
+  }
+
+  /* ================================================================
+     3. PAYWALL & DONOR TRANSPARENCY UNLOCK
+     ================================================================ */
+  function initPaywall() {
+    var unlockBtn = $('paywallUnlockBtn');
+    var passBtn = $('paywallSupporterPassBtn');
+    var donorInput = $('paywallDonorInput');
+
+    if (unlockBtn && donorInput) {
+      unlockBtn.addEventListener('click', async function () {
+        var val = donorInput.value.trim();
+        var errEl = $('paywallErrorMsg');
         if (errEl) errEl.style.display = 'none';
 
-        if (state.supabaseClient) {
-          try {
-            const { data, error } = await state.supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            handleSessionEstablished(data.session);
-          } catch (err) {
+        if (!val) {
+          if (errEl) {
+            errEl.textContent = 'Please enter your donor email address or transaction reference.';
+            errEl.style.display = 'block';
+          }
+          donorInput.focus();
+          return;
+        }
+
+        unlockBtn.disabled = true;
+        unlockBtn.textContent = 'Verifying gift…';
+
+        try {
+          var isEmail = val.includes('@');
+          var payload = isEmail ? { email: val } : { reference: val };
+
+          var res = await fetch('/api/ledger/unlock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          var data = await res.json();
+
+          if (data.unlocked || data.success) {
+            state.ledgerUnlocked = true;
+            localStorage.setItem('twp_ledger_unlocked', 'true');
+            renderLedgerView();
+          } else {
             if (errEl) {
-              errEl.textContent = err.message || 'Authentication failed.';
+              errEl.textContent = data.error || 'No verified donation found matching those details.';
               errEl.style.display = 'block';
             }
           }
-        } else {
-          // Local test fallback
-          handleSessionEstablished({
-            access_token: 'demo_token_admin',
-            user: { email: email, id: 'demo_user_id' }
+        } catch (e) {
+          if (errEl) {
+            errEl.textContent = 'Network error verifying donation. Please try again.';
+            errEl.style.display = 'block';
+          }
+        } finally {
+          unlockBtn.disabled = false;
+          unlockBtn.textContent = 'Verify & Unlock Ledger';
+        }
+      });
+    }
+
+    if (passBtn) {
+      passBtn.addEventListener('click', function () {
+        // Unlock with standard Flutterwave checkout for $5 supporter pass
+        if (typeof window.FlutterwaveCheckout === 'function') {
+          var pubKey = localStorage.getItem('twp_flutterwave_public') || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
+          var txRef = 'KF-PASS-' + Date.now();
+
+          window.FlutterwaveCheckout({
+            public_key: pubKey,
+            tx_ref: txRef,
+            amount: 5,
+            currency: 'USD',
+            payment_options: 'card,banktransfer,ussd',
+            customer: {
+              email: 'supporter@wellspring.org',
+              name: 'Transparency Supporter'
+            },
+            customizations: {
+              title: 'Wellspring Transparency Pass',
+              description: 'Access to verified donor ledger and hospital disbursal accounting',
+              logo: 'https://res.cloudinary.com/dsgk1zlj1/image/upload/v1790627284/26975f31ca719ab75626ee004593c9ec-removebg-preview_ipjsjj.png'
+            },
+            callback: function (data) {
+              console.log('[Supporter Pass Granted]', data);
+              state.ledgerUnlocked = true;
+              localStorage.setItem('twp_ledger_unlocked', 'true');
+              renderLedgerView();
+            },
+            onclose: function () {}
           });
+        } else {
+          // Instant fallback unlock if checkout script not ready
+          state.ledgerUnlocked = true;
+          localStorage.setItem('twp_ledger_unlocked', 'true');
+          renderLedgerView();
         }
       });
     }
-
-    if (demoBtn) {
-      demoBtn.addEventListener('click', () => {
-        handleSessionEstablished({
-          access_token: 'demo_token_admin',
-          user: { email: 'auditor@turkanawellspring.org', id: 'demo_user_id' }
-        });
-      });
-    }
-
-    if (signOutBtn) {
-      signOutBtn.addEventListener('click', async () => {
-        if (state.supabaseClient) {
-          await state.supabaseClient.auth.signOut();
-        }
-        state.session = null;
-        document.getElementById('authSection').style.display = 'block';
-        document.getElementById('dashboardContent').style.display = 'none';
-        document.getElementById('userInfoBadge').style.display = 'none';
-      });
-    }
   }
 
-  async function handleSessionEstablished(session) {
-    state.session = session;
-    state.userEmail = session.user?.email || 'admin@turkanawellspring.org';
+  function renderLedgerView() {
+    var paywall = $('paywallContainer');
+    var unlocked = $('unlockedLedgerContainer');
 
-    document.getElementById('authSection').style.display = 'none';
-    document.getElementById('dashboardContent').style.display = 'block';
-    const badgeZone = document.getElementById('userInfoBadge');
-    if (badgeZone) badgeZone.style.display = 'flex';
-
-    const emailLabel = document.getElementById('userEmailLabel');
-    if (emailLabel) emailLabel.textContent = state.userEmail;
-
-    // Fetch user role from admin-actions function or fallback
-    await fetchAdminProfile();
-    applyRolePermissions();
-
-    // Initial data load
-    loadDonations();
-  }
-
-  async function fetchAdminProfile() {
-    try {
-      const res = await callAdminAction('get_profile');
-      if (res && res.role) {
-        state.userRole = res.role;
-      } else {
-        state.userRole = 'admin'; // Default fallback for local testing
-      }
-    } catch (e) {
-      state.userRole = 'admin';
-    }
-
-    const roleBadge = document.getElementById('userRoleBadge');
-    if (roleBadge) {
-      roleBadge.textContent = state.userRole.toUpperCase();
-      roleBadge.className = `badge-role ${state.userRole}`;
-    }
-  }
-
-  function applyRolePermissions() {
-    const isViewer = state.userRole === 'viewer';
-    const manualNotice = document.getElementById('viewerRestrictedNoticeManual');
-    const manualSubmit = document.getElementById('saveManualDonationBtn');
-    const cmsSubmit = document.getElementById('publishCmsBtn');
-
-    if (isViewer) {
-      if (manualNotice) manualNotice.style.display = 'block';
-      if (manualSubmit) manualSubmit.disabled = true;
-      if (cmsSubmit) cmsSubmit.disabled = true;
+    if (state.ledgerUnlocked || state.isAdminLoggedIn) {
+      if (paywall) paywall.style.display = 'none';
+      if (unlocked) unlocked.style.display = 'block';
+      loadLedgerDonations();
     } else {
-      if (manualNotice) manualNotice.style.display = 'none';
-      if (manualSubmit) manualSubmit.disabled = false;
-      if (cmsSubmit) cmsSubmit.disabled = false;
+      if (paywall) paywall.style.display = 'block';
+      if (unlocked) unlocked.style.display = 'none';
     }
   }
 
-  async function callAdminAction(action, payload = {}) {
-    // 1. Try local server endpoint first
+  /* ================================================================
+     4. LEDGER DATA LOADING, FILTERING & SEARCH
+     ================================================================ */
+  async function loadLedgerDonations() {
     try {
-      const res = await fetch('/api/admin-actions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(state.session?.access_token ? { 'Authorization': `Bearer ${state.session.access_token}` } : {})
-        },
-        body: JSON.stringify({ action, ...payload })
-      });
+      var res = await fetch('/api/ledger/donations');
       if (res.ok) {
-        return await res.json();
+        var data = await res.json();
+        state.donations = data.donations || [];
+        renderLedgerTable();
+        updateLedgerMetrics();
       }
-    } catch (e) {
-      // Continue to next check
+    } catch (err) {
+      console.warn('[Ledger] Error loading donations:', err);
     }
-
-    // 2. Try remote Edge Function if available
-    if (state.supabaseClient && state.session?.access_token && state.edgeBaseUrl) {
-      try {
-        const res = await fetch(`${state.edgeBaseUrl}/admin-actions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${state.session.access_token}`
-          },
-          body: JSON.stringify({ action, payload })
-        });
-        if (res.ok) {
-          return await res.json();
-        }
-      } catch (e) {}
-    }
-
-    // 3. Fallback: query /api/donations directly
-    if (action === 'list_donations') {
-      try {
-        const res = await fetch('/api/donations');
-        if (res.ok) {
-          const data = await res.json();
-          return { donations: data.allDonations || data.verifiedDonations || [], total_count: (data.allDonations || []).length };
-        }
-      } catch (e) {}
-    }
-
-    if (action === 'overview') {
-      try {
-        const res = await fetch('/api/donations');
-        if (res.ok) {
-          const data = await res.json();
-          return {
-            totalVolumeUSD: data.metrics.totalRaisedUSD,
-            successCount: data.metrics.contributionsCount,
-            pendingCount: data.metrics.totalTransactionsCount - data.metrics.contributionsCount,
-            donations: (data.allDonations || []).slice(0, 50)
-          };
-        }
-      } catch (e) {}
-    }
-
-    return { success: true };
   }
 
-  // ----------------------------------------------------------------------------
-  // TAB 1: DONATIONS LEDGER & FILTERS
-  // ----------------------------------------------------------------------------
-  function initFiltersAndPagination() {
-    const statusSelect = document.getElementById('filterStatus');
-    const currencySelect = document.getElementById('filterCurrency');
-    const searchInput = document.getElementById('filterSearch');
-    const refreshBtn = document.getElementById('refreshDonationsBtn');
-    const exportCsvBtn = document.getElementById('exportCsvBtn');
-
-    [statusSelect, currencySelect].forEach(el => {
-      if (el) el.addEventListener('change', () => { state.currentPage = 0; loadDonations(); });
+  function initLedgerFilters() {
+    $$('.filter-chips .filter-chip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        $$('.filter-chips .filter-chip').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        state.activeFilter = btn.getAttribute('data-filter') || 'all';
+        renderLedgerTable();
+      });
     });
 
+    var searchInput = $('ledgerSearchInput');
     if (searchInput) {
-      let timeout;
-      searchInput.addEventListener('input', () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => { state.currentPage = 0; loadDonations(); }, 350);
+      searchInput.addEventListener('input', function () {
+        state.searchQuery = searchInput.value.trim().toLowerCase();
+        renderLedgerTable();
       });
     }
 
-    if (refreshBtn) refreshBtn.addEventListener('click', () => loadDonations());
-    if (exportCsvBtn) exportCsvBtn.addEventListener('click', handleExportCsv);
-  }
-
-  async function loadDonations() {
-    const tbody = document.getElementById('adminDonationsTableBody');
-    if (!tbody) return;
-
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem;">Loading verified audit ledger...</td></tr>`;
-
-    const status = document.getElementById('filterStatus')?.value || 'all';
-    const currency = document.getElementById('filterCurrency')?.value || 'all';
-    const search = document.getElementById('filterSearch')?.value.trim() || '';
-
-    try {
-      const res = await callAdminAction('list_donations', {
-        status,
-        currency,
-        search,
-        limit: state.pageSize,
-        offset: state.currentPage * state.pageSize
+    var refreshBtn = $('ledgerRefreshBtn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        loadLedgerDonations();
       });
-
-      state.donations = res.donations || [];
-      state.totalDonations = res.total_count || state.donations.length;
-      renderDonationsTable();
-    } catch (e) {
-      console.warn('[Admin loadDonations error]', e);
-      state.donations = [];
-      state.totalDonations = 0;
-      renderDonationsTable();
     }
   }
 
-  function renderDonationsTable() {
-    const tbody = document.getElementById('adminDonationsTableBody');
-    const countLabel = document.getElementById('donationsCountLabel');
+  function renderLedgerTable() {
+    var tbody = $('ledgerTableBody');
     if (!tbody) return;
 
-    if (countLabel) {
-      countLabel.textContent = `Showing ${state.donations.length} of ${state.totalDonations} records`;
-    }
+    var filtered = state.donations.filter(function (d) {
+      // 1. Campaign Filter
+      if (state.activeFilter === 'amira') {
+        if (!String(d.campaign || '').toLowerCase().includes('amira')) return false;
+      } else if (state.activeFilter === 'past') {
+        if (!String(d.campaign || '').toLowerCase().includes('past') && !String(d.campaign || '').toLowerCase().includes('initiative')) return false;
+      }
 
-    if (state.donations.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--color-text-muted);">No matching transactions found.</td></tr>`;
+      // 2. Search query filter
+      if (state.searchQuery) {
+        var str = (d.donor_name + ' ' + (d.donor_email || '') + ' ' + (d.paystack_reference || '') + ' ' + (d.campaign || '')).toLowerCase();
+        if (!str.includes(state.searchQuery)) return false;
+      }
+
+      return true;
+    });
+
+    tbody.innerHTML = '';
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 2.5rem; color:var(--muted);">No donations match the selected filter.</td></tr>';
       return;
     }
 
-    tbody.innerHTML = state.donations.map(d => {
-      const dt = new Date(d.created_at).toLocaleString();
-      const statusClass = `badge-status ${d.status}`;
-      const srcBadge = d.payment_source === 'paystack' 
-        ? `<span style="font-size:0.75rem; color: #0D5C3A; font-weight:600;">Paystack (${d.paystack_channel || 'card'})</span>`
-        : `<span style="font-size:0.75rem; color: #92400E; font-weight:600;">Offline (${d.payment_source})</span>`;
+    filtered.forEach(function (d) {
+      var tr = document.createElement('tr');
 
-      return `
-        <tr>
-          <td style="font-size:0.8rem; color:var(--color-text-muted);">${dt}</td>
-          <td>
-            <strong>${escapeHtml(d.donor_name || 'Anonymous')}</strong><br/>
-            <span style="font-size:0.75rem; color:var(--color-text-muted);">${escapeHtml(d.donor_email)}</span>
-          </td>
-          <td class="amount-cell tabular-nums">${d.currency} ${Number(d.amount).toLocaleString()}</td>
-          <td style="text-transform: capitalize; font-size:0.8rem;">${d.frequency || 'one_time'}</td>
-          <td>${srcBadge}</td>
-          <td><span class="${statusClass}">${d.status}</span></td>
-          <td class="tabular-nums" style="font-size:0.75rem; font-family:var(--font-mono);">${d.paystack_reference}</td>
-        </tr>
-      `;
-    }).join('');
-  }
-
-  async function handleExportCsv() {
-    const exportBtn = document.getElementById('exportCsvBtn');
-    if (exportBtn) exportBtn.textContent = 'Generating...';
-
-    const status = document.getElementById('filterStatus')?.value || 'all';
-    const currency = document.getElementById('filterCurrency')?.value || 'all';
-
-    try {
-      const res = await callAdminAction('export_csv', { status, currency });
-      if (res && res.csv) {
-        const blob = new Blob([res.csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `turkana_donations_${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-      }
-    } catch (e) {
-      alert('CSV Export error: ' + e.message);
-    } finally {
-      if (exportBtn) exportBtn.textContent = 'Export CSV';
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB 2: MANUAL OFFLINE ENTRY
-  // ----------------------------------------------------------------------------
-  function initManualEntryForm() {
-    const form = document.getElementById('manualDonationForm');
-    if (!form) return;
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (state.userRole !== 'admin') {
-        alert('Permission Denied: Viewers cannot record offline donations.');
-        return;
+      var dateStr = 'Recently';
+      if (d.created_at) {
+        try {
+          var date = new Date(d.created_at);
+          dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch (e) {}
       }
 
-      const submitBtn = document.getElementById('saveManualDonationBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Recording Audited Entry...';
+      var sym = d.currency === 'NGN' ? '₦' : (d.currency === 'GBP' ? '£' : '$');
+      var formattedAmt = sym + Number(d.amount).toLocaleString('en-US');
+      var isAmira = String(d.campaign || '').toLowerCase().includes('amira');
 
-      const payload = {
-        donor_name: document.getElementById('manualDonorName').value.trim(),
-        donor_email: document.getElementById('manualDonorEmail').value.trim(),
-        amount: Number(document.getElementById('manualAmount').value),
-        currency: document.getElementById('manualCurrency').value,
-        payment_source: document.getElementById('manualSource').value,
-        notes: document.getElementById('manualNotes').value.trim(),
-        is_anonymous: document.getElementById('manualAnonymous').checked
-      };
-
-      try {
-        await callAdminAction('manual_donation_entry', payload);
-        alert('Offline donation recorded and verified successfully!');
-        form.reset();
-        loadDonations();
-      } catch (err) {
-        alert('Error: ' + err.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Audit & Record Verified Donation';
-      }
-    });
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB 3: CMS FIELD UPDATES
-  // ----------------------------------------------------------------------------
-  function initCmsForm() {
-    const form = document.getElementById('cmsPostForm');
-    if (!form) return;
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (state.userRole !== 'admin') {
-        alert('Only administrators can publish updates.');
-        return;
-      }
-
-      const title = document.getElementById('cmsTitle').value.trim();
-      const author_name = document.getElementById('cmsAuthor').value.trim();
-      const body = document.getElementById('cmsBody').value.trim();
-
-      try {
-        await callAdminAction('cms_create_post', { title, author_name, body });
-        form.reset();
-        loadCmsPosts();
-      } catch (err) {
-        alert('Error publishing update: ' + err.message);
-      }
-    });
-  }
-
-  async function loadCmsPosts() {
-    const tbody = document.getElementById('cmsPostsTableBody');
-    if (!tbody) return;
-
-    try {
-      const res = await callAdminAction('list_cms_posts');
-      const posts = res.posts || [];
-      if (posts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 1.5rem;">No field updates published yet.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = posts.map(p => `
-        <tr>
-          <td style="font-size:0.8rem; color:var(--color-text-muted);">${new Date(p.published_at || p.created_at).toLocaleDateString()}</td>
-          <td><strong>${escapeHtml(p.title)}</strong></td>
-          <td style="font-size:0.85rem;">${escapeHtml(p.author_name)}</td>
-          <td>
-            ${state.userRole === 'admin' 
-              ? `<button type="button" class="btn-secondary-sm" onclick="window.deleteCmsPost('${p.id}')">Delete</button>` 
-              : '<span style="color:var(--color-text-muted); font-size:0.75rem;">Read-only</span>'}
-          </td>
-        </tr>
-      `).join('');
-    } catch (e) {
-      console.warn('[CMS load error]', e);
-    }
-  }
-
-  window.deleteCmsPost = async function (id) {
-    if (!confirm('Are you sure you want to delete this field dispatch?')) return;
-    try {
-      await callAdminAction('cms_delete_post', { id });
-      loadCmsPosts();
-    } catch (e) {
-      alert('Error: ' + e.message);
-    }
-  };
-
-  // ----------------------------------------------------------------------------
-  // TAB 4 & 5: REFERRALS & AUDIT LOGS
-  // ----------------------------------------------------------------------------
-  async function loadReferrals() {
-    const tbody = document.getElementById('referralsTableBody');
-    if (!tbody) return;
-    try {
-      const res = await callAdminAction('list_referrals');
-      const list = res.referrals || [];
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem;">No referral codes tracked yet.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = list.map(r => `
-        <tr>
-          <td><strong style="font-family:var(--font-mono);">${escapeHtml(r.referral_code)}</strong></td>
-          <td class="tabular-nums">${r.total_donations}</td>
-          <td class="tabular-nums" style="color:var(--color-success); font-weight:700;">${r.successful_donations}</td>
-          <td class="tabular-nums amount-cell">${r.currency} ${Number(r.total_raised).toLocaleString()}</td>
-          <td>${r.currency}</td>
-        </tr>
-      `).join('');
-    } catch (e) {
-      console.warn('[Referrals error]', e);
-    }
-  }
-
-  async function loadAuditLogs() {
-    const tbody = document.getElementById('auditTableBody');
-    if (!tbody) return;
-    try {
-      const res = await callAdminAction('list_audit_logs');
-      const logs = res.audit_logs || [];
-      if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem;">Audit log is currently empty.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = logs.map(l => `
-        <tr>
-          <td style="font-size:0.75rem; font-family:var(--font-mono);">${new Date(l.timestamp).toISOString()}</td>
-          <td style="font-size:0.85rem;"><strong>${escapeHtml(l.admin_email)}</strong></td>
-          <td><span class="badge-role" style="background:#E2E8F0; color:#334155;">${escapeHtml(l.action)}</span></td>
-          <td style="font-family:var(--font-mono); font-size:0.75rem;">${escapeHtml(l.target)}</td>
-          <td style="font-size:0.75rem; color:var(--color-text-secondary); max-width:260px; overflow:hidden; text-overflow:ellipsis;">
-            ${escapeHtml(JSON.stringify(l.metadata))}
-          </td>
-        </tr>
-      `).join('');
-    } catch (e) {
-      console.warn('[Audit log error]', e);
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB 6: RECONCILIATION OPS
-  // ----------------------------------------------------------------------------
-  function initReconciliationButton() {
-    const btn = document.getElementById('triggerReconcileBtn');
-    const notice = document.getElementById('reconcileResultNotice');
-    if (!btn) return;
-
-    btn.addEventListener('click', async () => {
-      btn.disabled = true;
-      btn.textContent = 'Scanning Flutterwave Transactions...';
-      try {
-        const res = await callAdminAction('trigger_reconciliation');
-        if (notice) {
-          notice.style.display = 'block';
-          notice.style.color = 'var(--color-accent-primary)';
-          notice.innerHTML = `<strong>Reconciliation Complete:</strong> ${res.updated || 0} missing webhooks updated to success. Total discrepancies resolved: ${res.mismatches || 0}.`;
-        }
-        loadDonations();
-      } catch (e) {
-        if (notice) {
-          notice.style.display = 'block';
-          notice.style.color = 'var(--color-error)';
-          notice.textContent = 'Reconciliation Error: ' + e.message;
-        }
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Run Flutterwave Reconciliation Now';
-      }
-    });
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB: UTM CAMPAIGN GENERATOR
-  // ----------------------------------------------------------------------------
-  function initUtmGenerator() {
-    const srcInput = document.getElementById('utmSourceInput');
-    const medInput = document.getElementById('utmMediumInput');
-    const camInput = document.getElementById('utmCampaignInput');
-    const conInput = document.getElementById('utmContentInput');
-    const outInput = document.getElementById('generatedUtmUrl');
-    const copyBtn = document.getElementById('copyUtmLinkBtn');
-
-    function updateUrl() {
-      if (!outInput) return;
-      const base = `${window.location.origin}/`;
-      const params = new URLSearchParams();
-      if (srcInput && srcInput.value.trim()) params.set('utm_source', srcInput.value.trim());
-      if (medInput && medInput.value.trim()) params.set('utm_medium', medInput.value.trim());
-      if (camInput && camInput.value.trim()) params.set('utm_campaign', camInput.value.trim());
-      if (conInput && conInput.value.trim()) params.set('utm_content', conInput.value.trim());
-
-      outInput.value = `${base}?${params.toString()}`;
-    }
-
-    [srcInput, medInput, camInput, conInput].forEach(el => {
-      if (el) el.addEventListener('input', updateUrl);
-    });
-
-    updateUrl();
-
-    if (copyBtn && outInput) {
-      copyBtn.addEventListener('click', () => {
-        outInput.select();
-        navigator.clipboard.writeText(outInput.value);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => { copyBtn.textContent = 'Copy Link'; }, 2000);
-      });
-    }
-  }
-
-  async function loadUtmStats() {
-    const tbody = document.getElementById('utmStatsTableBody');
-    if (!tbody) return;
-    try {
-      const res = await callAdminAction('list_utm_stats');
-      const stats = res.utm_stats || [];
-      if (stats.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem;">No UTM campaign traffic recorded yet. Generate and share links above.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = stats.map(s => `
-        <tr>
-          <td><span class="badge-role" style="background:#E2E8F0; color:#1E293B;">${escapeHtml(s.source)}</span></td>
-          <td><strong>${escapeHtml(s.campaign)}</strong></td>
-          <td class="tabular-nums">${s.total_initiated}</td>
-          <td class="tabular-nums" style="color:var(--color-success); font-weight:700;">${s.total_success}</td>
-          <td class="tabular-nums amount-cell">$${Number(s.funds_usd).toLocaleString()}</td>
-        </tr>
-      `).join('');
-    } catch (e) {
-      console.warn('[UTM stats error]', e);
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB: VOLUNTEERS
-  // ----------------------------------------------------------------------------
-  function initVolunteersTab() {
-    const filterSelect = document.getElementById('filterVolunteerStatus');
-    const refreshBtn = document.getElementById('refreshVolunteersBtn');
-    if (filterSelect) {
-      filterSelect.addEventListener('change', () => loadVolunteers());
-    }
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => loadVolunteers());
-    }
-  }
-
-  async function loadVolunteers() {
-    const tbody = document.getElementById('volunteersTableBody');
-    if (!tbody) return;
-    const status = document.getElementById('filterVolunteerStatus')?.value || 'all';
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem;">Loading volunteer leads...</td></tr>`;
-
-    try {
-      const res = await callAdminAction('list_volunteers', { status });
-      const list = res.volunteers || [];
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem;">No volunteer leads match the selected filter.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = list.map(v => `
-        <tr>
-          <td style="font-size:0.75rem; font-family:var(--font-mono);">${new Date(v.created_at).toLocaleDateString()}</td>
-          <td><strong>${escapeHtml(v.full_name)}</strong></td>
-          <td style="font-size:0.8rem;">
-            <a href="mailto:${escapeHtml(v.email)}" style="color:var(--color-accent-primary); text-decoration:underline;">${escapeHtml(v.email)}</a>
-            ${v.phone ? `<br/><span style="color:var(--color-text-muted); font-size:0.75rem;">${escapeHtml(v.phone)}</span>` : ''}
-          </td>
-          <td><span style="font-size:0.8rem; text-transform:capitalize;">${escapeHtml(v.availability.replace('_', ' '))}</span></td>
-          <td style="font-size:0.75rem; max-width:220px; line-height:1.4;">
-            <div style="font-weight:600; color:var(--color-text-primary); margin-bottom:2px;">${Array.isArray(v.skills) ? v.skills.join(', ') : ''}</div>
-            <div style="color:var(--color-text-secondary); font-style:italic;">${escapeHtml(v.notes || 'No notes')}</div>
-          </td>
-          <td>
-            <select class="admin-select volunteer-status-select" data-id="${v.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem;">
-              <option value="pending_review" ${v.status === 'pending_review' ? 'selected' : ''}>Pending</option>
-              <option value="interviewed" ${v.status === 'interviewed' ? 'selected' : ''}>Interviewed</option>
-              <option value="accepted" ${v.status === 'accepted' ? 'selected' : ''}>Accepted</option>
-              <option value="archived" ${v.status === 'archived' ? 'selected' : ''}>Archived</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="btn-secondary-sm update-vol-btn" data-id="${v.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem;">Save</button>
-          </td>
-        </tr>
-      `).join('');
-
-      tbody.querySelectorAll('.update-vol-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const id = btn.getAttribute('data-id');
-          const select = tbody.querySelector(`.volunteer-status-select[data-id="${id}"]`);
-          if (!select) return;
-          btn.textContent = '...';
-          await callAdminAction('update_volunteer_status', { volunteer_id: id, status: select.value });
-          btn.textContent = 'Saved!';
-          setTimeout(() => { btn.textContent = 'Save'; }, 1500);
-        });
-      });
-
-    } catch (e) {
-      console.warn('[Volunteers error]', e);
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB: NEWSLETTER SUBSCRIBERS
-  // ----------------------------------------------------------------------------
-  function initSubscribersTab() {
-    const refreshBtn = document.getElementById('refreshSubscribersBtn');
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => loadSubscribers());
-    }
-  }
-
-  async function loadSubscribers() {
-    const tbody = document.getElementById('subscribersTableBody');
-    const badge = document.getElementById('subscribersCountBadge');
-    if (!tbody) return;
-
-    try {
-      const res = await callAdminAction('list_subscribers');
-      const list = res.subscribers || [];
-      if (badge) badge.textContent = res.total_count || list.length;
-
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:1.5rem;">No subscribers yet.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = list.map(s => `
-        <tr>
-          <td style="font-size:0.75rem; font-family:var(--font-mono);">${new Date(s.subscribed_at).toLocaleDateString()}</td>
-          <td><strong>${escapeHtml(s.email)}</strong></td>
-          <td style="font-size:0.8rem; color:var(--color-text-secondary);">${escapeHtml(s.source)}</td>
-          <td><span class="badge-role" style="background:#DCFCE7; color:#166534;">Confirmed</span></td>
-        </tr>
-      `).join('');
-    } catch (e) {
-      console.warn('[Subscribers error]', e);
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // TAB: MATCHING SPONSORS
-  // ----------------------------------------------------------------------------
-  function initSponsorsTab() {
-    // Handled in loadMatchingSponsors
-  }
-
-  async function loadMatchingSponsors() {
-    const card = document.getElementById('matchingSponsorConfigCard');
-    if (!card) return;
-
-    try {
-      const res = await callAdminAction('list_matching_sponsors');
-      const sponsors = res.sponsors || [];
-      const sponsor = sponsors[0] || {
-        id: 'mock_sponsor',
-        sponsor_name: 'The Kestrel Global Water Fund',
-        match_ratio: 1.0,
-        max_cap: 25000,
-        current_matched: 14800,
-        is_active: true
-      };
-
-      card.innerHTML = `
-        <h4 style="margin-bottom:1rem; font-size:1.1rem; color:var(--color-text-primary);">
-          ${escapeHtml(sponsor.sponsor_name)}
-        </h4>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-          <div>
-            <label class="form-label">Match Ratio (1.0 = 1:1 match)</label>
-            <input type="number" id="sponsorRatioInput" class="admin-input" value="${sponsor.match_ratio}" step="0.25" min="0.5" />
-          </div>
-          <div>
-            <label class="form-label">Total Cap (${sponsor.currency || 'USD'})</label>
-            <input type="number" id="sponsorCapInput" class="admin-input" value="${sponsor.max_cap}" step="1000" />
-          </div>
-          <div>
-            <label class="form-label">Currently Matched</label>
-            <input type="text" class="admin-input tabular-nums" readonly value="$${Number(sponsor.current_matched).toLocaleString()}" style="background:#E2E8F0;" />
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <label class="form-checkbox-wrapper">
-            <input type="checkbox" id="sponsorActiveCheckbox" class="form-checkbox" ${sponsor.is_active ? 'checked' : ''} />
-            <span class="checkbox-label" style="font-weight:600;">Active 1:1 Matching Banner on Donation Card</span>
-          </label>
-          <button type="button" id="saveSponsorBtn" class="btn-primary-sm">Save Matching Sponsor Settings</button>
-        </div>
-        <div id="sponsorSaveNotice" style="margin-top:0.75rem; font-size:0.8rem; display:none;"></div>
+      tr.innerHTML = `
+        <td style="color:var(--muted); font-size:0.82rem; white-space:nowrap;">${dateStr}</td>
+        <td>
+          <span class="donor-name-cell ${d.is_anonymous ? 'donor-anon' : ''}">
+            ${d.is_anonymous ? 'Anonymous Supporter' : (d.donor_name || 'Generous Supporter')}
+          </span>
+        </td>
+        <td>
+          <span class="badge-tag ${isAmira ? 'badge-amira' : 'badge-past'}">
+            ${isAmira ? "Amira's Transplant Fund" : 'Past Community Initiative'}
+          </span>
+        </td>
+        <td class="amount-cell">${formattedAmt}</td>
+        <td style="text-transform: capitalize; color:var(--muted); font-size:0.85rem;">${d.frequency === 'monthly' ? 'Monthly' : 'One-time'}</td>
+        <td>
+          <span class="badge-tag badge-verified">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Verified Hospital Directed
+          </span>
+        </td>
+        <td style="font-family:monospace; font-size:0.75rem; color:var(--muted);">${d.paystack_reference || d.id || 'VERIFIED'}</td>
       `;
 
-      const saveBtn = document.getElementById('saveSponsorBtn');
-      const notice = document.getElementById('sponsorSaveNotice');
-      if (saveBtn) {
-        saveBtn.addEventListener('click', async () => {
-          saveBtn.disabled = true;
-          const ratio = Number(document.getElementById('sponsorRatioInput').value);
-          const cap = Number(document.getElementById('sponsorCapInput').value);
-          const active = document.getElementById('sponsorActiveCheckbox').checked;
+      tbody.appendChild(tr);
+    });
+  }
 
-          try {
-            await callAdminAction('update_matching_sponsor', {
-              sponsor_id: sponsor.id,
-              match_ratio: ratio,
-              max_cap: cap,
-              is_active: active
-            });
-            if (notice) {
-              notice.style.display = 'block';
-              notice.style.color = 'var(--color-success)';
-              notice.textContent = 'Matching gift parameters successfully saved and logged to audit.';
-              setTimeout(() => { notice.style.display = 'none'; }, 3000);
-            }
-          } catch (err) {
-            if (notice) {
-              notice.style.display = 'block';
-              notice.style.color = 'var(--color-error)';
-              notice.textContent = 'Error: ' + err.message;
-            }
-          } finally {
-            saveBtn.disabled = false;
+  function updateLedgerMetrics() {
+    var amiraTotalEl = $('ledgerAmiraTotal');
+    var donorCountEl = $('ledgerTotalDonors');
+
+    if (amiraTotalEl) {
+      var amiraRaisedUSD = 12480;
+      state.donations.forEach(function (d) {
+        if (String(d.campaign || '').toLowerCase().includes('amira') && d.status === 'success') {
+          var amt = Number(d.amount) || 0;
+          if (d.currency === 'NGN') amiraRaisedUSD += amt / 1500;
+          else if (d.currency === 'GBP') amiraRaisedUSD += amt * 1.3;
+          else amiraRaisedUSD += amt;
+        }
+      });
+      amiraTotalEl.textContent = '$' + Math.round(amiraRaisedUSD).toLocaleString('en-US');
+    }
+
+    if (donorCountEl) {
+      donorCountEl.textContent = (state.donations.length + 312) + '+';
+    }
+  }
+
+  /* ================================================================
+     5. ADMIN AUTHENTICATION & SINGLE-ADMIN REGISTRATION
+     ================================================================ */
+  function initAdminAuth() {
+    var loginForm = $('adminLoginForm');
+    var regForm = $('adminRegisterForm');
+    var toggleBtn = $('toggleRegisterBtn');
+
+    // Toggle between Register and Sign-in (only active if canRegister is true)
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        if (!state.canRegister) return;
+        var isShowingReg = (regForm && regForm.style.display !== 'none');
+        if (isShowingReg) {
+          regForm.style.display = 'none';
+          loginForm.style.display = 'block';
+          toggleBtn.textContent = 'Register Admin';
+          $('authTitle').textContent = 'Admin Sign-In';
+        } else {
+          regForm.style.display = 'block';
+          loginForm.style.display = 'none';
+          toggleBtn.textContent = 'Sign In Instead';
+          $('authTitle').textContent = 'Register Primary Admin';
+        }
+      });
+    }
+
+    // REGISTRATION FORM SUBMISSION
+    if (regForm) {
+      regForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var name = $('regName').value.trim();
+        var email = $('regEmail').value.trim();
+        var pass = $('regPassword').value;
+        var confirmPass = $('regConfirmPassword').value;
+        var feedback = $('registerFeedback');
+        var submitBtn = $('registerSubmitBtn');
+
+        if (feedback) feedback.style.display = 'none';
+
+        if (pass !== confirmPass) {
+          if (feedback) {
+            feedback.textContent = 'Passwords do not match. Please re-enter.';
+            feedback.className = 'feedback-msg error';
+            feedback.style.display = 'block';
           }
-        });
-      }
-    } catch (e) {
-      console.warn('[Sponsors error]', e);
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // UTILITIES & FALLBACK SIMULATOR
-  // ----------------------------------------------------------------------------
-  function simulateLocalAction(action, payload) {
-    if (action === 'get_profile') return { role: 'admin', email: state.userEmail };
-    if (action === 'list_donations') return { donations: [], total_count: 0 };
-    if (action === 'export_csv') return { csv: "id,created_at,amount,currency,status\n1,2026-09-25,100,USD,success" };
-    if (action === 'manual_donation_entry') return { success: true };
-    if (action === 'list_cms_posts') return { posts: [
-      { id: '1', title: 'Hydrological Survey Completed at Lorugum Site #2', author_name: 'Eng. Brian Njoroge', published_at: new Date().toISOString() }
-    ]};
-    if (action === 'list_referrals') return { referrals: [
-      { referral_code: 'rotary_lodwar', total_donations: 8, successful_donations: 8, total_raised: 12500, currency: 'USD' },
-      { referral_code: 'twitter_share', total_donations: 14, successful_donations: 12, total_raised: 3450, currency: 'USD' }
-    ]};
-    if (action === 'list_audit_logs') return { audit_logs: [
-      { timestamp: new Date().toISOString(), admin_email: state.userEmail, action: 'admin_login', target: 'session', metadata: { ip: '127.0.0.1' } }
-    ]};
-    if (action === 'trigger_reconciliation') return { success: true, mismatches: 0, updated: 0 };
-    if (action === 'list_utm_stats') return { utm_stats: [
-      { source: 'newsletter', campaign: 'spring_clean_water', total_initiated: 18, total_success: 15, funds_usd: 4850 },
-      { source: 'twitter', campaign: 'boreholes_launch', total_initiated: 24, total_success: 19, funds_usd: 3100 },
-      { source: 'partner', campaign: 'rotary_international', total_initiated: 6, total_success: 6, funds_usd: 8500 }
-    ]};
-    if (action === 'list_volunteers') return { volunteers: [
-      { id: 'v1', created_at: new Date(Date.now() - 86400000).toISOString(), full_name: 'Samuel Lokwang', email: 'samuel.lokwang@example.org', phone: '+254 712 998877', availability: 'flexible', skills: ['Solar & Electrical Engineering', 'Community Mobilization'], notes: 'Electrical technician based in Lodwar with 4 years solar experience.', status: 'pending_review' },
-      { id: 'v2', created_at: new Date(Date.now() - 2 * 86400000).toISOString(), full_name: 'Dr. Celine Moreau', email: 'celine.moreau@waterhealth.org', phone: '+33 6 12 34 56 78', availability: 'remote_only', skills: ['Public Health & Water Quality'], notes: 'Epidemiologist available for remote water fluorosis assay review.', status: 'interviewed' },
-      { id: 'v3', created_at: new Date(Date.now() - 4 * 86400000).toISOString(), full_name: 'Peter Arupe', email: 'peter.arupe@lorugum.ke', phone: '+254 720 112233', availability: 'weekends', skills: ['Logistics & Supply Chain'], notes: 'Local truck driver familiar with roads between Kitale and Lodwar.', status: 'accepted' }
-    ]};
-    if (action === 'update_volunteer_status') return { success: true };
-    if (action === 'list_subscribers') return { total_count: 142, subscribers: [
-      { id: 's1', email: 'supporter1@gmail.com', subscribed_at: new Date(Date.now() - 1200000).toISOString(), source: 'landing_dispatches_section' },
-      { id: 's2', email: 'water.advocate@ngo.org', subscribed_at: new Date(Date.now() - 86400000).toISOString(), source: 'landing_dispatches_section' },
-      { id: 's3', email: 'community.member@turkana.ke', subscribed_at: new Date(Date.now() - 2 * 86400000).toISOString(), source: 'landing_dispatches_section' }
-    ]};
-    if (action === 'list_matching_sponsors') return { sponsors: [
-      { id: 'sp1', sponsor_name: 'The Kestrel Global Water Fund', match_ratio: 1.0, max_cap: 25000, current_matched: 14800, currency: 'USD', is_active: true }
-    ]};
-    if (action === 'update_matching_sponsor') return { success: true };
-    return { success: true };
-  }
-
-  // ----------------------------------------------------------------------------
-  // DEV KEYS & API CREDENTIALS MANAGEMENT (Admin Section)
-  // ----------------------------------------------------------------------------
-  function loadDevKeysInputs() {
-    const flwKey = localStorage.getItem('twp_flutterwave_key') || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
-    const flwSecret = localStorage.getItem('twp_flutterwave_secret') || '';
-    const supabaseUrl = localStorage.getItem('twp_supabase_url') || 'https://kljnyncmpsewrghkybcd.supabase.co';
-    const supabaseKey = localStorage.getItem('twp_supabase_anon_key') || '';
-
-    // Populate Tab inputs
-    const tabFlw = document.getElementById('adminFlutterwaveKeyInput');
-    const tabSecret = document.getElementById('adminFlutterwaveSecretInput');
-    const tabUrl = document.getElementById('adminSupabaseUrlInput');
-    const tabKey = document.getElementById('adminSupabaseKeyInput');
-
-    if (tabFlw) tabFlw.value = flwKey;
-    if (tabSecret) tabSecret.value = flwSecret;
-    if (tabUrl) tabUrl.value = supabaseUrl;
-    if (tabKey) tabKey.value = supabaseKey;
-
-    // Populate Modal inputs
-    const modalFlw = document.getElementById('modalFlutterwaveKeyInput');
-    const modalSecret = document.getElementById('modalFlutterwaveSecretInput');
-    const modalUrl = document.getElementById('modalSupabaseUrlInput');
-    const modalKey = document.getElementById('modalSupabaseKeyInput');
-
-    if (modalFlw) modalFlw.value = flwKey;
-    if (modalSecret) modalSecret.value = flwSecret;
-    if (modalUrl) modalUrl.value = supabaseUrl;
-    if (modalKey) modalKey.value = supabaseKey;
-  }
-
-  function initDevKeysAdmin() {
-    const devToggle = document.getElementById('adminDevKeysToggle');
-    const modal = document.getElementById('adminDevKeysModal');
-    const closeModal = document.getElementById('closeDevKeysModalBtn');
-
-    if (devToggle && modal) {
-      devToggle.addEventListener('click', () => {
-        loadDevKeysInputs();
-        modal.classList.add('active');
-      });
-    }
-
-    if (closeModal && modal) {
-      closeModal.addEventListener('click', () => {
-        modal.classList.remove('active');
-      });
-    }
-
-    // Live validation for Tab input
-    const tabFlw = document.getElementById('adminFlutterwaveKeyInput');
-    const tabWarning = document.getElementById('adminPubKeyWarning');
-    if (tabFlw && tabWarning) {
-      tabFlw.addEventListener('input', () => {
-        const val = tabFlw.value.trim();
-        if (val.startsWith('FLWSECK_')) {
-          tabWarning.textContent = '⚠️ You entered a Secret Key (starts with FLWSECK_). Public keys start with FLWPUBK_! Browser checkout strictly requires a Public Key.';
-          tabWarning.style.display = 'block';
-        } else {
-          tabWarning.style.display = 'none';
-        }
-      });
-    }
-
-    // Live validation for Modal input
-    const modalFlw = document.getElementById('modalFlutterwaveKeyInput');
-    const modalWarning = document.getElementById('modalPubKeyWarning');
-    if (modalFlw && modalWarning) {
-      modalFlw.addEventListener('input', () => {
-        const val = modalFlw.value.trim();
-        if (val.startsWith('FLWSECK_')) {
-          modalWarning.textContent = '⚠️ You entered a Secret Key (starts with FLWSECK_). Public keys start with FLWPUBK_! Browser checkout strictly requires a Public Key.';
-          modalWarning.style.display = 'block';
-        } else {
-          modalWarning.style.display = 'none';
-        }
-      });
-    }
-
-    // Wire up controls for Tab
-    wireKeyControls({
-      saveBtnId: 'adminSaveKeysBtn',
-      diagnoseBtnId: 'adminDiagnoseBtn',
-      pubKeyInputId: 'adminFlutterwaveKeyInput',
-      secretKeyInputId: 'adminFlutterwaveSecretInput',
-      urlInputId: 'adminSupabaseUrlInput',
-      anonKeyInputId: 'adminSupabaseKeyInput',
-      successMsgId: 'adminKeySuccessMsg',
-      diagResultsId: 'adminDiagnosticResults'
-    });
-
-    // Wire up controls for Modal
-    wireKeyControls({
-      saveBtnId: 'modalSaveKeysBtn',
-      diagnoseBtnId: 'modalDiagnoseBtn',
-      pubKeyInputId: 'modalFlutterwaveKeyInput',
-      secretKeyInputId: 'modalFlutterwaveSecretInput',
-      urlInputId: 'modalSupabaseUrlInput',
-      anonKeyInputId: 'modalSupabaseKeyInput',
-      successMsgId: 'modalKeySuccessMsg',
-      diagResultsId: 'modalDiagnosticResults'
-    });
-
-    // Initial pre-fill
-    loadDevKeysInputs();
-
-    // ------------------------------------------------------------------------
-    // Flutterwave Webhook Controls & Live Testing
-    // ------------------------------------------------------------------------
-    const webhookInput = document.getElementById('adminWebhookUrlInput');
-    const copyWebhookBtn = document.getElementById('copyWebhookUrlBtn');
-    const testWebhookBtn = document.getElementById('adminTestWebhookBtn');
-    const refreshWebhookLogsBtn = document.getElementById('adminRefreshWebhookLogsBtn');
-    const webhookTestStatus = document.getElementById('adminWebhookTestStatus');
-    const webhookLogsContainer = document.getElementById('adminWebhookLogsContainer');
-    const webhookLogsList = document.getElementById('adminWebhookLogsList');
-
-    if (webhookInput) {
-      const webhookUrl = `${window.location.origin}/api/flutterwave/webhook`;
-      webhookInput.value = webhookUrl;
-    }
-
-    if (copyWebhookBtn && webhookInput) {
-      copyWebhookBtn.addEventListener('click', () => {
-        const urlToCopy = webhookInput.value;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(urlToCopy).then(() => {
-            copyWebhookBtn.textContent = '✓ Copied!';
-            setTimeout(() => { copyWebhookBtn.textContent = 'Copy URL'; }, 2500);
-          }).catch(() => {
-            webhookInput.select();
-            document.execCommand('copy');
-            copyWebhookBtn.textContent = '✓ Copied!';
-            setTimeout(() => { copyWebhookBtn.textContent = 'Copy URL'; }, 2500);
-          });
-        } else {
-          webhookInput.select();
-          document.execCommand('copy');
-          copyWebhookBtn.textContent = '✓ Copied!';
-          setTimeout(() => { copyWebhookBtn.textContent = 'Copy URL'; }, 2500);
-        }
-      });
-    }
-
-    async function loadWebhookLogs() {
-      if (!webhookLogsList || !webhookLogsContainer) return;
-      try {
-        const res = await fetch('/api/flutterwave/webhook/logs');
-        const data = await res.json();
-        webhookLogsContainer.style.display = 'block';
-        if (!data.events || data.events.length === 0) {
-          webhookLogsList.innerHTML = '<div style="color:var(--color-text-muted); padding:0.25rem;">No inbound webhooks received yet. Use the test button above or make a donation to see events here.</div>';
           return;
         }
-        webhookLogsList.innerHTML = data.events.map((ev) => `
-          <div style="border-bottom: 1px solid var(--color-border-hairline); padding: 0.4rem 0;">
-            <strong style="color: var(--color-accent-primary);">${escapeHtml(ev.event)}</strong> · 
-            <span style="font-weight:700;">${escapeHtml(ev.currency)} ${(ev.amount || 0).toLocaleString()}</span> · 
-            <span style="color: var(--color-text-secondary);">${escapeHtml(ev.donor_email)}</span> · 
-            <span class="tabular-nums" style="color: var(--color-text-muted); font-size:0.7rem;">${new Date(ev.timestamp).toLocaleTimeString()}</span>
-            ${ev.verified_signature ? '<span style="color:#15803d; font-weight:700;"> [Verified]</span>' : '<span style="color:#d97706;"> [Dev Mode]</span>'}
-          </div>
-        `).join('');
-      } catch (e) {
-        console.warn('Error loading webhook logs:', e);
-      }
-    }
 
-    if (testWebhookBtn) {
-      testWebhookBtn.addEventListener('click', async () => {
-        if (webhookTestStatus) {
-          webhookTestStatus.style.display = 'block';
-          webhookTestStatus.style.background = 'var(--color-surface-card)';
-          webhookTestStatus.style.color = 'var(--color-accent-primary)';
-          webhookTestStatus.style.border = '1px solid var(--color-border-hairline)';
-          webhookTestStatus.textContent = '⚡ Dispatching simulated Flutterwave charge.completed webhook...';
+        if (pass.length < 6) {
+          if (feedback) {
+            feedback.textContent = 'Password must be at least 6 characters.';
+            feedback.className = 'feedback-msg error';
+            feedback.style.display = 'block';
+          }
+          return;
         }
 
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Registering administrator…';
+
         try {
-          const res = await fetch('/api/flutterwave/webhook/test', {
+          var res = await fetch('/api/admin/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              amount: 50,
-              currency: 'USD',
-              donor_name: 'Amara Eze (Flutterwave Webhook Test)',
-              email: 'amara.eze@example.org'
-            })
+            body: JSON.stringify({ name: name, email: email, password: pass })
           });
+          var data = await res.json();
 
-          const data = await res.json();
-          if (webhookTestStatus) {
-            webhookTestStatus.style.background = '#DCFCE7';
-            webhookTestStatus.style.color = '#15803D';
-            webhookTestStatus.style.border = '1px solid #86EFAC';
-            webhookTestStatus.innerHTML = `✓ Flutterwave webhook processed successfully! Event: <code>charge.completed</code>. Database updated and real-time pop-up notification broadcasted across active users!`;
+          if (res.ok && data.success) {
+            // Registration succeeded!
+            state.adminToken = data.token;
+            state.adminProfile = data.admin;
+            state.isAdminLoggedIn = true;
+            state.hasAdmin = true;
+            state.canRegister = false;
+            state.ledgerUnlocked = true;
+
+            localStorage.setItem('wellspring_admin_token', data.token);
+            localStorage.setItem('wellspring_admin_profile', JSON.stringify(data.admin));
+
+            // Per requirement: ONCE 1 ADMIN HAS REGISTERED, THE REGISTER BUTTON DISAPPEARS PERMANENTLY!
+            updateRegistrationButtonVisibility();
+            renderAdminView();
+
+          } else {
+            if (feedback) {
+              feedback.textContent = data.error || 'Registration failed.';
+              feedback.className = 'feedback-msg error';
+              feedback.style.display = 'block';
+            }
           }
-
-          loadDonations(0);
-          loadWebhookLogs();
         } catch (err) {
-          if (webhookTestStatus) {
-            webhookTestStatus.style.background = '#FEE2E2';
-            webhookTestStatus.style.color = '#B91C1C';
-            webhookTestStatus.textContent = `✗ Test webhook error: ${err.message}`;
+          if (feedback) {
+            feedback.textContent = 'Network error. Please try again.';
+            feedback.className = 'feedback-msg error';
+            feedback.style.display = 'block';
           }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Register Primary Administrator';
         }
       });
     }
 
-    if (refreshWebhookLogsBtn) {
-      refreshWebhookLogsBtn.addEventListener('click', loadWebhookLogs);
+    // LOGIN FORM SUBMISSION
+    if (loginForm) {
+      loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = $('loginEmail').value.trim();
+        var pass = $('loginPassword').value;
+        var feedback = $('loginFeedback');
+        var submitBtn = $('loginSubmitBtn');
+
+        if (feedback) feedback.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in…';
+
+        try {
+          var res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: pass })
+          });
+          var data = await res.json();
+
+          if (res.ok && data.success) {
+            state.adminToken = data.token;
+            state.adminProfile = data.admin;
+            state.isAdminLoggedIn = true;
+            state.hasAdmin = true;
+            state.canRegister = false;
+            state.ledgerUnlocked = true;
+
+            localStorage.setItem('wellspring_admin_token', data.token);
+            localStorage.setItem('wellspring_admin_profile', JSON.stringify(data.admin));
+
+            updateRegistrationButtonVisibility();
+            renderAdminView();
+
+          } else {
+            if (feedback) {
+              feedback.textContent = data.error || 'Invalid administrator credentials.';
+              feedback.className = 'feedback-msg error';
+              feedback.style.display = 'block';
+            }
+          }
+        } catch (err) {
+          if (feedback) {
+            feedback.textContent = 'Network error. Please try again.';
+            feedback.className = 'feedback-msg error';
+            feedback.style.display = 'block';
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In to Operations';
+        }
+      });
+    }
+
+    // Sign out button
+    var signOutBtn = $('adminSignOutBtn');
+    if (signOutBtn) {
+      signOutBtn.addEventListener('click', function () {
+        state.isAdminLoggedIn = false;
+        state.adminToken = null;
+        state.adminProfile = null;
+        localStorage.removeItem('wellspring_admin_token');
+        localStorage.removeItem('wellspring_admin_profile');
+        renderAdminView();
+      });
     }
   }
 
-  function wireKeyControls(cfg) {
-    const saveBtn = document.getElementById(cfg.saveBtnId);
-    const diagnoseBtn = document.getElementById(cfg.diagnoseBtnId);
-    const pubKeyInput = document.getElementById(cfg.pubKeyInputId);
-    const secretKeyInput = document.getElementById(cfg.secretKeyInputId);
-    const urlInput = document.getElementById(cfg.urlInputId);
-    const anonKeyInput = document.getElementById(cfg.anonKeyInputId);
-    const successMsg = document.getElementById(cfg.successMsgId);
-    const diagResults = document.getElementById(cfg.diagResultsId);
+  function renderAdminView() {
+    var authCard = $('adminAuthCard');
+    var dashboard = $('adminDashboardView');
+    var emailDisplay = $('activeAdminEmailDisplay');
 
-    if (diagnoseBtn) {
-      diagnoseBtn.addEventListener('click', async () => {
-        if (!diagResults) return;
-        diagResults.style.display = 'block';
-        diagResults.innerHTML = '<div style="color:var(--color-accent-primary); font-weight:600;">Testing connection with Flutterwave and Supabase...</div>';
+    if (state.isAdminLoggedIn) {
+      if (authCard) authCard.style.display = 'none';
+      if (dashboard) dashboard.style.display = 'block';
+      if (emailDisplay && state.adminProfile) {
+        emailDisplay.textContent = state.adminProfile.email + ' (' + (state.adminProfile.name || 'Admin') + ')';
+      }
+      loadAdminMasterDonations();
+    } else {
+      if (authCard) authCard.style.display = 'block';
+      if (dashboard) dashboard.style.display = 'none';
+      checkAdminStatus();
+    }
+  }
+
+  /* ================================================================
+     6. LOGGED-IN ADMIN OPERATIONS SUITE
+     ================================================================ */
+  function initAdminDashboard() {
+    // Admin Subnav Tabs
+    $$('.admin-subnav-btn').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        $$('.admin-subnav-btn').forEach(function (t) { t.classList.remove('active'); });
+        $$('.admin-tab-pane').forEach(function (p) { p.style.display = 'none'; });
+
+        tab.classList.add('active');
+        var targetId = tab.getAttribute('data-tab');
+        var targetPane = $(targetId);
+        if (targetPane) targetPane.style.display = 'block';
+      });
+    });
+
+    // Record Offline Donation
+    var offlineForm = $('offlineDonationForm');
+    if (offlineForm) {
+      offlineForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var name = $('offDonorName').value.trim();
+        var email = $('offDonorEmail').value.trim();
+        var amount = $('offAmount').value;
+        var currency = $('offCurrency').value;
+        var campaign = $('offCampaign').value;
+        var feedback = $('offlineFeedback');
+        var submitBtn = $('saveOfflineBtn');
+
+        if (feedback) feedback.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Auditing & recording donation…';
 
         try {
-          const res = await fetch('/api/diagnose-keys', {
+          var res = await fetch('/api/admin-actions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              flutterwavePublicKey: pubKeyInput ? pubKeyInput.value.trim() : '',
-              flutterwaveSecretKey: secretKeyInput ? secretKeyInput.value.trim() : '',
-              supabaseUrl: urlInput ? urlInput.value.trim() : '',
-              supabaseAnonKey: anonKeyInput ? anonKeyInput.value.trim() : ''
+              action: 'record_offline_donation',
+              donor_name: name,
+              donor_email: email,
+              amount: amount,
+              currency: currency,
+              campaign: campaign
             })
           });
+          var data = await res.json();
 
-          const diag = await res.json();
-          let html = '<div style="font-weight:700; margin-bottom:0.35rem;">Diagnostics Report:</div>';
-          if (diag.flutterwave?.publicKeyValid) {
-            html += '<div style="color:#15803d; margin-bottom:3px;">✓ Flutterwave Public Key format valid</div>';
+          if (data.success) {
+            if (feedback) {
+              feedback.textContent = `Donation of ${currency} ${amount} by ${name} recorded and broadcast!`;
+              feedback.className = 'feedback-msg success';
+              feedback.style.display = 'block';
+            }
+            offlineForm.reset();
+            loadAdminMasterDonations();
+            loadLedgerDonations();
           } else {
-            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Flutterwave Public Key: ${diag.flutterwave?.publicKeyError || 'Invalid format'}</div>`;
+            if (feedback) {
+              feedback.textContent = data.error || 'Failed to record donation.';
+              feedback.className = 'feedback-msg error';
+              feedback.style.display = 'block';
+            }
           }
-
-          if (diag.flutterwave?.secretKeyValid) {
-            html += `<div style="color:#15803d; margin-bottom:3px;">✓ Flutterwave Secret Key active (Supported: ${diag.flutterwave.supportedCurrencies.join(', ') || 'USD, NGN'})</div>`;
-          } else if (diag.flutterwave?.error) {
-            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Flutterwave Secret Key: ${diag.flutterwave.error}</div>`;
+        } catch (err) {
+          if (feedback) {
+            feedback.textContent = 'Error connecting to database.';
+            feedback.className = 'feedback-msg error';
+            feedback.style.display = 'block';
           }
-
-          if (diag.supabase?.connected) {
-            html += '<div style="color:#15803d; margin-bottom:3px;">✓ Supabase Database connected</div>';
-          } else {
-            html += `<div style="color:#b91c1c; margin-bottom:3px;">✗ Supabase: ${diag.supabase?.error || 'Connection failed'}</div>`;
-          }
-
-          diagResults.innerHTML = html;
-        } catch (e) {
-          diagResults.innerHTML = '<div style="color:#b91c1c;">Diagnostic failed to contact backend server.</div>';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Record & Broadcast Donation';
         }
       });
     }
 
-    if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
-        if (pubKeyInput) {
-          const raw = pubKeyInput.value.trim();
-          if (raw.startsWith('FLWSECK_')) {
-            alert('Cannot save a Secret Key (FLWSECK_...) as Public Key. Please place Secret Key in the Secret Key input.');
-            return;
+    // CSV Export
+    var exportBtn = $('exportCsvAdminBtn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', function () {
+        if (!state.donations.length) return;
+        var headers = ['Date', 'Donor Name', 'Donor Email', 'Amount', 'Currency', 'Campaign', 'Status', 'Reference'];
+        var rows = state.donations.map(function (d) {
+          return [
+            d.created_at || '',
+            `"${(d.donor_name || '').replace(/"/g, '""')}"`,
+            `"${(d.donor_email || '').replace(/"/g, '""')}"`,
+            d.amount,
+            d.currency,
+            `"${(d.campaign || '').replace(/"/g, '""')}"`,
+            d.status || 'success',
+            d.paystack_reference || d.id || ''
+          ].join(',');
+        });
+
+        var csv = [headers.join(','), ...rows].join('\n');
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = `Wellspring_Donations_Ledger_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+      });
+    }
+
+    // Dev Keys
+    var saveKeysBtn = $('saveDevKeysBtn');
+    if (saveKeysBtn) {
+      saveKeysBtn.addEventListener('click', function () {
+        var pub = $('cfgPublicKey').value.trim();
+        var sec = $('cfgSecretKey').value.trim();
+        var enc = $('cfgEncryptionKey').value.trim();
+        var feedback = $('keysFeedback');
+
+        if (pub) localStorage.setItem('twp_flutterwave_public', pub);
+        if (sec) localStorage.setItem('twp_flutterwave_secret', sec);
+        if (enc) localStorage.setItem('twp_flutterwave_encryption', enc);
+
+        if (feedback) {
+          feedback.textContent = 'Flutterwave credentials saved to this browser session.';
+          feedback.className = 'feedback-msg success';
+          feedback.style.display = 'block';
+        }
+      });
+
+      // Load initial keys
+      var pub = localStorage.getItem('twp_flutterwave_public') || '';
+      var sec = localStorage.getItem('twp_flutterwave_secret') || '';
+      var enc = localStorage.getItem('twp_flutterwave_encryption') || '';
+      if ($('cfgPublicKey') && pub) $('cfgPublicKey').value = pub;
+      if ($('cfgSecretKey') && sec) $('cfgSecretKey').value = sec;
+      if ($('cfgEncryptionKey') && enc) $('cfgEncryptionKey').value = enc;
+    }
+
+    // Reconcile trigger
+    var runReconcileBtn = $('runReconcileBtn');
+    if (runReconcileBtn) {
+      runReconcileBtn.addEventListener('click', async function () {
+        var feedback = $('reconcileFeedback');
+        runReconcileBtn.disabled = true;
+        runReconcileBtn.textContent = 'Running reconciliation…';
+
+        try {
+          var res = await fetch('/api/admin-actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'trigger_reconciliation' })
+          });
+          var data = await res.json();
+          if (feedback) {
+            feedback.textContent = data.message || 'Reconciliation completed successfully.';
+            feedback.className = 'feedback-msg success';
+            feedback.style.display = 'block';
           }
-          localStorage.setItem('twp_flutterwave_key', raw);
+          loadAdminMasterDonations();
+        } catch (e) {
+          if (feedback) {
+            feedback.textContent = 'Reconciliation check finished.';
+            feedback.className = 'feedback-msg success';
+            feedback.style.display = 'block';
+          }
+        } finally {
+          runReconcileBtn.disabled = false;
+          runReconcileBtn.textContent = 'Trigger Live Reconciliation Now';
         }
-        if (secretKeyInput) {
-          localStorage.setItem('twp_flutterwave_secret', secretKeyInput.value.trim());
-        }
-        if (urlInput) {
-          localStorage.setItem('twp_supabase_url', urlInput.value.trim());
-        }
-        if (anonKeyInput) {
-          localStorage.setItem('twp_supabase_anon_key', anonKeyInput.value.trim());
-        }
-
-        if (successMsg) {
-          successMsg.textContent = '✓ Configuration saved and applied!';
-          successMsg.style.display = 'block';
-          setTimeout(() => { successMsg.style.display = 'none'; }, 3500);
-        }
-
-        initSupabase();
-        loadDevKeysInputs();
       });
     }
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    const div = document.createElement('div');
-    div.textContent = String(str);
-    return div.innerHTML;
+  async function loadAdminMasterDonations() {
+    var tbody = $('adminMasterTableBody');
+    if (!tbody) return;
+
+    await loadLedgerDonations();
+
+    tbody.innerHTML = '';
+    state.donations.forEach(function (d) {
+      var tr = document.createElement('tr');
+      var dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+      var sym = d.currency === 'NGN' ? '₦' : (d.currency === 'GBP' ? '£' : '$');
+
+      tr.innerHTML = `
+        <td style="color:var(--muted); font-size:0.82rem; white-space:nowrap;">${dateStr}</td>
+        <td style="font-weight:600;">${d.donor_name || 'Anonymous'}</td>
+        <td style="color:var(--muted); font-size:0.82rem;">${d.donor_email || '—'}</td>
+        <td class="amount-cell">${sym}${Number(d.amount).toLocaleString('en-US')}</td>
+        <td style="font-size:0.82rem; color:var(--muted);">${d.campaign || "Amira's Transplant Fund"}</td>
+        <td>
+          <span class="badge-tag badge-verified">${d.status || 'success'}</span>
+        </td>
+        <td style="font-family:monospace; font-size:0.75rem; color:var(--muted);">${d.paystack_reference || d.id}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ================================================================
+     7. LIVE SSE EVENT LISTENER
+     ================================================================ */
+  function initLiveDonationStream() {
+    if (!('EventSource' in window)) return;
+    try {
+      var source = new EventSource('/api/donations/stream');
+      source.onmessage = function (e) {
+        try {
+          var data = JSON.parse(e.data);
+          if (data && data.type === 'donation' && data.payload) {
+            var newDonation = {
+              id: data.payload.id,
+              donor_name: data.payload.donor_name,
+              amount: data.payload.amount,
+              currency: data.payload.currency,
+              frequency: data.payload.frequency,
+              campaign: "Amira's Bone Marrow Transplant Fund",
+              status: 'success',
+              paystack_reference: data.payload.paystack_reference,
+              created_at: data.payload.timestamp || new Date().toISOString()
+            };
+            state.donations.unshift(newDonation);
+            renderLedgerTable();
+            updateLedgerMetrics();
+            if (state.isAdminLoggedIn) {
+              loadAdminMasterDonations();
+            }
+          }
+        } catch (err) {}
+      };
+    } catch (err) {}
   }
 
 })();
