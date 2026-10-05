@@ -5,6 +5,8 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.ts" },
+    { "source": "/initiate-donation", "destination": "/api/index.ts" },
+    { "source": "/config", "destination": "/api/index.ts" },
     { "source": "/transactions/(.*)", "destination": "/api/index.ts" },
     { "source": "/verify-transaction", "destination": "/api/index.ts" },
     { "source": "/donation-total", "destination": "/api/index.ts" },

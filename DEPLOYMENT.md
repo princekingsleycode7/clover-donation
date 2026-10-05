@@ -75,18 +75,22 @@ This project is configured with zero-config Vercel support via `vercel.json` and
 
 ### Required Environment Variables in Vercel
 Go to **Vercel Project Settings > Environment Variables** and add:
-- `PAYSTACK_PUBLIC_KEY`: `pk_live_...` (or `pk_test_...`)
-- `PAYSTACK_SECRET_KEY`: `sk_live_...` (or `sk_test_...`)
+- `FLUTTERWAVE_PUBLIC_KEY`: `FLWPUBK_live_...` (or `FLWPUBK_TEST-...`)
+- `FLUTTERWAVE_SECRET_KEY`: `FLWSECK_live_...` (or `FLWSECK_TEST-...`)
+- `FLUTTERWAVE_ENCRYPTION_KEY`: 24-character encryption key (from Flutterwave dashboard)
+- `FLUTTERWAVE_SECRET_HASH`: Webhook secret hash string
 - `SUPABASE_URL`: `https://your-project.supabase.co`
 - `SUPABASE_ANON_KEY`: `eyJ...`
 - `SUPABASE_SERVICE_ROLE_KEY`: `eyJ...`
 
+> ⚠️ **CRITICAL VERCEL STEP: TRIGGER REDEPLOYMENT**
+> When you add or modify environment variables in Vercel Project Settings, Vercel **does not** automatically apply them to existing deployments.
+> You **must** go to **Vercel Dashboard > Deployments**, select the latest deployment, click the **`...`** (three dots) menu, and click **Redeploy** (or push a new commit to git). Without a redeploy, the app runs with old environment variables and will return `Invalid parameter (PBFPubKey)`.
+
 ---
 
-## 5. Paystack Account Configuration Note
+## 5. Flutterwave Configuration Note
 
-For multi-currency operations:
-- Ensure the account administrator has enabled multi-currency settlement (USD, NGN, GBP) under **Paystack Dashboard > Settings > Preferences**.
-- Configure the Webhook URL in Paystack Dashboard to point to your live domain:
-  `https://your-deployment.vercel.app/api/paystack-webhook`
-- Copy the Webhook Secret from Paystack into `PAYSTACK_SECRET_KEY` in Vercel Environment Variables.
+- Ensure the Public Key starts with `FLWPUBK_` (or `FLWPUBK-`). Do NOT paste the Secret Key (`FLWSECK_`) into the Public Key variable, as client-side checkouts will fail with `Invalid parameter (PBFPubKey)`.
+- Configure the Webhook URL in Flutterwave Dashboard under **Settings > Webhooks**:
+  `https://your-deployment.vercel.app/api/flutterwave/webhook`

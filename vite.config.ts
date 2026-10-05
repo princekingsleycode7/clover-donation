@@ -25,14 +25,32 @@ function copyStaticAssetsPlugin() {
   };
 }
 
+function cleanEnvStr(val?: string) {
+  if (!val) return '';
+  let s = String(val).trim();
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1).trim();
+  }
+  return s;
+}
+
 export default defineConfig(() => {
+  const flwPub = cleanEnvStr(
+    process.env.FLUTTERWAVE_PUBLIC_KEY ||
+    process.env.VITE_FLUTTERWAVE_PUBLIC_KEY ||
+    process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY ||
+    process.env.FLW_PUBLIC_KEY ||
+    process.env.PUBLIC_KEY
+  );
+
   return {
     plugins: [react(), tailwindcss(), copyStaticAssetsPlugin()],
     define: {
       'window.__ENV__': JSON.stringify({
-        paystackPublicKey: process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_2193bfe61dcf7971c220bb9b9a0027d4eb0e2ff3',
-        supabaseUrl: process.env.SUPABASE_URL || 'https://kljnyncmpsewrghkybcd.supabase.co',
-        supabaseAnonKey: process.env.SUPABASE_ANON_KEY || ''
+        flutterwavePublicKey: flwPub,
+        paystackPublicKey: cleanEnvStr(process.env.PAYSTACK_PUBLIC_KEY) || 'pk_test_2193bfe61dcf7971c220bb9b9a0027d4eb0e2ff3',
+        supabaseUrl: cleanEnvStr(process.env.SUPABASE_URL) || 'https://kljnyncmpsewrghkybcd.supabase.co',
+        supabaseAnonKey: cleanEnvStr(process.env.SUPABASE_ANON_KEY) || ''
       })
     },
     resolve: {

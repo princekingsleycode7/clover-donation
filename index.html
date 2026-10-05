@@ -1287,9 +1287,25 @@ iframe.flwpugpaidid,
   /* ================================================================
      CONFIG — all editable content lives here
      ================================================================ */
+  function sanitizeFlwKey(k) {
+    if (!k) return '';
+    var s = String(k).trim();
+    if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+      s = s.slice(1, -1).trim();
+    }
+    return s;
+  }
+
+  function isRealFlutterwavePubKey(k) {
+    var s = sanitizeFlwKey(k);
+    return Boolean(s && !s.includes('SANDBOXDEMOKEY') && !s.includes('REPLACE') && (s.startsWith('FLWPUBK_') || s.startsWith('FLWPUBK-')));
+  }
+
+  var initialFlwKey = (typeof window !== 'undefined' && window.__ENV__ && sanitizeFlwKey(window.__ENV__.flutterwavePublicKey)) || '';
+
   var CONFIG = {
     mockMode: false,
-    publicKey: 'FLWPUBK_TEST-SANDBOXDEMOKEY-X',
+    publicKey: initialFlwKey,
     verifyUrl: '/api/verify-transaction',
     initiateUrl: '/api/initiate-donation',
     totalUrl: '/donation-total',
@@ -1806,7 +1822,15 @@ iframe.flwpugpaidid,
       if (submitLabel) submitLabel.textContent = 'Opening secure checkout\u2026';
 
       var txRef = 'KF-WELLSPRING-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      var publicKey = (typeof localStorage !== 'undefined' && localStorage.getItem('twp_flutterwave_public')) || CONFIG.publicKey || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
+
+      var storedKey = typeof localStorage !== 'undefined' ? sanitizeFlwKey(localStorage.getItem('twp_flutterwave_public')) : '';
+      var envKey = typeof window !== 'undefined' && window.__ENV__ ? sanitizeFlwKey(window.__ENV__.flutterwavePublicKey) : '';
+      var configKey = sanitizeFlwKey(CONFIG.publicKey);
+
+      var publicKey = '';
+      if (isRealFlutterwavePubKey(storedKey)) publicKey = storedKey;
+      else if (isRealFlutterwavePubKey(envKey)) publicKey = envKey;
+      else if (isRealFlutterwavePubKey(configKey)) publicKey = configKey;
 
       // 1. Register pending donation in database & get verified public key
       try {
@@ -1825,8 +1849,9 @@ iframe.flwpugpaidid,
 
         if (initRes.ok) {
           var initData = await initRes.json();
-          if (initData.flutterwave_public_key && !initData.flutterwave_public_key.includes('REPLACE')) {
-            publicKey = initData.flutterwave_public_key;
+          var serverKey = sanitizeFlwKey(initData.flutterwave_public_key);
+          if (isRealFlutterwavePubKey(serverKey)) {
+            publicKey = serverKey;
           }
           if (initData.tx_ref) {
             txRef = initData.tx_ref;
@@ -1834,6 +1859,24 @@ iframe.flwpugpaidid,
         }
       } catch (initErr) {
         console.warn('[index.html] Initiate donation warning:', initErr);
+      }
+
+      // Check if Flutterwave public key is valid BEFORE opening checkout
+      if (!isRealFlutterwavePubKey(publicKey)) {
+        state.processing = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.hidden = true;
+        render();
+
+        var keyErrorMsg = '';
+        var rawKeyCheck = storedKey || envKey || configKey;
+        if (rawKeyCheck && (rawKeyCheck.startsWith('FLWSECK_') || rawKeyCheck.startsWith('FLWSECK-'))) {
+          keyErrorMsg = 'Gateway Configuration Notice: A Flutterwave Secret Key was supplied instead of a Public Key. Client checkout requires your Public Key (starting with FLWPUBK_).';
+        } else {
+          keyErrorMsg = 'Payment Gateway Notice: Flutterwave Public Key is missing or pending deployment. If you just added keys in Vercel Environment Variables, please Redeploy your project on Vercel so the secrets take effect.';
+        }
+        showStage1Error(keyErrorMsg);
+        return;
       }
 
       // 2. Ensure Flutterwave checkout library is loaded

@@ -39,11 +39,60 @@ app.use(express.static('public'));
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://kljnyncmpsewrghkybcd.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
+function cleanEnvString(val?: any): string {
+  if (!val) return '';
+  let str = String(val).trim();
+  if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
+    str = str.slice(1, -1).trim();
+  }
+  return str.replace(/\\r/g, '').replace(/\\n/g, '').trim();
+}
+
+// Support all common Vercel/Vite environment variable aliases
+let rawFlwPublicKey = cleanEnvString(
+  process.env.FLUTTERWAVE_PUBLIC_KEY ||
+  process.env.VITE_FLUTTERWAVE_PUBLIC_KEY ||
+  process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY ||
+  process.env.FLW_PUBLIC_KEY ||
+  process.env.FLUTTERWAVE_PUB_KEY ||
+  process.env.FLW_PUB_KEY ||
+  process.env.PUBLIC_KEY
+);
+
+let rawFlwSecretKey = cleanEnvString(
+  process.env.FLUTTERWAVE_SECRET_KEY ||
+  process.env.FLW_SECRET_KEY ||
+  process.env.FLUTTERWAVE_SEC_KEY ||
+  process.env.FLW_SEC_KEY ||
+  process.env.SECRET_KEY
+);
+
+let rawFlwEncryptionKey = cleanEnvString(
+  process.env.FLUTTERWAVE_ENCRYPTION_KEY ||
+  process.env.FLW_ENCRYPTION_KEY ||
+  process.env.FLUTTERWAVE_ENC_KEY
+);
+
+// Intelligent inverted-keys auto repair (if public and secret keys were swapped in environment secrets)
+if ((rawFlwPublicKey.startsWith('FLWSECK_') || rawFlwPublicKey.startsWith('FLWSECK-')) &&
+    (!rawFlwSecretKey || rawFlwSecretKey.startsWith('FLWPUBK_') || rawFlwSecretKey.startsWith('FLWPUBK-'))) {
+  console.warn('[server.ts] Inverted Flutterwave keys detected in environment variables. Auto-swapping public and secret keys.');
+  const temp = rawFlwPublicKey;
+  rawFlwPublicKey = rawFlwSecretKey;
+  rawFlwSecretKey = temp;
+} else if ((rawFlwSecretKey.startsWith('FLWPUBK_') || rawFlwSecretKey.startsWith('FLWPUBK-')) &&
+           (!rawFlwPublicKey || rawFlwPublicKey.startsWith('FLWSECK_') || rawFlwPublicKey.startsWith('FLWSECK-'))) {
+  console.warn('[server.ts] Inverted Flutterwave keys detected in environment variables. Auto-swapping public and secret keys.');
+  const temp = rawFlwPublicKey;
+  rawFlwPublicKey = rawFlwSecretKey;
+  rawFlwSecretKey = temp;
+}
+
 // Flutterwave Payment Configuration (Standard API & Direct Card Charge)
-const FLUTTERWAVE_PUBLIC_KEY = process.env.FLUTTERWAVE_PUBLIC_KEY || process.env.FLW_PUBLIC_KEY || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
-const FLUTTERWAVE_SECRET_KEY = process.env.FLUTTERWAVE_SECRET_KEY || process.env.FLW_SECRET_KEY || '';
-const FLUTTERWAVE_ENCRYPTION_KEY = process.env.FLUTTERWAVE_ENCRYPTION_KEY || process.env.FLW_ENCRYPTION_KEY || '';
-const FLUTTERWAVE_SECRET_HASH = process.env.FLUTTERWAVE_SECRET_HASH || process.env.FLW_SECRET_HASH || 'wellspring_webhook_hash';
+const FLUTTERWAVE_PUBLIC_KEY = rawFlwPublicKey || 'FLWPUBK_TEST-SANDBOXDEMOKEY-X';
+const FLUTTERWAVE_SECRET_KEY = rawFlwSecretKey || '';
+const FLUTTERWAVE_ENCRYPTION_KEY = rawFlwEncryptionKey || '';
+const FLUTTERWAVE_SECRET_HASH = cleanEnvString(process.env.FLUTTERWAVE_SECRET_HASH || process.env.FLW_SECRET_HASH) || 'wellspring_webhook_hash';
 
 function isValidFlwSecretKey(key?: string): boolean {
   if (!key) return false;
@@ -178,15 +227,19 @@ app.post('/api/donations/broadcast', (req: Request, res: Response) => {
 // ----------------------------------------------------------------------------
 // API: PUBLIC CONFIG
 // ----------------------------------------------------------------------------
-app.get('/api/config', (_req: Request, res: Response) => {
+const handleConfigResponse = (_req: Request, res: Response) => {
   res.json({
     flutterwavePublicKey: FLUTTERWAVE_PUBLIC_KEY,
+    hasValidPublicKey: isValidFlwPublicKey(FLUTTERWAVE_PUBLIC_KEY) && !FLUTTERWAVE_PUBLIC_KEY.includes('SANDBOXDEMOKEY'),
+    hasSecretKey: Boolean(isValidFlwSecretKey(FLUTTERWAVE_SECRET_KEY)),
     supabaseUrl: SUPABASE_URL,
     supabaseAnonKey: SUPABASE_ANON_KEY,
-    hasSecretKey: Boolean(isValidFlwSecretKey(FLUTTERWAVE_SECRET_KEY)),
     defaultCurrency: 'USD'
   });
-});
+};
+
+app.get('/api/config', handleConfigResponse);
+app.get('/config', handleConfigResponse);
 
 // ----------------------------------------------------------------------------
 // API: KEY DIAGNOSTICS & VERIFICATION (Flutterwave & Supabase)
@@ -322,6 +375,8 @@ async function handleInitiateDonation(req: Request, res: Response) {
       console.warn('[initiate-donation] DB error:', dbErr);
     }
 
+    const isRealPubKey = isValidFlwPublicKey(FLUTTERWAVE_PUBLIC_KEY) && !FLUTTERWAVE_PUBLIC_KEY.includes('SANDBOXDEMOKEY');
+
     return res.status(201).json({
       success: true,
       donation_id: donationId,
@@ -331,7 +386,8 @@ async function handleInitiateDonation(req: Request, res: Response) {
       frequency: normalizedFrequency,
       donor_email: cleanEmail,
       donor_name: is_anonymous ? null : donor_name,
-      flutterwave_public_key: FLUTTERWAVE_PUBLIC_KEY
+      flutterwave_public_key: FLUTTERWAVE_PUBLIC_KEY,
+      has_valid_key: isRealPubKey
     });
 
   } catch (err: any) {
@@ -342,6 +398,7 @@ async function handleInitiateDonation(req: Request, res: Response) {
 
 app.post('/api/initiate-donation', handleInitiateDonation);
 app.post('/api/functions/initiate-donation', handleInitiateDonation);
+app.post('/initiate-donation', handleInitiateDonation);
 
 function encrypt3DES(key: string, text: string): string {
   const cipher = forge.cipher.createCipher('3DES-ECB', forge.util.createBuffer(key));
