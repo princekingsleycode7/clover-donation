@@ -295,6 +295,10 @@ html.anim-io .reveal.is-visible{opacity:1;transform:none}
   padding:.5rem .75rem;
   animation:panelIn .25s var(--ease);
 }
+.monthly-impact-note[hidden],
+[hidden]{
+  display:none !important;
+}
 .monthly-impact-note .icon{color:var(--accent);flex:none}
 .chips{display:flex;flex-wrap:wrap;gap:.55rem}
 .chip{
@@ -740,7 +744,7 @@ iframe.flwpugpaidid,
               </div>
             </div>
             <div class="chips" role="group" aria-label="Donation amount" data-chips></div>
-            <div class="monthly-impact-note" data-monthly-note hidden>
+            <div class="monthly-impact-note" data-monthly-note hidden style="display:none;">
               <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
               <span>Monthly recurring deposit · Sustaining direct care every month · Cancel anytime</span>
             </div>
@@ -1339,7 +1343,9 @@ iframe.flwpugpaidid,
         b.setAttribute('aria-pressed', String(b.getAttribute('data-freq') === state.frequency));
       });
       if (monthlyNote) {
-        monthlyNote.hidden = (state.frequency !== 'monthly');
+        var isMonthly = (state.frequency === 'monthly');
+        monthlyNote.hidden = !isMonthly;
+        monthlyNote.style.display = isMonthly ? 'flex' : 'none';
       }
       chips.forEach(function (ch) {
         if (ch.getAttribute('data-amount') === 'custom') {
