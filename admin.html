@@ -298,6 +298,94 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
   display: inline-block; width: 8px; height: 8px; border-radius: 50%;
   background: #22c55e; box-shadow: 0 0 8px #22c55e; margin-right: 6px;
 }
+
+/* ============ AUDIENCE & FUNNEL ANALYTICS DASHBOARD ============ */
+.analytics-header-bar {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  margin-bottom: 1.75rem; background: var(--paper); border: var(--hairline); border-radius: var(--radius);
+  padding: 1.15rem 1.4rem;
+}
+.analytics-time-filters {
+  display: inline-flex; background: rgba(1, 24, 216, .04); border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px; gap: 3px;
+}
+.time-filter-btn {
+  border: 0; background: transparent; padding: .4rem .9rem; border-radius: 999px;
+  font-size: .8rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .2s;
+}
+.time-filter-btn.active { background: var(--ink); color: var(--paper); }
+.analytics-grid-2 {
+  display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem;
+}
+@media (min-width: 960px) {
+  .analytics-grid-2 { grid-template-columns: 1fr 1fr; }
+}
+.analytics-panel {
+  background: var(--paper); border: var(--hairline); border-radius: var(--radius);
+  padding: 1.5rem; box-shadow: 0 4px 20px -8px rgba(1, 24, 216, .05);
+}
+.analytics-panel-header {
+  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;
+  border-bottom: var(--hairline); padding-bottom: .85rem;
+}
+.analytics-panel-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 .25rem; }
+.analytics-panel-subtitle { font-size: .82rem; color: var(--muted); margin: 0; }
+
+/* Funnel Steps */
+.funnel-list { display: flex; flex-direction: column; gap: 1rem; }
+.funnel-item { position: relative; }
+.funnel-item-top {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: .35rem;
+  font-size: .86rem; font-weight: 600;
+}
+.funnel-bar-bg {
+  width: 100%; height: 26px; background: rgba(1, 24, 216, .05); border-radius: 6px;
+  overflow: hidden; position: relative; display: flex; align-items: center;
+}
+.funnel-bar-fill {
+  height: 100%; border-radius: 6px; transition: width .6s var(--ease);
+  background: linear-gradient(90deg, #1b56fd, #4f46e5);
+}
+.funnel-bar-label {
+  position: absolute; left: 12px; font-size: .78rem; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35); pointer-events: none;
+}
+.funnel-drop-badge {
+  font-size: .74rem; font-weight: 600; color: #dc2626; background: #fef2f2;
+  border: 1px solid #fee2e2; border-radius: 4px; padding: 1px 6px; margin-left: 8px;
+}
+
+/* Geo & Traffic breakdown */
+.geo-list { display: flex; flex-direction: column; gap: .75rem; }
+.geo-row {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  padding: .45rem 0; border-bottom: 1px dashed rgba(1, 24, 216, .08); font-size: .88rem;
+}
+.geo-row:last-child { border-bottom: 0; }
+.geo-country-info { display: flex; align-items: center; gap: .6rem; font-weight: 500; }
+.geo-flag { font-size: 1.25rem; line-height: 1; }
+.geo-count-badge {
+  font-weight: 700; font-family: var(--serif); font-size: 1.05rem; color: var(--ink);
+}
+.geo-pct-bar {
+  width: 70px; height: 6px; background: rgba(1, 24, 216, .08); border-radius: 999px;
+  overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 8px;
+}
+.geo-pct-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+
+/* IP Log Table styles */
+.badge-ip {
+  font-family: monospace; font-size: .8rem; font-weight: 600; background: rgba(15, 23, 42, .06);
+  color: #0f172a; padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(15, 23, 42, .1);
+}
+.badge-stage {
+  font-size: .72rem; font-weight: 600; padding: 2px 7px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: .03em;
+}
+.badge-stage-converted { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-stage-modal { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.badge-stage-form { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge-stage-view { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 </style>
 </head>
 <body>
@@ -588,6 +676,7 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
         <!-- Admin Sub-Navigation Tabs -->
         <nav class="admin-subnav-tabs" role="tablist">
           <button type="button" class="admin-subnav-btn active" data-tab="tabDonations">Master Ledger</button>
+          <button type="button" class="admin-subnav-btn" data-tab="tabAnalytics">Audience & Funnel Analytics</button>
           <button type="button" class="admin-subnav-btn" data-tab="tabOffline">Record Offline Donation</button>
           <button type="button" class="admin-subnav-btn" data-tab="tabDevKeys">Flutterwave API Keys</button>
           <button type="button" class="admin-subnav-btn" data-tab="tabReconcile">Reconciliation</button>
@@ -613,6 +702,175 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
               </tbody>
             </table>
           </div>
+        </div>
+
+        <!-- TAB ANALYTICS: AUDIENCE TARGETING, DROP-OFF FUNNEL & IP LOCATION -->
+        <div id="tabAnalytics" class="admin-tab-pane" style="display: none;">
+          
+          <!-- Analytics Controls Bar -->
+          <div class="analytics-header-bar">
+            <div>
+              <span class="label" style="margin-bottom: 2px;">Real-Time Audience Intelligence</span>
+              <h3 style="margin: 0; font-size: 1.35rem;">Visitor Traffic & Conversion Engine</h3>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;">
+              <div class="analytics-time-filters" id="analyticsTimeFilterGroup">
+                <button type="button" class="time-filter-btn" data-range="today">Today</button>
+                <button type="button" class="time-filter-btn" data-range="7d">Last 7d</button>
+                <button type="button" class="time-filter-btn" data-range="30d">Last 30d</button>
+                <button type="button" class="time-filter-btn active" data-range="all">All Time</button>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" id="refreshAnalyticsBtn">
+                <span class="live-pulse"></span> Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- Top Metric Cards -->
+          <div class="metrics-grid" style="margin-bottom: 2rem;">
+            <div class="metric-card">
+              <span class="metric-label">Unique Visitors</span>
+              <div class="metric-value" id="anlUniqueVisitors">—</div>
+              <p class="metric-note">Individual browser fingerprints</p>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Total Sessions</span>
+              <div class="metric-value" id="anlTotalSessions">—</div>
+              <p class="metric-note">Page journeys & visits</p>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Donation Conversion Rate</span>
+              <div class="metric-value" id="anlConversionRate" style="color: #15803d;">—%</div>
+              <p class="metric-note" id="anlConversionsCount">0 completed donations</p>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Avg Scroll Depth</span>
+              <div class="metric-value" id="anlAvgScroll">—%</div>
+              <p class="metric-note">Story engagement percentage</p>
+            </div>
+          </div>
+
+          <!-- Analytics Grid: "Where They Stopped (Funnel)" & "Where They View (Pages)" -->
+          <div class="analytics-grid-2">
+            
+            <!-- PANEL 1: WHERE THEY STOPPED (DROP-OFF FUNNEL) -->
+            <div class="analytics-panel">
+              <div class="analytics-panel-header">
+                <div>
+                  <h4 class="analytics-panel-title">Where Visitors Stopped (Drop-Off Funnel)</h4>
+                  <p class="analytics-panel-subtitle">Pinpoint exact stages where audience leaves before donating</p>
+                </div>
+              </div>
+
+              <div class="funnel-list" id="anlFunnelContainer">
+                <!-- Dynamically populated funnel steps -->
+              </div>
+
+              <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: var(--hairline);">
+                <h5 style="font-size: .85rem; font-weight: 700; margin-bottom: .6rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);">Top Exit Locations:</h5>
+                <div id="anlTopExitSections" style="display: flex; flex-direction: column; gap: .4rem; font-size: .84rem;">
+                  <!-- Dynamically populated exit sections -->
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 2: WHERE THEY VIEW (PAGE POPULARITY & JOURNEYS) -->
+            <div class="analytics-panel">
+              <div class="analytics-panel-header">
+                <div>
+                  <h4 class="analytics-panel-title">Where They View (Page Popularity)</h4>
+                  <p class="analytics-panel-subtitle">Traffic volume, reading engagement, and conversion by URL</p>
+                </div>
+              </div>
+
+              <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+                <table class="ledger-table" style="font-size: .84rem;">
+                  <thead>
+                    <tr>
+                      <th>Page / Path</th>
+                      <th>Views</th>
+                      <th>Unique</th>
+                      <th>Avg Depth</th>
+                      <th>Conv %</th>
+                    </tr>
+                  </thead>
+                  <tbody id="anlPagesTableBody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Analytics Grid: "Geographic Location" & "Traffic / UTM Sources" -->
+          <div class="analytics-grid-2">
+
+            <!-- PANEL 3: VISITOR LOCATIONS (COUNTRY & CITIES) -->
+            <div class="analytics-panel">
+              <div class="analytics-panel-header">
+                <div>
+                  <h4 class="analytics-panel-title">Audience Geographic Locations</h4>
+                  <p class="analytics-panel-subtitle">Countries and regions accessing your campaign</p>
+                </div>
+              </div>
+
+              <div class="geo-list" id="anlGeoList">
+                <!-- Dynamically populated country rows -->
+              </div>
+            </div>
+
+            <!-- PANEL 4: TRAFFIC SOURCES & CAMPAIGN TARGETING -->
+            <div class="analytics-panel">
+              <div class="analytics-panel-header">
+                <div>
+                  <h4 class="analytics-panel-title">Campaign & Traffic Channels</h4>
+                  <p class="analytics-panel-subtitle">Identify highest performing ads, social posts, & referrals</p>
+                </div>
+              </div>
+
+              <div class="geo-list" id="anlTrafficList">
+                <!-- Dynamically populated traffic rows -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PANEL 5: LIVE IP & VISITOR INTELLIGENCE LOG -->
+          <div class="analytics-panel" style="margin-bottom: 2rem;">
+            <div class="analytics-panel-header">
+              <div>
+                <h4 class="analytics-panel-title">Live Visitor & IP Location Ledger</h4>
+                <p class="analytics-panel-subtitle">Individual session forensics, client IP, geographic location, and stopping points</p>
+              </div>
+              <span class="badge-tag badge-verified" id="anlLiveStatusBadge">
+                <span class="live-pulse"></span> Tracking Active
+              </span>
+            </div>
+
+            <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+              <table class="ledger-table" style="font-size: .82rem;">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Client IP</th>
+                    <th>Location</th>
+                    <th>Page Viewed</th>
+                    <th>Where Stopped</th>
+                    <th>Device / OS</th>
+                    <th>Campaign / Source</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="anlVisitorTableBody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
         <!-- TAB B: RECORD OFFLINE DONATION -->

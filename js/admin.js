@@ -599,6 +599,7 @@
         emailDisplay.textContent = state.adminProfile.email + ' (' + (state.adminProfile.name || 'Admin') + ')';
       }
       loadAdminMasterDonations();
+      loadAdminAnalytics(currentAnalyticsRange);
     } else {
       if (authCard) authCard.style.display = 'block';
       if (dashboard) dashboard.style.display = 'none';
@@ -620,8 +621,30 @@
         var targetId = tab.getAttribute('data-tab');
         var targetPane = $(targetId);
         if (targetPane) targetPane.style.display = 'block';
+
+        if (targetId === 'tabAnalytics') {
+          loadAdminAnalytics(currentAnalyticsRange);
+        }
       });
     });
+
+    // Time range filter buttons for Analytics
+    var timeFilterBtns = $$('#analyticsTimeFilterGroup .time-filter-btn');
+    timeFilterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        timeFilterBtns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentAnalyticsRange = btn.getAttribute('data-range') || 'all';
+        loadAdminAnalytics(currentAnalyticsRange);
+      });
+    });
+
+    var refreshAnalyticsBtn = $('refreshAnalyticsBtn');
+    if (refreshAnalyticsBtn) {
+      refreshAnalyticsBtn.addEventListener('click', function () {
+        loadAdminAnalytics(currentAnalyticsRange);
+      });
+    }
 
     // Record Offline Donation
     var offlineForm = $('offlineDonationForm');
@@ -802,6 +825,183 @@
       `;
       tbody.appendChild(tr);
     });
+  }
+
+  var currentAnalyticsRange = 'all';
+
+  async function loadAdminAnalytics(range) {
+    range = range || currentAnalyticsRange || 'all';
+    try {
+      var res = await fetch('/api/analytics/summary?range=' + encodeURIComponent(range));
+      if (!res.ok) {
+        res = await fetch('/api/analytics-summary?range=' + encodeURIComponent(range));
+      }
+      var data = await res.json();
+      if (!data) return;
+
+      // 1. Update Metrics Cards
+      var uniqueEl = $('anlUniqueVisitors');
+      if (uniqueEl) uniqueEl.textContent = Number(data.unique_visitors || 0).toLocaleString();
+
+      var sessionsEl = $('anlTotalSessions');
+      if (sessionsEl) sessionsEl.textContent = Number(data.total_sessions || 0).toLocaleString();
+
+      var convRateEl = $('anlConversionRate');
+      if (convRateEl) convRateEl.textContent = (data.conversion_rate || '0.0') + '%';
+
+      var convCountEl = $('anlConversionsCount');
+      if (convCountEl) convCountEl.textContent = (data.total_conversions || 0) + ' completed donations ($' + Number(data.total_revenue_usd || 0).toLocaleString() + ')';
+
+      var avgScrollEl = $('anlAvgScroll');
+      if (avgScrollEl) avgScrollEl.textContent = (data.avg_scroll_depth || 0) + '% (Avg ' + (data.avg_time_on_page || 0) + 's read)';
+
+      // 2. Render Funnel (Where They Stopped)
+      var funnelContainer = $('anlFunnelContainer');
+      if (funnelContainer && Array.isArray(data.funnel)) {
+        funnelContainer.innerHTML = '';
+        data.funnel.forEach(function (f, idx) {
+          var item = document.createElement('div');
+          item.className = 'funnel-item';
+          var dropOffText = f.step > 1 && f.drop_off_pct && f.drop_off_pct !== '0.0'
+            ? `<span class="funnel-drop-badge">↓ ${f.drop_off_pct}% dropped here</span>`
+            : '';
+          
+          item.innerHTML = `
+            <div class="funnel-item-top">
+              <span>Step ${f.step}: ${f.label} ${dropOffText}</span>
+              <span>${f.count} users (${f.pct}%)</span>
+            </div>
+            <div class="funnel-bar-bg">
+              <div class="funnel-bar-fill" style="width: ${Math.max(f.pct, 4)}%;"></div>
+              <span class="funnel-bar-label">${f.pct}%</span>
+            </div>
+          `;
+          funnelContainer.appendChild(item);
+        });
+      }
+
+      // Render Top Exit Sections
+      var exitsContainer = $('anlTopExitSections');
+      if (exitsContainer && Array.isArray(data.drop_off_sections)) {
+        exitsContainer.innerHTML = '';
+        if (data.drop_off_sections.length === 0) {
+          exitsContainer.innerHTML = '<span style="color:var(--muted); font-style:italic;">No drop-off exits recorded yet.</span>';
+        } else {
+          data.drop_off_sections.forEach(function (sec) {
+            var row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.justifyContent = 'space-between';
+            row.style.alignItems = 'center';
+            row.style.padding = '3px 0';
+            row.innerHTML = `
+              <span style="color:var(--ink); font-weight:500;">📍 ${sec.location}</span>
+              <span style="color:var(--muted); font-weight:600;">${sec.count} users (${sec.pct_of_all}%)</span>
+            `;
+            exitsContainer.appendChild(row);
+          });
+        }
+      }
+
+      // 3. Render Pages Table (Where They View)
+      var pagesTbody = $('anlPagesTableBody');
+      if (pagesTbody && Array.isArray(data.pages_breakdown)) {
+        pagesTbody.innerHTML = '';
+        data.pages_breakdown.forEach(function (p) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div style="font-weight:600; color:var(--ink);">${p.path}</div>
+              <div style="font-size:0.75rem; color:var(--muted);">${p.title || p.path}</div>
+            </td>
+            <td style="font-weight:700;">${p.views}</td>
+            <td>${p.unique_visitors}</td>
+            <td>${p.avg_scroll_pct}%</td>
+            <td style="font-weight:600; color:#15803d;">${p.conversion_rate}</td>
+          `;
+          pagesTbody.appendChild(tr);
+        });
+      }
+
+      // 4. Render Geo Breakdown (Top Countries)
+      var geoList = $('anlGeoList');
+      if (geoList && Array.isArray(data.countries_breakdown)) {
+        geoList.innerHTML = '';
+        data.countries_breakdown.forEach(function (c) {
+          var row = document.createElement('div');
+          row.className = 'geo-row';
+          row.innerHTML = `
+            <div class="geo-country-info">
+              <span class="geo-flag">${c.flag || '🌐'}</span>
+              <span>${c.country}</span>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <span class="geo-count-badge">${c.count}</span>
+              <span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${c.pct})</span>
+              <span class="geo-pct-bar"><span class="geo-pct-fill" style="width:${c.pct};"></span></span>
+            </div>
+          `;
+          geoList.appendChild(row);
+        });
+      }
+
+      // 5. Render Traffic Channels
+      var trafficList = $('anlTrafficList');
+      if (trafficList && Array.isArray(data.traffic_sources)) {
+        trafficList.innerHTML = '';
+        data.traffic_sources.forEach(function (t) {
+          var row = document.createElement('div');
+          row.className = 'geo-row';
+          row.innerHTML = `
+            <div style="font-weight:500; color:var(--ink);">
+              <span>⚡ ${t.source}</span>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <span class="geo-count-badge">${t.count}</span>
+              <span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${t.pct})</span>
+              <span class="geo-pct-bar"><span class="geo-pct-fill" style="width:${t.pct}; background:#4f46e5;"></span></span>
+            </div>
+          `;
+          trafficList.appendChild(row);
+        });
+      }
+
+      // 6. Render Live Visitor & IP Table
+      var visitorTbody = $('anlVisitorTableBody');
+      if (visitorTbody && Array.isArray(data.recent_visitors)) {
+        visitorTbody.innerHTML = '';
+        data.recent_visitors.forEach(function (v) {
+          var tr = document.createElement('tr');
+          var timeStr = v.created_at ? new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now';
+          var stageBadge = v.converted
+            ? `<span class="badge-stage badge-stage-converted">Donated ${v.donation_currency || '$'}${v.donation_amount || ''}</span>`
+            : (v.stage === 'modal_opened'
+              ? `<span class="badge-stage badge-stage-modal">Modal Opened</span>`
+              : (v.stage === 'form_filled'
+                ? `<span class="badge-stage badge-stage-form">Form Filled</span>`
+                : `<span class="badge-stage badge-stage-view">${v.max_scroll_pct || 0}% Read</span>`));
+
+          var durMin = Math.floor((v.time_on_page || 0) / 60);
+          var durSec = (v.time_on_page || 0) % 60;
+          var durStr = durMin > 0 ? (durMin + 'm ' + durSec + 's') : (durSec + 's');
+
+          tr.innerHTML = `
+            <td style="color:var(--muted); white-space:nowrap;">${timeStr}</td>
+            <td><span class="badge-ip">${v.ip || '127.0.0.1'}</span></td>
+            <td style="white-space:nowrap;">${v.flag || '🌐'} ${v.city || 'Unknown'}, ${v.country || 'Global'}</td>
+            <td style="font-family:monospace; font-size:0.8rem; font-weight:600;">${v.path}</td>
+            <td style="font-size:0.8rem; color:var(--muted);">${v.stop_location || (v.max_scroll_pct + '% scroll')}</td>
+            <td style="font-size:0.8rem;">${v.device || 'Mobile'} · ${v.browser || 'Browser'} (${v.os || 'OS'})</td>
+            <td style="font-size:0.8rem; color:var(--accent); font-weight:500;">${v.utm_campaign && v.utm_campaign !== 'none' ? v.utm_campaign : (v.traffic_source || 'Direct')}</td>
+            <td style="color:var(--muted); font-size:0.8rem;">${durStr}</td>
+            <td>${stageBadge}</td>
+          `;
+          visitorTbody.appendChild(tr);
+        });
+      }
+
+    } catch (err) {
+      console.warn('[Admin Analytics] Load summary error:', err);
+    }
   }
 
   /* ================================================================

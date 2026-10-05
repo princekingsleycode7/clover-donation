@@ -4,6 +4,8 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/analytics/track", "destination": "/api/analytics-track" },
+    { "source": "/api/analytics/summary", "destination": "/api/analytics-summary" },
     { "source": "/initiate-donation", "destination": "/api/initiate-donation" },
     { "source": "/config", "destination": "/api/config" },
     { "source": "/verify-transaction", "destination": "/api/verify-transaction" },

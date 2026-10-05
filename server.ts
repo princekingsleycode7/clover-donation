@@ -8,6 +8,7 @@ import path from 'path';
 import Flutterwave from 'flutterwave-node-v3';
 // @ts-ignore
 import forge from 'node-forge';
+import { extractClientIP, resolveGeoLocation, recordVisitorSession, getAnalyticsSummary } from './src/analytics-engine.ts';
 
 dotenv.config();
 
@@ -240,6 +241,42 @@ const handleConfigResponse = (_req: Request, res: Response) => {
 
 app.get('/api/config', handleConfigResponse);
 app.get('/config', handleConfigResponse);
+
+// ----------------------------------------------------------------------------
+// API: AUDIENCE & VISITOR ANALYTICS
+// ----------------------------------------------------------------------------
+const handleAnalyticsTrack = (req: Request, res: Response) => {
+  try {
+    const ip = extractClientIP(req);
+    const geo = resolveGeoLocation(req, req.body?.timezone);
+    const session = recordVisitorSession({
+      ...req.body,
+      ip,
+      geo
+    });
+    return res.json({
+      success: true,
+      recorded: true,
+      session_id: session.session_id,
+      location: `${session.city}, ${session.country} ${session.flag}`,
+      ip: session.ip
+    });
+  } catch (err: any) {
+    console.error('[server.ts] Analytics track error:', err);
+    return res.status(500).json({ error: err.message || 'Analytics track error' });
+  }
+};
+
+const handleAnalyticsSummary = (req: Request, res: Response) => {
+  const range = (req.query?.range || 'all').toString();
+  const summary = getAnalyticsSummary(range);
+  return res.json(summary);
+};
+
+app.post('/api/analytics/track', handleAnalyticsTrack);
+app.post('/api/analytics-track', handleAnalyticsTrack);
+app.get('/api/analytics/summary', handleAnalyticsSummary);
+app.get('/api/analytics-summary', handleAnalyticsSummary);
 
 // ----------------------------------------------------------------------------
 // API: KEY DIAGNOSTICS & VERIFICATION (Flutterwave & Supabase)
