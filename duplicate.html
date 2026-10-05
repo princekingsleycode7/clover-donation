@@ -1380,9 +1380,26 @@ iframe.flwpugpaidid,
       }
     }
 
-    function showError(msg) {
+    function showError(msg, allowManualKey) {
       if (!errorEl) return;
-      errorEl.textContent = msg;
+      if (allowManualKey) {
+        errorEl.innerHTML = msg + ' <button type="button" id="manualKeyBtn" style="background:none; border:none; padding:0; text-decoration:underline; cursor:pointer; font-weight:700; color:inherit; display:inline;">Enter Public Key manually</button>';
+        var btn = errorEl.querySelector('#manualKeyBtn');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var entered = window.prompt('Enter your Flutterwave Public Key (starts with FLWPUBK_):');
+            if (entered && isRealFlutterwavePubKey(entered)) {
+              localStorage.setItem('twp_flutterwave_public', sanitizeFlwKey(entered));
+              clearError();
+              if (submitBtn) submitBtn.click();
+            } else if (entered) {
+              alert('Invalid format. Flutterwave public keys must start with FLWPUBK_');
+            }
+          });
+        }
+      } else {
+        errorEl.textContent = msg;
+      }
       errorEl.hidden = false;
     }
 
@@ -1543,7 +1560,7 @@ iframe.flwpugpaidid,
         } else {
           keyErrorMsg = 'Payment Gateway Notice: Flutterwave Public Key is missing or pending deployment. If you just added keys in Vercel Environment Variables, please Redeploy your project on Vercel so the secrets take effect.';
         }
-        showError(keyErrorMsg);
+        showError(keyErrorMsg, true);
         return;
       }
 
