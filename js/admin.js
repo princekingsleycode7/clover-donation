@@ -67,18 +67,42 @@
     }
   }
 
+  async function safeFetchJson(primaryUrl, alternateUrl, options) {
+    try {
+      var res = await fetch(primaryUrl, options);
+      if (res.status === 404 && alternateUrl) {
+        res = await fetch(alternateUrl, options);
+      }
+      var text = await res.text();
+      var json = null;
+      try {
+        json = JSON.parse(text);
+      } catch (parseErr) {
+        return { ok: false, status: res.status, data: { error: 'Server response error (' + res.status + ').' } };
+      }
+      return { ok: res.ok, status: res.status, data: json };
+    } catch (netErr) {
+      return { ok: false, status: 0, data: { error: 'Connection failed. Please check your internet connection and try again.' } };
+    }
+  }
+
   async function checkAdminStatus() {
     try {
-      var res = await fetch('/api/admin/status');
-      if (res.ok) {
-        var data = await res.json();
-        state.hasAdmin = Boolean(data.has_admin);
-        state.canRegister = Boolean(data.can_register);
-
+      var result = await safeFetchJson('/api/admin/status', '/api/admin-status');
+      if (result.ok && result.data) {
+        state.hasAdmin = Boolean(result.data.has_admin);
+        state.canRegister = Boolean(result.data.can_register);
+        updateRegistrationButtonVisibility();
+      } else {
+        // Fallback: If no admin recorded, allow registration setup
+        state.canRegister = true;
+        state.hasAdmin = false;
         updateRegistrationButtonVisibility();
       }
     } catch (err) {
-      console.warn('[Admin Controller] Could not fetch admin status:', err);
+      state.canRegister = true;
+      state.hasAdmin = false;
+      updateRegistrationButtonVisibility();
     }
   }
 
@@ -195,14 +219,14 @@
           var isEmail = val.includes('@');
           var payload = isEmail ? { email: val } : { reference: val };
 
-          var res = await fetch('/api/ledger/unlock', {
+          var result = await safeFetchJson('/api/ledger/unlock', '/api/ledger-unlock', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
-          var data = await res.json();
+          var data = result.data || {};
 
-          if (data.unlocked || data.success) {
+          if (result.ok && (data.unlocked || data.success)) {
             state.ledgerUnlocked = true;
             localStorage.setItem('twp_ledger_unlocked', 'true');
             renderLedgerView();
@@ -214,7 +238,7 @@
           }
         } catch (e) {
           if (errEl) {
-            errEl.textContent = 'Network error verifying donation. Please try again.';
+            errEl.textContent = 'Could not verify donation. Please try again.';
             errEl.style.display = 'block';
           }
         } finally {
@@ -283,10 +307,9 @@
      ================================================================ */
   async function loadLedgerDonations() {
     try {
-      var res = await fetch('/api/ledger/donations');
-      if (res.ok) {
-        var data = await res.json();
-        state.donations = data.donations || [];
+      var result = await safeFetchJson('/api/ledger/donations', '/api/ledger-donations');
+      if (result.ok && result.data) {
+        state.donations = result.data.donations || [];
         renderLedgerTable();
         updateLedgerMetrics();
       }
@@ -475,14 +498,14 @@
         submitBtn.textContent = 'Registering administrator…';
 
         try {
-          var res = await fetch('/api/admin/register', {
+          var result = await safeFetchJson('/api/admin/register', '/api/admin-register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: name, email: email, password: pass })
           });
-          var data = await res.json();
+          var data = result.data || {};
 
-          if (res.ok && data.success) {
+          if (result.ok && data.success) {
             // Registration succeeded!
             state.adminToken = data.token;
             state.adminProfile = data.admin;
@@ -500,14 +523,14 @@
 
           } else {
             if (feedback) {
-              feedback.textContent = data.error || 'Registration failed.';
+              feedback.textContent = data.error || 'Registration failed (' + (result.status || 'unknown') + ').';
               feedback.className = 'feedback-msg error';
               feedback.style.display = 'block';
             }
           }
         } catch (err) {
           if (feedback) {
-            feedback.textContent = 'Network error. Please try again.';
+            feedback.textContent = 'Could not register administrator. Please check your connection and try again.';
             feedback.className = 'feedback-msg error';
             feedback.style.display = 'block';
           }
@@ -532,14 +555,14 @@
         submitBtn.textContent = 'Signing in…';
 
         try {
-          var res = await fetch('/api/admin/login', {
+          var result = await safeFetchJson('/api/admin/login', '/api/admin-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email, password: pass })
           });
-          var data = await res.json();
+          var data = result.data || {};
 
-          if (res.ok && data.success) {
+          if (result.ok && data.success) {
             state.adminToken = data.token;
             state.adminProfile = data.admin;
             state.isAdminLoggedIn = true;
@@ -555,14 +578,21 @@
 
           } else {
             if (feedback) {
-              feedback.textContent = data.error || 'Invalid administrator credentials.';
+              if (data.can_register) {
+                state.canRegister = true;
+                state.hasAdmin = false;
+                updateRegistrationButtonVisibility();
+                feedback.textContent = data.error || 'No administrator registered yet. Please click "Register Admin" above.';
+              } else {
+                feedback.textContent = data.error || 'Invalid administrator credentials.';
+              }
               feedback.className = 'feedback-msg error';
               feedback.style.display = 'block';
             }
           }
         } catch (err) {
           if (feedback) {
-            feedback.textContent = 'Network error. Please try again.';
+            feedback.textContent = 'Could not sign in. Please verify your credentials or server connection.';
             feedback.className = 'feedback-msg error';
             feedback.style.display = 'block';
           }
@@ -664,7 +694,7 @@
         submitBtn.textContent = 'Auditing & recording donation…';
 
         try {
-          var res = await fetch('/api/admin-actions', {
+          var result = await safeFetchJson('/api/admin-actions', '/api/functions/admin-actions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -676,9 +706,9 @@
               campaign: campaign
             })
           });
-          var data = await res.json();
+          var data = result.data || {};
 
-          if (data.success) {
+          if (result.ok && data.success) {
             if (feedback) {
               feedback.textContent = `Donation of ${currency} ${amount} by ${name} recorded and broadcast!`;
               feedback.className = 'feedback-msg success';
@@ -774,12 +804,12 @@
         runReconcileBtn.textContent = 'Running reconciliation…';
 
         try {
-          var res = await fetch('/api/admin-actions', {
+          var result = await safeFetchJson('/api/admin-actions', '/api/functions/admin-actions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'trigger_reconciliation' })
           });
-          var data = await res.json();
+          var data = result.data || {};
           if (feedback) {
             feedback.textContent = data.message || 'Reconciliation completed successfully.';
             feedback.className = 'feedback-msg success';
@@ -999,9 +1029,435 @@
         });
       }
 
+      // 7. Render D3.js Charts (Conversion Trends, Abandonment Funnel, Geo Breakdown)
+      cachedAnalyticsData = data;
+      renderAllD3Charts(data);
+
     } catch (err) {
       console.warn('[Admin Analytics] Load summary error:', err);
     }
+  }
+
+  /* ================================================================
+     D3.JS VISUALIZATION ENGINE (CONVERSION, ABANDONMENT, GEOLOCATION)
+     ================================================================ */
+  var cachedAnalyticsData = null;
+
+  function renderAllD3Charts(data) {
+    if (typeof d3 === 'undefined' || !data) return;
+    renderD3ConversionTrendChart(data.timeline_trends || []);
+    renderD3AbandonmentFunnelChart(data.funnel || []);
+    renderD3GeoBarChart(data.countries_breakdown || data.countries || []);
+  }
+
+  // Handle responsive redraw on window resize
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      if (cachedAnalyticsData && $('tabAnalytics') && $('tabAnalytics').style.display !== 'none') {
+        renderAllD3Charts(cachedAnalyticsData);
+      }
+    }, 200);
+  });
+
+  // Chart 1: Multi-metric Conversion Rates & Trends (D3.js)
+  function renderD3ConversionTrendChart(timelineData) {
+    var container = document.getElementById('d3ConversionTrendChart');
+    if (!container || typeof d3 === 'undefined') return;
+    container.innerHTML = '';
+
+    if (!timelineData || timelineData.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--muted); font-size:0.85rem;">No trend data available for this range.</div>';
+      return;
+    }
+
+    var containerWidth = container.clientWidth || 800;
+    var margin = { top: 25, right: 55, bottom: 35, left: 45 };
+    var width = containerWidth - margin.left - margin.right;
+    var height = 240 - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', height + margin.top + margin.bottom)
+      .attr('viewBox', `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Tooltip instance
+    var tooltip = d3.select('body').select('.d3-trend-tooltip');
+    if (tooltip.empty()) {
+      tooltip = d3.select('body').append('div').attr('class', 'd3-tooltip d3-trend-tooltip');
+    }
+
+    // Scales
+    var x0 = d3.scaleBand()
+      .domain(timelineData.map(d => d.label))
+      .rangeRound([0, width])
+      .paddingInner(0.25);
+
+    var x1 = d3.scaleBand()
+      .domain(['visitors', 'dropoffs', 'conversions'])
+      .rangeRound([0, x0.bandwidth()])
+      .padding(0.08);
+
+    var maxVol = d3.max(timelineData, d => Math.max(d.visitors || 0, 10)) * 1.25;
+    var yLeft = d3.scaleLinear()
+      .domain([0, maxVol])
+      .range([height, 0]);
+
+    var maxRate = Math.max(d3.max(timelineData, d => d.conversion_rate || 0) || 15, 20) * 1.25;
+    var yRight = d3.scaleLinear()
+      .domain([0, maxRate])
+      .range([height, 0]);
+
+    // Horizontal Gridlines
+    svg.append('g')
+      .attr('class', 'd3-grid')
+      .call(d3.axisLeft(yLeft).ticks(5).tickSize(-width).tickFormat(''));
+
+    // Gradients
+    var defs = svg.append('defs');
+    var lineGrad = defs.append('linearGradient')
+      .attr('id', 'convLineGrad')
+      .attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '0%');
+    lineGrad.append('stop').attr('offset', '0%').attr('stop-color', '#10b981');
+    lineGrad.append('stop').attr('offset', '100%').attr('stop-color', '#047857');
+
+    var areaGrad = defs.append('linearGradient')
+      .attr('id', 'convAreaGrad')
+      .attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
+    areaGrad.append('stop').attr('offset', '0%').attr('stop-color', '#10b981').attr('stop-opacity', 0.28);
+    areaGrad.append('stop').attr('offset', '100%').attr('stop-color', '#10b981').attr('stop-opacity', 0.0);
+
+    // Grouped Bars for Visitors, Dropoffs, Conversions
+    var barColors = {
+      visitors: '#3b82f6',
+      dropoffs: '#cbd5e1',
+      conversions: '#16a34a'
+    };
+
+    var group = svg.selectAll('.bar-group')
+      .data(timelineData)
+      .enter().append('g')
+      .attr('class', 'bar-group')
+      .attr('transform', d => `translate(${x0(d.label)},0)`);
+
+    ['visitors', 'dropoffs', 'conversions'].forEach(function (key) {
+      group.append('rect')
+        .attr('class', 'd3-bar')
+        .attr('x', x1(key))
+        .attr('y', d => yLeft(d[key] || 0))
+        .attr('width', x1.bandwidth())
+        .attr('height', d => height - yLeft(d[key] || 0))
+        .attr('fill', barColors[key])
+        .attr('rx', 3)
+        .on('mouseenter', function (event, d) {
+          var keyLabel = key === 'visitors' ? 'Total Visitors' : (key === 'dropoffs' ? 'Abandoned (Drop-Off)' : 'Completed Donations');
+          tooltip.style('opacity', 1)
+            .html(`
+              <div style="font-weight:700; margin-bottom:4px; color:#fff;">📅 ${d.label}</div>
+              <div style="color:${barColors[key]}; font-weight:600;">${keyLabel}: ${d[key]}</div>
+              <div style="color:#94a3b8; font-size:11px; margin-top:2px;">Rate: <strong>${d.conversion_rate}%</strong> · Rev: $${d.revenue || 0}</div>
+            `);
+        })
+        .on('mousemove', function (event) {
+          tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseleave', function () {
+          tooltip.style('opacity', 0);
+        });
+    });
+
+    // Line & Area for Conversion Rate %
+    var areaGen = d3.area()
+      .x(d => (x0(d.label) || 0) + x0.bandwidth() / 2)
+      .y0(height)
+      .y1(d => yRight(d.conversion_rate || 0))
+      .curve(d3.curveMonotoneX);
+
+    var lineGen = d3.line()
+      .x(d => (x0(d.label) || 0) + x0.bandwidth() / 2)
+      .y(d => yRight(d.conversion_rate || 0))
+      .curve(d3.curveMonotoneX);
+
+    svg.append('path')
+      .datum(timelineData)
+      .attr('class', 'd3-area')
+      .attr('fill', 'url(#convAreaGrad)')
+      .attr('d', areaGen);
+
+    svg.append('path')
+      .datum(timelineData)
+      .attr('class', 'd3-line')
+      .attr('stroke', 'url(#convLineGrad)')
+      .attr('d', lineGen);
+
+    // Glowing Interactive Dots along line
+    svg.selectAll('.d3-conv-dot')
+      .data(timelineData)
+      .enter().append('circle')
+      .attr('class', 'd3-dot d3-conv-dot')
+      .attr('cx', d => (x0(d.label) || 0) + x0.bandwidth() / 2)
+      .attr('cy', d => yRight(d.conversion_rate || 0))
+      .attr('r', 4.5)
+      .attr('fill', '#fff')
+      .attr('stroke', '#047857')
+      .attr('stroke-width', 2.5)
+      .on('mouseenter', function (event, d) {
+        tooltip.style('opacity', 1)
+          .html(`
+            <div style="font-weight:700; color:#34d399;">⚡ ${d.label} Conversion Rate</div>
+            <div style="font-size:13px; font-weight:700; color:#fff;">${d.conversion_rate}% Conversion</div>
+            <div style="color:#94a3b8; font-size:11px;">${d.conversions} donations out of ${d.visitors} visits</div>
+          `);
+      })
+      .on('mousemove', function (event) {
+        tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mouseleave', function () {
+        tooltip.style('opacity', 0);
+      });
+
+    // X Axis
+    svg.append('g')
+      .attr('class', 'd3-axis')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x0).tickSize(0).tickPadding(8));
+
+    // Y Left Axis (Volume)
+    svg.append('g')
+      .attr('class', 'd3-axis')
+      .call(d3.axisLeft(yLeft).ticks(5).tickFormat(d3.format('~s')));
+
+    // Y Right Axis (Conversion Rate %)
+    svg.append('g')
+      .attr('class', 'd3-axis')
+      .attr('transform', `translate(${width},0)`)
+      .call(d3.axisRight(yRight).ticks(5).tickFormat(d => d + '%'));
+  }
+
+  // Chart 2: Session Abandonment & Drop-Off Funnel (D3.js)
+  function renderD3AbandonmentFunnelChart(funnelData) {
+    var container = document.getElementById('d3FunnelChart');
+    if (!container || typeof d3 === 'undefined') return;
+    container.innerHTML = '';
+
+    if (!funnelData || funnelData.length === 0) return;
+
+    var containerWidth = container.clientWidth || 450;
+    var margin = { top: 15, right: 75, bottom: 20, left: 130 };
+    var width = containerWidth - margin.left - margin.right;
+    var height = 210 - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', height + margin.top + margin.bottom)
+      .attr('viewBox', `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    var tooltip = d3.select('body').select('.d3-trend-tooltip');
+
+    var yScale = d3.scaleBand()
+      .domain(funnelData.map(d => d.step))
+      .rangeRound([0, height])
+      .padding(0.22);
+
+    var maxCount = d3.max(funnelData, d => d.count || 1) || 1;
+    var xScale = d3.scaleLinear()
+      .domain([0, maxCount])
+      .range([0, width]);
+
+    // Color gradient interpolation based on funnel depth
+    var colorScale = d3.scaleLinear()
+      .domain([1, 6])
+      .range(['#1b56fd', '#10b981']);
+
+    // Background track bars
+    svg.selectAll('.funnel-bg-bar')
+      .data(funnelData)
+      .enter().append('rect')
+      .attr('class', 'funnel-bg-bar')
+      .attr('x', 0)
+      .attr('y', d => yScale(d.step))
+      .attr('width', width)
+      .attr('height', yScale.bandwidth())
+      .attr('fill', 'rgba(1, 24, 216, 0.04)')
+      .attr('rx', 4);
+
+    // Connecting trapezoids between funnel steps
+    for (var i = 0; i < funnelData.length - 1; i++) {
+      var d1 = funnelData[i];
+      var d2 = funnelData[i + 1];
+      var y1 = yScale(d1.step) + yScale.bandwidth();
+      var y2 = yScale(d2.step);
+      var w1 = xScale(d1.count);
+      var w2 = xScale(d2.count);
+
+      var points = [
+        `0,${y1}`,
+        `${w1},${y1}`,
+        `${w2},${y2}`,
+        `0,${y2}`
+      ].join(' ');
+
+      svg.append('polygon')
+        .attr('points', points)
+        .attr('fill', colorScale(d1.step))
+        .attr('opacity', 0.12);
+    }
+
+    // Active Funnel step bars
+    svg.selectAll('.funnel-active-bar')
+      .data(funnelData)
+      .enter().append('rect')
+      .attr('class', 'd3-bar funnel-active-bar')
+      .attr('x', 0)
+      .attr('y', d => yScale(d.step))
+      .attr('width', d => Math.max(xScale(d.count), 4))
+      .attr('height', yScale.bandwidth())
+      .attr('fill', d => colorScale(d.step))
+      .attr('rx', 4)
+      .on('mouseenter', function (event, d) {
+        var dropInfo = d.step > 1 && d.drop_off_pct ? `<div style="color:#f87171; font-weight:600;">↓ ${d.drop_off_pct}% Drop-off at this transition</div>` : '';
+        tooltip.style('opacity', 1)
+          .html(`
+            <div style="font-weight:700; color:#60a5fa;">Step ${d.step}: ${d.label}</div>
+            <div style="font-weight:600; color:#fff;">${d.count} Users (${d.pct}% retained)</div>
+            ${dropInfo}
+          `);
+      })
+      .on('mousemove', function (event) {
+        tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mouseleave', function () {
+        tooltip.style('opacity', 0);
+      });
+
+    // Step labels on Left Axis
+    svg.selectAll('.funnel-label-text')
+      .data(funnelData)
+      .enter().append('text')
+      .attr('x', -8)
+      .attr('y', d => yScale(d.step) + yScale.bandwidth() / 2)
+      .attr('text-anchor', 'end')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', 'var(--ink)')
+      .attr('font-size', '11px')
+      .attr('font-weight', '600')
+      .text(d => `Step ${d.step}: ${d.label.split(' ')[0]}`);
+
+    // Value counts on Right
+    svg.selectAll('.funnel-val-text')
+      .data(funnelData)
+      .enter().append('text')
+      .attr('x', d => Math.max(xScale(d.count), 4) + 8)
+      .attr('y', d => yScale(d.step) + yScale.bandwidth() / 2)
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', 'var(--ink)')
+      .attr('font-size', '11px')
+      .attr('font-weight', '700')
+      .text(d => `${d.count} (${d.pct}%)`);
+  }
+
+  // Chart 3: Audience Geolocation & Regional Performance (D3.js)
+  function renderD3GeoBarChart(countriesData) {
+    var container = document.getElementById('d3GeoBarChart');
+    if (!container || typeof d3 === 'undefined') return;
+    container.innerHTML = '';
+
+    if (!countriesData || countriesData.length === 0) return;
+
+    var topCountries = countriesData.slice(0, 5);
+    var containerWidth = container.clientWidth || 450;
+    var margin = { top: 10, right: 65, bottom: 20, left: 110 };
+    var width = containerWidth - margin.left - margin.right;
+    var height = 190 - margin.top - margin.bottom;
+
+    var svg = d3.select(container)
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', height + margin.top + margin.bottom)
+      .attr('viewBox', `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    var tooltip = d3.select('body').select('.d3-trend-tooltip');
+
+    var yScale = d3.scaleBand()
+      .domain(topCountries.map(d => d.country))
+      .rangeRound([0, height])
+      .padding(0.25);
+
+    var maxCount = d3.max(topCountries, d => d.count || 1) || 1;
+    var xScale = d3.scaleLinear()
+      .domain([0, maxCount])
+      .range([0, width]);
+
+    // Background track bars
+    svg.selectAll('.geo-bg-bar')
+      .data(topCountries)
+      .enter().append('rect')
+      .attr('x', 0)
+      .attr('y', d => yScale(d.country))
+      .attr('width', width)
+      .attr('height', yScale.bandwidth())
+      .attr('fill', 'rgba(1, 24, 216, 0.04)')
+      .attr('rx', 4);
+
+    // Active Geo bars
+    svg.selectAll('.geo-active-bar')
+      .data(topCountries)
+      .enter().append('rect')
+      .attr('class', 'd3-bar')
+      .attr('x', 0)
+      .attr('y', d => yScale(d.country))
+      .attr('width', d => Math.max(xScale(d.count), 4))
+      .attr('height', yScale.bandwidth())
+      .attr('fill', '#4f46e5')
+      .attr('rx', 4)
+      .on('mouseenter', function (event, d) {
+        tooltip.style('opacity', 1)
+          .html(`
+            <div style="font-weight:700; color:#fff;">${d.flag || '🌐'} ${d.country}</div>
+            <div style="color:#a5b4fc; font-weight:600;">${d.count} Sessions (${d.pct || ''})</div>
+            <div style="color:#34d399; font-size:11px; margin-top:2px;">Conversion Rate: <strong>${d.conversion_rate || '0%'}</strong></div>
+          `);
+      })
+      .on('mousemove', function (event) {
+        tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mouseleave', function () {
+        tooltip.style('opacity', 0);
+      });
+
+    // Country Flag & Name label
+    svg.selectAll('.geo-label-text')
+      .data(topCountries)
+      .enter().append('text')
+      .attr('x', -8)
+      .attr('y', d => yScale(d.country) + yScale.bandwidth() / 2)
+      .attr('text-anchor', 'end')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', 'var(--ink)')
+      .attr('font-size', '11px')
+      .attr('font-weight', '600')
+      .text(d => `${d.flag || '🌐'} ${d.country.length > 12 ? d.country.slice(0, 10) + '…' : d.country}`);
+
+    // Count & Conv Rate Badge on Right
+    svg.selectAll('.geo-val-text')
+      .data(topCountries)
+      .enter().append('text')
+      .attr('x', d => Math.max(xScale(d.count), 4) + 8)
+      .attr('y', d => yScale(d.country) + yScale.bandwidth() / 2)
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', 'var(--ink)')
+      .attr('font-size', '11px')
+      .attr('font-weight', '700')
+      .text(d => `${d.count} (${d.conversion_rate || d.pct})`);
   }
 
   /* ================================================================

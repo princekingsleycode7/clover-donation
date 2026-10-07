@@ -9,6 +9,7 @@ import Flutterwave from 'flutterwave-node-v3';
 // @ts-ignore
 import forge from 'node-forge';
 import { extractClientIP, resolveGeoLocation, recordVisitorSession, getAnalyticsSummary } from './src/analytics-engine.ts';
+import { checkAdminRegistrationStatus, registerPrimaryAdmin, loginAdmin } from './src/admin-auth-service.ts';
 
 dotenv.config();
 
@@ -1976,104 +1977,30 @@ function hashPassword(password: string, salt: string): string {
 }
 
 // Check admin registration status: allows registration ONLY if 0 admins exist
-app.get('/api/admin/status', (_req: Request, res: Response) => {
-  const admins = getStoredAdmins();
-  return res.json({
-    has_admin: admins.length > 0,
-    can_register: admins.length === 0,
-    admin_count: admins.length,
-    registered_admin_email: admins.length > 0 ? admins[0].email : null
-  });
-});
+const handleAdminStatus = (_req: Request, res: Response) => {
+  const status = checkAdminRegistrationStatus();
+  return res.json(status);
+};
+app.get('/api/admin/status', handleAdminStatus);
+app.get('/api/admin-status', handleAdminStatus);
 
 // Register single initial admin. Once 1 admin has registered, permanently blocks further registration
-app.post('/api/admin/register', (req: Request, res: Response) => {
-  const admins = getStoredAdmins();
-  if (admins.length > 0) {
-    return res.status(403).json({
-      success: false,
-      error: 'Registration is permanently closed. An administrator account is already registered.'
-    });
-  }
-
+const handleAdminRegister = (req: Request, res: Response) => {
   const { email, password, name } = req.body || {};
-  const cleanEmail = String(email || '').trim().toLowerCase();
-  const cleanName = String(name || '').trim() || 'Primary Administrator';
-
-  if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-    return res.status(400).json({ success: false, error: 'A valid email address is required.' });
-  }
-
-  if (!password || String(password).length < 6) {
-    return res.status(400).json({ success: false, error: 'Password must be at least 6 characters long.' });
-  }
-
-  const salt = crypto.randomBytes(16).toString('hex');
-  const passwordHash = hashPassword(String(password), salt);
-
-  const newAdmin: AdminRecord = {
-    id: `adm_${Date.now()}`,
-    email: cleanEmail,
-    name: cleanName,
-    passwordHash,
-    salt,
-    role: 'admin',
-    created_at: new Date().toISOString()
-  };
-
-  admins.push(newAdmin);
-  saveStoredAdmins(admins);
-
-  const sessionToken = crypto.randomBytes(32).toString('hex');
-  return res.status(201).json({
-    success: true,
-    message: 'Primary administrator registered successfully.',
-    token: sessionToken,
-    admin: {
-      id: newAdmin.id,
-      email: newAdmin.email,
-      name: newAdmin.name,
-      role: 'admin'
-    }
-  });
-});
+  const result = registerPrimaryAdmin(name, email, password);
+  return res.status(result.status || 200).json(result);
+};
+app.post('/api/admin/register', handleAdminRegister);
+app.post('/api/admin-register', handleAdminRegister);
 
 // Admin Login
-app.post('/api/admin/login', (req: Request, res: Response) => {
+const handleAdminLogin = (req: Request, res: Response) => {
   const { email, password } = req.body || {};
-  const admins = getStoredAdmins();
-  const cleanEmail = String(email || '').trim().toLowerCase();
-
-  if (admins.length === 0) {
-    return res.status(400).json({
-      success: false,
-      can_register: true,
-      error: 'No administrator registered yet. Please create the initial admin account first.'
-    });
-  }
-
-  const admin = admins.find(a => a.email.toLowerCase() === cleanEmail);
-  if (!admin) {
-    return res.status(401).json({ success: false, error: 'Invalid admin email or password.' });
-  }
-
-  const hash = hashPassword(String(password || ''), admin.salt);
-  if (hash !== admin.passwordHash) {
-    return res.status(401).json({ success: false, error: 'Invalid admin email or password.' });
-  }
-
-  const sessionToken = crypto.randomBytes(32).toString('hex');
-  return res.json({
-    success: true,
-    token: sessionToken,
-    admin: {
-      id: admin.id,
-      email: admin.email,
-      name: admin.name,
-      role: 'admin'
-    }
-  });
-});
+  const result = loginAdmin(email, password);
+  return res.status(result.status || 200).json(result);
+};
+app.post('/api/admin/login', handleAdminLogin);
+app.post('/api/admin-login', handleAdminLogin);
 
 // ----------------------------------------------------------------------------
 // TRANSPARENCY PAYWALL & VERIFIED DONOR UNLOCK

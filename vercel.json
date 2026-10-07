@@ -4,6 +4,12 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/admin/status", "destination": "/api/admin-status" },
+    { "source": "/api/admin/login", "destination": "/api/admin-login" },
+    { "source": "/api/admin/register", "destination": "/api/admin-register" },
+    { "source": "/api/admin-actions", "destination": "/api/admin-actions" },
+    { "source": "/api/ledger/donations", "destination": "/api/ledger-donations" },
+    { "source": "/api/ledger/unlock", "destination": "/api/ledger-unlock" },
     { "source": "/api/analytics/track", "destination": "/api/analytics-track" },
     { "source": "/api/analytics/summary", "destination": "/api/analytics-summary" },
     { "source": "/initiate-donation", "destination": "/api/initiate-donation" },

@@ -386,6 +386,42 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
 .badge-stage-modal { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 .badge-stage-form { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
 .badge-stage-view { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+/* ============ D3.JS INTERACTIVE VISUALIZATION STYLES ============ */
+.d3-chart-card {
+  background: var(--paper); border: var(--hairline); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 20px -8px rgba(1, 24, 216, .05);
+}
+.d3-chart-header {
+  display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;
+  margin-bottom: 1.25rem; border-bottom: var(--hairline); padding-bottom: .85rem;
+}
+.d3-chart-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 .25rem; color: var(--ink); }
+.d3-chart-subtitle { font-size: .84rem; color: var(--muted); margin: 0; }
+.d3-chart-legend {
+  display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; font-size: .8rem; font-weight: 600;
+}
+.d3-legend-item { display: inline-flex; align-items: center; gap: .45rem; }
+.d3-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.d3-svg-wrap {
+  width: 100%; position: relative; min-height: 240px; overflow-x: auto;
+}
+.d3-tooltip {
+  position: absolute; pointer-events: none; z-index: 1000;
+  background: #0f172a; color: #fff; padding: .65rem .85rem; border-radius: 8px;
+  font-size: .78rem; line-height: 1.4; box-shadow: 0 10px 25px -5px rgba(0,0,0,.4);
+  opacity: 0; transition: opacity .15s ease; white-space: nowrap;
+}
+.d3-tooltip strong { color: #60a5fa; }
+.d3-axis text { fill: var(--muted); font-size: 11px; font-family: inherit; }
+.d3-axis line, .d3-axis path { stroke: rgba(1, 24, 216, .1); }
+.d3-grid line { stroke: rgba(1, 24, 216, .05); stroke-dasharray: 3 3; }
+.d3-bar { transition: opacity .2s, transform .2s; cursor: pointer; }
+.d3-bar:hover { opacity: .85; }
+.d3-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.d3-area { opacity: .18; }
+.d3-dot { cursor: pointer; transition: r .2s, fill .2s; }
+.d3-dot:hover { r: 6; }
 </style>
 </head>
 <body>
@@ -751,6 +787,23 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
             </div>
           </div>
 
+          <!-- D3.JS HERO CHART: VISITOR CONVERSION RATES & TRAFFIC VELOCITY -->
+          <div class="d3-chart-card">
+            <div class="d3-chart-header">
+              <div>
+                <h4 class="d3-chart-title">Visitor Conversion Rates & Session Trends (D3.js)</h4>
+                <p class="d3-chart-subtitle">Real-time multi-dimensional tracking of visitor flow, abandoned journeys, and donation conversions</p>
+              </div>
+              <div class="d3-chart-legend">
+                <div class="d3-legend-item"><span class="d3-legend-dot" style="background:#3b82f6;"></span> Total Visitors</div>
+                <div class="d3-legend-item"><span class="d3-legend-dot" style="background:#cbd5e1;"></span> Abandoned Sessions</div>
+                <div class="d3-legend-item"><span class="d3-legend-dot" style="background:#16a34a;"></span> Completed Donations</div>
+                <div class="d3-legend-item"><span class="d3-legend-dot" style="background:#10b981; border: 2px solid #047857;"></span> Conversion Rate %</div>
+              </div>
+            </div>
+            <div id="d3ConversionTrendChart" class="d3-svg-wrap"></div>
+          </div>
+
           <!-- Analytics Grid: "Where They Stopped (Funnel)" & "Where They View (Pages)" -->
           <div class="analytics-grid-2">
             
@@ -758,10 +811,13 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
             <div class="analytics-panel">
               <div class="analytics-panel-header">
                 <div>
-                  <h4 class="analytics-panel-title">Where Visitors Stopped (Drop-Off Funnel)</h4>
+                  <h4 class="analytics-panel-title">Session Abandonment & Funnel (D3.js)</h4>
                   <p class="analytics-panel-subtitle">Pinpoint exact stages where audience leaves before donating</p>
                 </div>
               </div>
+
+              <!-- D3 Funnel Step Visualization -->
+              <div id="d3FunnelChart" class="d3-svg-wrap" style="min-height: 220px; margin-bottom: 1.25rem;"></div>
 
               <div class="funnel-list" id="anlFunnelContainer">
                 <!-- Dynamically populated funnel steps -->
@@ -811,10 +867,13 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
             <div class="analytics-panel">
               <div class="analytics-panel-header">
                 <div>
-                  <h4 class="analytics-panel-title">Audience Geographic Locations</h4>
-                  <p class="analytics-panel-subtitle">Countries and regions accessing your campaign</p>
+                  <h4 class="analytics-panel-title">Audience Geographic Breakdown (D3.js)</h4>
+                  <p class="analytics-panel-subtitle">Territory distribution & regional conversion performance</p>
                 </div>
               </div>
+
+              <!-- D3 Geolocation Bar Chart -->
+              <div id="d3GeoBarChart" class="d3-svg-wrap" style="min-height: 210px; margin-bottom: 1.25rem;"></div>
 
               <div class="geo-list" id="anlGeoList">
                 <!-- Dynamically populated country rows -->
@@ -1005,6 +1064,9 @@ h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: 
 
 <!-- Flutterwave Checkout script (for the $5 supporter pass) -->
 <script src="https://checkout.flutterwave.com/v3.js"></script>
+
+<!-- D3.js Visualization Engine -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 
 <!-- Admin & Ledger Controller -->
 <script src="/js/admin.js"></script>
