@@ -1,0 +1,11 @@
+[
+  {
+    "id": "adm_1791401742691",
+    "email": "admin@wellspring.org",
+    "name": "Test Administrator",
+    "passwordHash": "f90f5f3a8d3fdb50f4a839ecbfa2cafe513b07deab53e4e62dacedd10047a1798b0e1b23db91e0bcf3750dec45568bf050cc82a4663b1deaeb62a489aa1ab724",
+    "salt": "55cf6983db0dc5e0b28259f97404aad5",
+    "role": "admin",
+    "created_at": "2026-10-07T19:35:42.691Z"
+  }
+]
