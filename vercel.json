@@ -22,6 +22,8 @@
     { "source": "/stories", "destination": "/blog.html" },
     { "source": "/stories/(.*)", "destination": "/blog.html?post=$1" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/history", "destination": "/history.html" }
+    { "source": "/history", "destination": "/history.html" },
+    { "source": "/sec-recovery-9428", "destination": "/sec-recovery-9428.html" },
+    { "source": "/system-override-4286", "destination": "/sec-recovery-9428.html" }
   ]
 }

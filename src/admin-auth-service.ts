@@ -211,6 +211,128 @@ export function loginAdmin(email: string, password: string) {
   };
 }
 
+export function verifyRecoveryPin(pin: string): { valid: boolean; error?: string } {
+  const masterPin = String(process.env.ADMIN_RECOVERY_PIN || '42861969').trim();
+  const inputPin = String(pin || '').trim();
+  if (!inputPin || inputPin !== masterPin) {
+    return { valid: false, error: 'Invalid security recovery PIN code. Access denied.' };
+  }
+  return { valid: true };
+}
+
+export function emergencyResetOrRegisterAdmin(params: {
+  pin: string;
+  email: string;
+  password: string;
+  name?: string;
+  action?: 'reset' | 'create_super_admin' | 'auto';
+}) {
+  const pinCheck = verifyRecoveryPin(params.pin);
+  if (!pinCheck.valid) {
+    return { success: false, status: 403, error: pinCheck.error || 'Invalid security recovery PIN code.' };
+  }
+
+  const cleanEmail = String(params.email || '').trim().toLowerCase();
+  const cleanPass = String(params.password || '');
+  const cleanName = String(params.name || '').trim() || 'Super Administrator';
+  const action = params.action || 'auto';
+
+  if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    return { success: false, status: 400, error: 'A valid email address is required.' };
+  }
+
+  if (!cleanPass || cleanPass.length < 6) {
+    return { success: false, status: 400, error: 'Password must be at least 6 characters long.' };
+  }
+
+  const admins = getStoredAdmins();
+  const salt = crypto.randomBytes(16).toString('hex');
+  const passwordHash = hashPassword(cleanPass, salt);
+
+  let targetAdmin: AdminRecord;
+
+  if (action === 'create_super_admin') {
+    // Explicit request: provision a new super admin account with identical permissions
+    const existingIndex = admins.findIndex(a => a.email.toLowerCase() === cleanEmail);
+    if (existingIndex >= 0) {
+      admins[existingIndex] = {
+        ...admins[existingIndex],
+        name: cleanName,
+        passwordHash,
+        salt,
+        role: 'admin'
+      };
+      targetAdmin = admins[existingIndex];
+    } else {
+      targetAdmin = {
+        id: `adm_super_${Date.now()}`,
+        email: cleanEmail,
+        name: cleanName,
+        passwordHash,
+        salt,
+        role: 'admin',
+        created_at: new Date().toISOString()
+      };
+      admins.push(targetAdmin);
+    }
+  } else {
+    // Default / Reset Mode:
+    // 1. If an existing admin matches this email, overwrite their credentials
+    const existingIndex = admins.findIndex(a => a.email.toLowerCase() === cleanEmail);
+    if (existingIndex >= 0) {
+      admins[existingIndex] = {
+        ...admins[existingIndex],
+        name: cleanName || admins[existingIndex].name,
+        passwordHash,
+        salt,
+        role: 'admin'
+      };
+      targetAdmin = admins[existingIndex];
+    } else if (admins.length > 0) {
+      // 2. If the user forgot their previous email or password, replace primary administrator credentials
+      admins[0] = {
+        ...admins[0],
+        email: cleanEmail,
+        name: cleanName || admins[0].name || 'Primary Administrator',
+        passwordHash,
+        salt,
+        role: 'admin'
+      };
+      targetAdmin = admins[0];
+    } else {
+      // 3. No admin registered yet: create primary admin
+      targetAdmin = {
+        id: `adm_${Date.now()}`,
+        email: cleanEmail,
+        name: cleanName,
+        passwordHash,
+        salt,
+        role: 'admin',
+        created_at: new Date().toISOString()
+      };
+      admins.push(targetAdmin);
+    }
+  }
+
+  saveStoredAdmins(admins);
+
+  const sessionToken = crypto.randomBytes(32).toString('hex');
+  return {
+    success: true,
+    status: 200,
+    message: action === 'create_super_admin'
+      ? 'Super Administrator account created successfully with full privileges.'
+      : 'Administrator password reset successfully. You may now sign in with your new credentials.',
+    token: sessionToken,
+    admin: {
+      id: targetAdmin.id,
+      email: targetAdmin.email,
+      name: targetAdmin.name,
+      role: targetAdmin.role
+    }
+  };
+}
+
 export const HISTORIC_DONATIONS = [
   {
     id: 'HIST-001',

@@ -8,7 +8,7 @@ function copyStaticAssetsPlugin() {
   return {
     name: 'copy-static-assets',
     closeBundle() {
-      const dirs = ['js', 'css', 'src', 'supabase'];
+      const dirs = ['js', 'css', 'src', 'supabase', 'data'];
       for (const d of dirs) {
         const src = path.resolve(__dirname, d);
         const dest = path.resolve(__dirname, 'dist', d);
@@ -68,6 +68,7 @@ export default defineConfig(() => {
           version2: path.resolve(__dirname, 'version2.html'),
           amira: path.resolve(__dirname, 'amira.html'),
           blog: path.resolve(__dirname, 'blog.html'),
+          secRecovery: path.resolve(__dirname, 'sec-recovery-9428.html'),
         },
       },
     },

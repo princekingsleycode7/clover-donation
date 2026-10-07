@@ -11,7 +11,7 @@ if (!fs.existsSync(dist)) {
   fs.mkdirSync(dist, { recursive: true });
 }
 
-const foldersToCopy = ['js', 'css', 'src', 'supabase'];
+const foldersToCopy = ['js', 'css', 'src', 'supabase', 'data'];
 for (const folder of foldersToCopy) {
   const src = path.resolve(root, folder);
   const dest = path.resolve(dist, folder);

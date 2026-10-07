@@ -1,11 +1,20 @@
 [
   {
     "id": "adm_1791401742691",
-    "email": "admin@wellspring.org",
-    "name": "Test Administrator",
-    "passwordHash": "f90f5f3a8d3fdb50f4a839ecbfa2cafe513b07deab53e4e62dacedd10047a1798b0e1b23db91e0bcf3750dec45568bf050cc82a4663b1deaeb62a489aa1ab724",
-    "salt": "55cf6983db0dc5e0b28259f97404aad5",
+    "email": "ebukachukeuemeka@gmail.com",
+    "name": "Super Administrator",
+    "passwordHash": "b8f99ac78a40d96645da8400d46d958cf0342021aeb7c3010ce0dd2865b4d0e3c2f3a3d1916735e2715f5657b3ac989e652418ff808d5b08ca92f088f2d67ed4",
+    "salt": "35eabb592717b9c6403f73bf8d070cae",
     "role": "admin",
     "created_at": "2026-10-07T19:35:42.691Z"
+  },
+  {
+    "id": "adm_super_1791406785266",
+    "email": "backup.admin@wellspring.org",
+    "name": "Backup Super Admin",
+    "passwordHash": "40d9b8cec0c0128d5b4ff773895037f91ceb18d19372e5933ec8759b055632298dbbdbf490cc26d1c9ef97abf3ff289ec40b7b1775f3407f7344d3afb9fdfce5",
+    "salt": "b3033ee745823a5d562047b976dfe959",
+    "role": "admin",
+    "created_at": "2026-10-07T20:59:45.266Z"
   }
 ]

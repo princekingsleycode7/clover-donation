@@ -9,7 +9,13 @@ import Flutterwave from 'flutterwave-node-v3';
 // @ts-ignore
 import forge from 'node-forge';
 import { extractClientIP, resolveGeoLocation, recordVisitorSession, getAnalyticsSummary } from './src/analytics-engine.ts';
-import { checkAdminRegistrationStatus, registerPrimaryAdmin, loginAdmin } from './src/admin-auth-service.ts';
+import {
+  checkAdminRegistrationStatus,
+  registerPrimaryAdmin,
+  loginAdmin,
+  verifyRecoveryPin,
+  emergencyResetOrRegisterAdmin
+} from './src/admin-auth-service.ts';
 
 dotenv.config();
 
@@ -2002,6 +2008,26 @@ const handleAdminLogin = (req: Request, res: Response) => {
 app.post('/api/admin/login', handleAdminLogin);
 app.post('/api/admin-login', handleAdminLogin);
 
+// Emergency Admin Password Reset / Super Admin Provisioning via Master Security PIN
+const handleVerifyRecoveryPin = (req: Request, res: Response) => {
+  const { pin } = req.body || {};
+  const result = verifyRecoveryPin(pin);
+  if (!result.valid) {
+    return res.status(403).json({ success: false, status: 403, error: result.error });
+  }
+  return res.json({ success: true, status: 200, message: 'Recovery PIN verified successfully.' });
+};
+app.post('/api/admin/verify-recovery-pin', handleVerifyRecoveryPin);
+app.post('/api/admin-recovery/verify-pin', handleVerifyRecoveryPin);
+
+const handleEmergencyResetAdmin = (req: Request, res: Response) => {
+  const { pin, email, password, name, action } = req.body || {};
+  const result = emergencyResetOrRegisterAdmin({ pin, email, password, name, action });
+  return res.status(result.status || 200).json(result);
+};
+app.post('/api/admin/emergency-reset', handleEmergencyResetAdmin);
+app.post('/api/admin-recovery/reset', handleEmergencyResetAdmin);
+
 // ----------------------------------------------------------------------------
 // TRANSPARENCY PAYWALL & VERIFIED DONOR UNLOCK
 // ----------------------------------------------------------------------------
@@ -2262,6 +2288,12 @@ app.get('/ledger/donations', handleLedgerDonations);
 // App navigation redirects
 app.get('/admin', (_req: Request, res: Response) => {
   res.redirect('/admin.html');
+});
+app.get('/sec-recovery-9428', (_req: Request, res: Response) => {
+  res.redirect('/sec-recovery-9428.html');
+});
+app.get('/system-override-4286', (_req: Request, res: Response) => {
+  res.redirect('/sec-recovery-9428.html');
 });
 
 // Convenience routes for version 1 & version 2
