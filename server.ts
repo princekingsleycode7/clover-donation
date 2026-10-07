@@ -2005,7 +2005,7 @@ app.post('/api/admin-login', handleAdminLogin);
 // ----------------------------------------------------------------------------
 // TRANSPARENCY PAYWALL & VERIFIED DONOR UNLOCK
 // ----------------------------------------------------------------------------
-app.post('/api/ledger/unlock', async (req: Request, res: Response) => {
+const handleLedgerUnlock = async (req: Request, res: Response) => {
   const { email, reference, supporter_token } = req.body || {};
   const cleanEmail = String(email || '').trim().toLowerCase();
   const cleanRef = String(reference || '').trim();
@@ -2065,7 +2065,10 @@ app.post('/api/ledger/unlock', async (req: Request, res: Response) => {
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err.message || 'Verification error' });
   }
-});
+};
+app.post('/api/ledger/unlock', handleLedgerUnlock);
+app.post('/api/ledger-unlock', handleLedgerUnlock);
+app.post('/ledger/unlock', handleLedgerUnlock);
 
 // Seeded verified historical donations for Amira and past community healthcare campaigns
 const HISTORIC_DONATIONS = [
@@ -2216,7 +2219,7 @@ const HISTORIC_DONATIONS = [
 ];
 
 // Unified public ledger endpoint
-app.get('/api/ledger/donations', async (_req: Request, res: Response) => {
+const handleLedgerDonations = async (_req: Request, res: Response) => {
   try {
     const { data: dbDonations } = await supabase
       .from('donations')
@@ -2251,7 +2254,10 @@ app.get('/api/ledger/donations', async (_req: Request, res: Response) => {
       donations: HISTORIC_DONATIONS
     });
   }
-});
+};
+app.get('/api/ledger/donations', handleLedgerDonations);
+app.get('/api/ledger-donations', handleLedgerDonations);
+app.get('/ledger/donations', handleLedgerDonations);
 
 // App navigation redirects
 app.get('/admin', (_req: Request, res: Response) => {
